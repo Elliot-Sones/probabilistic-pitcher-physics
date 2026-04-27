@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import hashlib
 import html
+import math
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -23,14 +24,20 @@ ROLLING_GOALS = {
 
 
 def _font(size: int, *, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    candidates = [
-        "/System/Library/Fonts/Supplemental/Avenir Next.ttc",
-        "/System/Library/Fonts/Supplemental/Helvetica Neue.ttc",
-        "/System/Library/Fonts/Supplemental/Arial.ttf",
-    ]
+    candidates = (
+        [
+            "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+            "/System/Library/Fonts/Supplemental/Verdana Bold.ttf",
+        ]
+        if bold
+        else [
+            "/System/Library/Fonts/Supplemental/Arial.ttf",
+            "/System/Library/Fonts/Supplemental/Verdana.ttf",
+        ]
+    )
     for path in candidates:
         try:
-            return ImageFont.truetype(path, size=size, index=1 if bold else 0)
+            return ImageFont.truetype(path, size=size)
         except OSError:
             continue
     return ImageFont.load_default()
@@ -110,6 +117,51 @@ def build_scoreboard_svg() -> None:
     _write(ASSET_DIR / "scoreboard.svg", svg)
 
 
+def build_scoreboard_png() -> None:
+    width, height = 1400, 760
+    image = Image.new("RGB", (width, height), (25, 24, 21))
+    draw = ImageDraw.Draw(image)
+    title_font = _font(64, bold=True)
+    eyebrow_font = _font(28, bold=True)
+    subtitle_font = _font(30)
+    row_title_font = _font(38, bold=True)
+    row_note_font = _font(25)
+    metric_font = _font(50, bold=True)
+    status_font = _font(25, bold=True)
+    colors = [(31, 122, 77), (180, 127, 26), (164, 61, 50)]
+    rows = [
+        ("Single 70/30 split", "Skubal FF ceiling result", "0.533", "VALIDATED"),
+        ("Rolling truth test", "goal <= 0.620, hit rate >= 0.40", "0.702", "DIAGNOSTIC"),
+        ("Worst rolling fold", "release/spin state drift remains visible", "0.929", "MISS"),
+    ]
+    draw.text((70, 66), "PRIMARY VALIDATION STORY", font=eyebrow_font, fill=(215, 165, 49))
+    draw.text((70, 125), "Honest Scoreboard", font=title_font, fill=(247, 244, 236))
+    draw.text(
+        (70, 205),
+        "Single split shows the ceiling. Rolling windows decide reliability.",
+        font=subtitle_font,
+        fill=(216, 209, 193),
+    )
+    for line_index, color in enumerate(colors):
+        y = 548 + line_index * 55
+        draw.arc((-80, y - 260, 1320, y + 400), 200, 340, fill=color, width=4)
+    for index, (title, note, value, status) in enumerate(rows):
+        y = 280 + index * 130
+        color = colors[index]
+        draw.rounded_rectangle((70, y, 1330, y + 94), radius=14, fill=(242, 242, 241))
+        draw.rounded_rectangle((70, y, 82, y + 94), radius=6, fill=color)
+        draw.text((120, y + 18), title, font=row_title_font, fill=(25, 24, 21))
+        draw.text((120, y + 59), note, font=row_note_font, fill=(98, 91, 80))
+        draw.rounded_rectangle((1040, y + 17, 1292, y + 77), radius=26, fill=_blend(color, (242, 242, 241), 0.16))
+        draw.text((1084, y + 15), value, font=metric_font, fill=(25, 24, 21))
+        draw.text((1086, y + 62), status, font=status_font, fill=color)
+    image.save(ASSET_DIR / "scoreboard.png", optimize=True)
+
+
+def _blend(a: tuple[int, int, int], b: tuple[int, int, int], amount: float) -> tuple[int, int, int]:
+    return tuple(round(a[i] * amount + b[i] * (1 - amount)) for i in range(3))
+
+
 def build_pipeline_svg() -> None:
     steps = [
         ("Real Statcast", "public pitch rows"),
@@ -167,6 +219,74 @@ def build_pipeline_svg() -> None:
 </svg>
 """
     _write(ASSET_DIR / "pipeline.svg", svg)
+
+
+def build_pipeline_png() -> None:
+    width, height = 1400, 720
+    image = Image.new("RGB", (width, height), (247, 244, 236))
+    draw = ImageDraw.Draw(image)
+    title_font = _font(48, bold=True)
+    subtitle_font = _font(26)
+    step_title_font = _font(28, bold=True)
+    step_sub_font = _font(20)
+    number_font = _font(25, bold=True)
+    ink = (25, 24, 21)
+    draw.rounded_rectangle((42, 42, width - 42, height - 42), radius=30, fill=(255, 255, 255), outline=(215, 205, 184), width=2)
+    draw.text((82, 82), "From Real Pitches To A Validated Practice Envelope", font=title_font, fill=ink)
+    draw.text(
+        (82, 142),
+        "Every generated pitch is tied back to a real-data split and a validation layer.",
+        font=subtitle_font,
+        fill=(98, 91, 80),
+    )
+    steps = [
+        ("Real Statcast", "public pitch rows", (31, 122, 77)),
+        ("Feature layers", "release, spin, movement", (47, 111, 130)),
+        ("Generator suite", "factorized + drift models", (215, 165, 49)),
+        ("C2ST validator", "classifier realism test", (164, 61, 50)),
+        ("Rolling board", "future-game reliability", (180, 127, 26)),
+        ("Trajekt export", "sampled session JSON", (31, 122, 77)),
+    ]
+    positions = [(88, 230), (520, 230), (952, 230), (88, 470), (520, 470), (952, 470)]
+    for index, ((title, subtitle, color), (x, y)) in enumerate(zip(steps, positions, strict=True)):
+        draw.rounded_rectangle((x, y, x + 360, y + 142), radius=22, fill=(255, 250, 240), outline=ink, width=3)
+        draw.ellipse((x + 30, y + 30, x + 78, y + 78), fill=color)
+        draw.text((x + 45, y + 39), str(index + 1), font=number_font, fill=(255, 250, 240))
+        draw.text((x + 108, y + 42), title, font=step_title_font, fill=ink)
+        draw.text((x + 108, y + 86), subtitle, font=step_sub_font, fill=(98, 91, 80))
+    arrows = [
+        ((452, 301), (512, 301)),
+        ((884, 301), (944, 301)),
+        ((1132, 376), (1132, 462)),
+        ((952, 541), (888, 541)),
+        ((520, 541), (456, 541)),
+    ]
+    for start, end in arrows:
+        _draw_arrow(draw, start, end, ink)
+    image.save(ASSET_DIR / "pipeline.png", optimize=True)
+
+
+def _draw_arrow(
+    draw: ImageDraw.ImageDraw,
+    start: tuple[int, int],
+    end: tuple[int, int],
+    color: tuple[int, int, int],
+) -> None:
+    draw.line((start, end), fill=color, width=5)
+    angle = math.atan2(end[1] - start[1], end[0] - start[0])
+    size = 18
+    points = [
+        end,
+        (
+            round(end[0] - size * math.cos(angle - math.pi / 6)),
+            round(end[1] - size * math.sin(angle - math.pi / 6)),
+        ),
+        (
+            round(end[0] - size * math.cos(angle + math.pi / 6)),
+            round(end[1] - size * math.sin(angle + math.pi / 6)),
+        ),
+    ]
+    draw.polygon(points, fill=color)
 
 
 def build_rolling_gif() -> None:
@@ -445,8 +565,10 @@ Prompt summary:
 
 ## Deterministic Assets
 
-- `scoreboard.svg`: exact primary-scoreboard numbers.
-- `pipeline.svg`: model/data flow overview.
+- `scoreboard.png`: exact primary-scoreboard numbers used by README.
+- `scoreboard.svg`: editable SVG source for the scoreboard.
+- `pipeline.png`: model/data flow overview used by README.
+- `pipeline.svg`: editable SVG source for the pipeline.
 - `rolling-window-validation.gif`: animated rolling-window validation explanation.
 - `pitcher-twin-architecture.excalidraw`: editable architecture source.
 """
@@ -456,7 +578,9 @@ Prompt summary:
 def main() -> int:
     ASSET_DIR.mkdir(parents=True, exist_ok=True)
     build_scoreboard_svg()
+    build_scoreboard_png()
     build_pipeline_svg()
+    build_pipeline_png()
     build_rolling_gif()
     build_excalidraw()
     build_prompt_note()

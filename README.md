@@ -18,7 +18,7 @@
 
 Lower AUC is better. `0.50` means a classifier specifically trained to detect synthetic pitches has no meaningful signal. Rolling validation is now the primary truth test — single-split AUC is treated as a ceiling, not a guarantee.
 
-![Pitcher Twin honest scoreboard](docs/assets/readme/scoreboard.svg)
+![Pitcher Twin honest scoreboard](docs/assets/readme/scoreboard.png)
 
 ---
 
@@ -34,7 +34,7 @@ The output is a Trajekt-shaped session JSON of sampled pitches with **layered va
 
 ## How it works
 
-![Pitcher Twin pipeline from Statcast to Trajekt export](docs/assets/readme/pipeline.svg)
+![Pitcher Twin pipeline from Statcast to Trajekt export](docs/assets/readme/pipeline.png)
 
 ### The factorized physics chain (V2.1+)
 

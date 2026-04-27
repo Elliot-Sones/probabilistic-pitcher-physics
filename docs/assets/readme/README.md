@@ -12,7 +12,9 @@ Prompt summary:
 
 ## Deterministic Assets
 
-- `scoreboard.svg`: exact primary-scoreboard numbers.
-- `pipeline.svg`: model/data flow overview.
+- `scoreboard.png`: exact primary-scoreboard numbers used by README.
+- `scoreboard.svg`: editable SVG source for the scoreboard.
+- `pipeline.png`: model/data flow overview used by README.
+- `pipeline.svg`: editable SVG source for the pipeline.
 - `rolling-window-validation.gif`: animated rolling-window validation explanation.
 - `pitcher-twin-architecture.excalidraw`: editable architecture source.
