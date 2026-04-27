@@ -12,8 +12,6 @@ Prompt summary:
 
 ## Deterministic Assets
 
-- `scoreboard.png`: exact primary-scoreboard numbers used by README.
-- `scoreboard.svg`: editable SVG source for the scoreboard.
 - `best-validated-result.gif`: results-first animation for the top of the README.
 - `pitch-cloud-generator.gif`: animated conditional generator explanation.
 - `factorized-physics-chain.gif`: animated model-structure explanation.

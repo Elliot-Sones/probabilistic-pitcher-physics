@@ -314,13 +314,13 @@
       "updated": 1,
       "link": null,
       "locked": false,
-      "text": "Rolling\nscoreboard",
+      "text": "Rolling\nstress test",
       "fontSize": 22,
       "fontFamily": 1,
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": null,
-      "originalText": "Rolling\nscoreboard",
+      "originalText": "Rolling\nstress test",
       "lineHeight": 1.25
     },
     {

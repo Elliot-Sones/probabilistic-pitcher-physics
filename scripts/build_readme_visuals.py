@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import json
 import hashlib
-import html
 import math
 from pathlib import Path
 
@@ -60,112 +59,6 @@ def _write(path: Path, content: str) -> None:
 
 def _seed(value: str) -> int:
     return int(hashlib.sha256(value.encode("utf-8")).hexdigest()[:8], 16)
-
-
-def build_scoreboard_svg() -> None:
-    rows = [
-        ("Single 70/30 split", "validated", "0.533", "#1f7a4d", "Skubal FF ceiling result"),
-        (
-            "Rolling truth test",
-            "diagnostic",
-            "0.702",
-            "#b47f1a",
-            "goal <= 0.620, hit rate >= 0.40",
-        ),
-        (
-            "Worst rolling fold",
-            "miss",
-            "0.929",
-            "#a43d32",
-            "release/spin state drift remains visible",
-        ),
-    ]
-    row_blocks = []
-    y = 178
-    for index, (name, status, value, color, note) in enumerate(rows):
-        row_y = y + index * 118
-        escaped_note = html.escape(note)
-        row_blocks.append(
-            f"""
-  <g transform="translate(48 {row_y})">
-    <rect x="0" y="0" width="1004" height="88" rx="14" fill="#ffffff" opacity="0.92"/>
-    <rect x="0" y="0" width="7" height="88" rx="3" fill="{color}"/>
-    <text x="34" y="35" class="row-title">{name}</text>
-    <text x="34" y="64" class="row-note">{escaped_note}</text>
-    <rect x="555" y="18" width="260" height="52" rx="18" fill="{color}" opacity="0.13"/>
-    <text x="584" y="40" class="metric" fill="{color}">{value}</text>
-    <text x="584" y="63" class="pill" fill="{color}">{status}</text>
-  </g>"""
-        )
-    svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="610" viewBox="0 0 1100 610" role="img" aria-label="Pitcher Twin honest scoreboard">
-  <defs>
-    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#161512"/>
-      <stop offset="58%" stop-color="#24221d"/>
-      <stop offset="100%" stop-color="#f7f4ec"/>
-    </linearGradient>
-    <style>
-      .eyebrow {{ font: 700 18px ui-sans-serif, system-ui, sans-serif; fill: #d7a531; letter-spacing: 2px; }}
-      .title {{ font: 800 50px ui-sans-serif, system-ui, sans-serif; fill: #f7f4ec; }}
-      .subtitle {{ font: 500 22px ui-sans-serif, system-ui, sans-serif; fill: #d8d1c1; }}
-      .row-title {{ font: 800 26px ui-sans-serif, system-ui, sans-serif; fill: #191815; }}
-      .row-note {{ font: 500 17px ui-sans-serif, system-ui, sans-serif; fill: #625b50; }}
-      .pill {{ font: 800 17px ui-sans-serif, system-ui, sans-serif; text-transform: uppercase; }}
-      .metric {{ font: 850 34px ui-sans-serif, system-ui, sans-serif; fill: #191815; }}
-    </style>
-  </defs>
-  <rect width="1100" height="610" fill="url(#bg)"/>
-  <path d="M-120 500 C 120 315, 270 525, 470 365 S 760 155, 1180 345" fill="none" stroke="#1f7a4d" stroke-width="3" opacity="0.48"/>
-  <path d="M-80 540 C 170 380, 330 530, 540 380 S 800 260, 1160 430" fill="none" stroke="#d7a531" stroke-width="3" opacity="0.42"/>
-  <path d="M-40 575 C 210 425, 410 555, 630 410 S 840 340, 1120 525" fill="none" stroke="#a43d32" stroke-width="3" opacity="0.38"/>
-  <text x="48" y="72" class="eyebrow">PRIMARY VALIDATION STORY</text>
-  <text x="48" y="128" class="title">Honest Scoreboard</text>
-  <text x="48" y="162" class="subtitle">Single split shows the ceiling. Rolling windows decide reliability.</text>
-  {''.join(row_blocks)}
-</svg>
-"""
-    _write(ASSET_DIR / "scoreboard.svg", svg)
-
-
-def build_scoreboard_png() -> None:
-    width, height = 1400, 760
-    image = Image.new("RGB", (width, height), (25, 24, 21))
-    draw = ImageDraw.Draw(image)
-    title_font = _font(64, bold=True)
-    eyebrow_font = _font(28, bold=True)
-    subtitle_font = _font(30)
-    row_title_font = _font(38, bold=True)
-    row_note_font = _font(25)
-    metric_font = _font(50, bold=True)
-    status_font = _font(25, bold=True)
-    colors = [(31, 122, 77), (180, 127, 26), (164, 61, 50)]
-    rows = [
-        ("Single 70/30 split", "Skubal FF ceiling result", "0.533", "VALIDATED"),
-        ("Rolling truth test", "goal <= 0.620, hit rate >= 0.40", "0.702", "DIAGNOSTIC"),
-        ("Worst rolling fold", "release/spin state drift remains visible", "0.929", "MISS"),
-    ]
-    draw.text((70, 66), "PRIMARY VALIDATION STORY", font=eyebrow_font, fill=(215, 165, 49))
-    draw.text((70, 125), "Honest Scoreboard", font=title_font, fill=(247, 244, 236))
-    draw.text(
-        (70, 205),
-        "Single split shows the ceiling. Rolling windows decide reliability.",
-        font=subtitle_font,
-        fill=(216, 209, 193),
-    )
-    for line_index, color in enumerate(colors):
-        y = 548 + line_index * 55
-        draw.arc((-80, y - 260, 1320, y + 400), 200, 340, fill=color, width=4)
-    for index, (title, note, value, status) in enumerate(rows):
-        y = 280 + index * 130
-        color = colors[index]
-        draw.rounded_rectangle((70, y, 1330, y + 94), radius=14, fill=(242, 242, 241))
-        draw.rounded_rectangle((70, y, 82, y + 94), radius=6, fill=color)
-        draw.text((120, y + 18), title, font=row_title_font, fill=(25, 24, 21))
-        draw.text((120, y + 59), note, font=row_note_font, fill=(98, 91, 80))
-        draw.rounded_rectangle((1040, y + 17, 1292, y + 77), radius=26, fill=_blend(color, (242, 242, 241), 0.16))
-        draw.text((1084, y + 15), value, font=metric_font, fill=(25, 24, 21))
-        draw.text((1086, y + 62), status, font=status_font, fill=color)
-    image.save(ASSET_DIR / "scoreboard.png", optimize=True)
 
 
 def _blend(a: tuple[int, int, int], b: tuple[int, int, int], amount: float) -> tuple[int, int, int]:
@@ -723,7 +616,7 @@ def build_excalidraw() -> None:
         ("features", 330, 120, "Layered\nfeatures", "#e5edf0"),
         ("generator", 580, 120, "Factorized\nphysics generator", "#f4e6bd"),
         ("validator", 830, 120, "C2ST\nvalidator", "#f0d3cd"),
-        ("rolling", 1080, 120, "Rolling\nscoreboard", "#f3dfbd"),
+        ("rolling", 1080, 120, "Rolling\nstress test", "#f3dfbd"),
     ]
     for card in cards:
         elements.extend(rect(card[0], card[1], card[2], 180, 96, card[3], card[4]))
