@@ -306,7 +306,7 @@ def build_pitch_cloud_generator_gif() -> None:
             draw.text((x + 18, y + 12), label, font=small_font, fill=(98, 91, 80))
             draw.text((x + 18, y + 34), value, font=label_font, fill=ink)
 
-        zone = (900, 210, 1240, 610)
+        zone = (900, 252, 1240, 610)
         draw.rounded_rectangle((845, 190, 1292, 654), radius=22, fill=(247, 244, 236), outline=(216, 205, 184), width=2)
         draw.text((870, 212), "Generated plate-location samples", font=label_font, fill=ink)
         draw.rectangle(zone, outline=ink, width=4)
@@ -336,10 +336,10 @@ def build_factorized_chain_gif() -> None:
     cream = (247, 244, 236)
     colors = [(31, 122, 77), (47, 111, 130), (215, 165, 49), (164, 61, 50)]
     layers = [
-        ("Release + velocity + spin", "where/how the ball leaves the hand"),
-        ("Movement residual", "break and induced movement around release"),
-        ("Trajectory residual", "vx0/vy0/vz0 + acceleration consistency"),
-        ("Command residual", "plate_x / plate_z location cloud"),
+        ("Release state", "velocity, spin, release point"),
+        ("Movement", "break around that release"),
+        ("Trajectory", "speed + acceleration consistency"),
+        ("Command", "plate-location cloud"),
     ]
     frames: list[Image.Image] = []
     for frame_index in range(40):
@@ -838,8 +838,6 @@ Prompt summary:
 
 ## Deterministic Assets
 
-- `scoreboard.png`: exact primary-scoreboard numbers used by README.
-- `scoreboard.svg`: editable SVG source for the scoreboard.
 - `best-validated-result.gif`: results-first animation for the top of the README.
 - `pitch-cloud-generator.gif`: animated conditional generator explanation.
 - `factorized-physics-chain.gif`: animated model-structure explanation.
@@ -854,8 +852,6 @@ Prompt summary:
 
 def main() -> int:
     ASSET_DIR.mkdir(parents=True, exist_ok=True)
-    build_scoreboard_svg()
-    build_scoreboard_png()
     build_best_results_gif()
     build_pitch_cloud_generator_gif()
     build_factorized_chain_gif()

@@ -14,6 +14,10 @@ Prompt summary:
 
 - `scoreboard.png`: exact primary-scoreboard numbers used by README.
 - `scoreboard.svg`: editable SVG source for the scoreboard.
+- `best-validated-result.gif`: results-first animation for the top of the README.
+- `pitch-cloud-generator.gif`: animated conditional generator explanation.
+- `factorized-physics-chain.gif`: animated model-structure explanation.
+- `c2st-validator.gif`: animated validation explanation.
 - `pipeline.png`: model/data flow overview used by README.
 - `pipeline.svg`: editable SVG source for the pipeline.
 - `rolling-window-validation.gif`: animated rolling-window validation explanation.
