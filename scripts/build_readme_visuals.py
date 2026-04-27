@@ -47,18 +47,18 @@ def _seed(value: str) -> int:
 
 def build_scoreboard_svg() -> None:
     rows = [
-        ("Single 70/30 split", "validated", "0.533 AUC", "#1f7a4d", "Skubal FF ceiling result"),
+        ("Single 70/30 split", "validated", "0.533", "#1f7a4d", "Skubal FF ceiling result"),
         (
             "Rolling truth test",
             "diagnostic",
-            "0.702 mean AUC",
+            "0.702",
             "#b47f1a",
             "goal <= 0.620, hit rate >= 0.40",
         ),
         (
             "Worst rolling fold",
             "miss",
-            "0.929 AUC",
+            "0.929",
             "#a43d32",
             "release/spin state drift remains visible",
         ),
@@ -75,9 +75,9 @@ def build_scoreboard_svg() -> None:
     <rect x="0" y="0" width="7" height="88" rx="3" fill="{color}"/>
     <text x="34" y="35" class="row-title">{name}</text>
     <text x="34" y="64" class="row-note">{escaped_note}</text>
-    <rect x="590" y="18" width="360" height="52" rx="18" fill="{color}" opacity="0.13"/>
-    <text x="616" y="40" class="metric" fill="{color}">{value}</text>
-    <text x="616" y="63" class="pill" fill="{color}">{status}</text>
+    <rect x="555" y="18" width="260" height="52" rx="18" fill="{color}" opacity="0.13"/>
+    <text x="584" y="40" class="metric" fill="{color}">{value}</text>
+    <text x="584" y="63" class="pill" fill="{color}">{status}</text>
   </g>"""
         )
     svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="610" viewBox="0 0 1100 610" role="img" aria-label="Pitcher Twin honest scoreboard">
