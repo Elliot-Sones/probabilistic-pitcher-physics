@@ -483,6 +483,78 @@ HTML_TEMPLATE = dedent(
       background: white;
     }}
     .gh-button:hover {{ background: var(--ink); color: white; }}
+    .cta-button {{
+      display: inline-block;
+      padding: .65rem 1.2rem;
+      background: var(--green);
+      color: white;
+      border-radius: 9px;
+      text-decoration: none;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(31, 122, 77, .25);
+      transition: all .15s;
+    }}
+    .cta-button:hover {{
+      background: #136a40;
+      color: white;
+      transform: translateY(-1px);
+    }}
+    .app-nav {{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+      background: rgba(247, 244, 236, .85);
+      border-bottom: 1px solid rgba(28, 26, 23, .12);
+      padding: .75rem 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }}
+    .app-nav .brand {{
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: -.01em;
+      color: var(--ink);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+    }}
+    .app-nav .brand-dot {{
+      width: 1.6rem; height: 1.6rem;
+      border-radius: 999px;
+      background: var(--card-bg);
+      border: 1.5px solid var(--ink);
+      position: relative;
+    }}
+    .app-nav .brand-dot::before, .app-nav .brand-dot::after {{
+      content: "";
+      position: absolute;
+      left: 18%; right: 18%;
+      height: 1.5px;
+      background: var(--green);
+      border-radius: 2px;
+    }}
+    .app-nav .brand-dot::before {{ top: 36%; transform: scaleY(.6); }}
+    .app-nav .brand-dot::after {{ bottom: 36%; transform: scaleY(.6); }}
+    .app-nav nav {{
+      display: flex;
+      gap: .25rem;
+      margin-left: auto;
+    }}
+    .app-nav nav a {{
+      padding: .45rem .9rem;
+      border-radius: 7px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .92rem;
+      font-weight: 600;
+      transition: all .15s;
+    }}
+    .app-nav nav a:hover {{ color: var(--ink); background: rgba(28, 26, 23, .04); }}
+    .app-nav nav a.active {{ color: var(--green); background: rgba(31, 122, 77, .12); }}
+    .app-nav nav a.external::after {{ content: " ↗"; font-size: .75em; opacity: .7; }}
     .caption {{
       font-size: .92rem;
       color: var(--muted);
@@ -547,6 +619,16 @@ HTML_TEMPLATE = dedent(
     </style>
     </head>
     <body>
+
+    <header class="app-nav">
+      <a class="brand" href="/"><span class="brand-dot"></span>Pitcher Twin</a>
+      <nav>
+        <a href="/">App</a>
+        <a href="/report.html" class="active">Report</a>
+        <a href="https://github.com/Elliot-Sones/probabilistic-pitcher-physics" class="external" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </header>
+
     <main class="container">
 
     <div class="kicker">Pitcher Twin · live demo</div>
@@ -577,44 +659,10 @@ HTML_TEMPLATE = dedent(
       </div>
     </div>
 
-    <h2>Try it · pick a pitcher, count, and batter hand</h2>
-    <p class="lede">
-      Pick a pitcher and pitch type, then change the game context. Each green dot is a
-      pitch the model generates for the chosen situation; each dark dot is a real
-      held-out pitch from that pitcher. The cloud shifts with count, batter handedness,
-      and pitcher.
+    <p style="margin: 0 0 2rem;">
+      <a href="/" class="cta-button">→ Open the live app</a>
+      &nbsp;<span style="color: var(--muted)">— pick pitcher, count, and batter hand; the cloud reshapes</span>
     </p>
-
-    <div class="panel" id="try-it-panel">
-      <div class="controls">
-        <label>
-          <span class="control-label">Pitcher · pitch</span>
-          <select id="pick-candidate"></select>
-        </label>
-        <label>
-          <span class="control-label">Count</span>
-          <select id="pick-count"></select>
-        </label>
-        <label>
-          <span class="control-label">Batter</span>
-          <select id="pick-hand"></select>
-        </label>
-        <div class="status-readout" id="candidate-status"></div>
-      </div>
-      <div class="legend-row">
-        <span class="legend-key"><span class="legend-dot real"></span>Real held-out pitches</span>
-        <span class="legend-key"><span class="legend-dot sim"></span>Model samples for this context</span>
-        <span class="legend-key" id="sample-counts"></span>
-      </div>
-      <div class="grid-2">
-        <div id="try-plate" style="height:460px"></div>
-        <div>
-          <div id="try-velocity" style="height:230px"></div>
-          <div id="try-spin" style="height:230px"></div>
-        </div>
-      </div>
-      <p class="caption" id="try-caption">Loading model samples…</p>
-    </div>
 
     <h2>Real held-out pitches vs generated samples</h2>
     <p class="lede">
@@ -740,158 +788,6 @@ train games  1-28  → test games 29-30</code></pre>
     </div>
 
     </main>
-    <script>
-    (async function() {{
-      const REAL = "#171512";
-      const SIM = "#1f7a4d";
-      const STATUS_TEXT = {{
-        validated: "✅ Validated · classifier barely beats coin flip",
-        candidate: "🟡 Candidate · close to target on a single split",
-        diagnostic: "🟡 Diagnostic · model still distinguishable here"
-      }};
-
-      const candidateSel = document.getElementById("pick-candidate");
-      const countSel = document.getElementById("pick-count");
-      const handSel = document.getElementById("pick-hand");
-      const statusReadout = document.getElementById("candidate-status");
-      const sampleCounts = document.getElementById("sample-counts");
-      const caption = document.getElementById("try-caption");
-
-      let payload;
-      try {{
-        const res = await fetch("data.json");
-        payload = await res.json();
-      }} catch (err) {{
-        caption.textContent = "Could not load model samples (data.json missing).";
-        return;
-      }}
-
-      const byKey = Object.fromEntries(payload.candidates.map(c => [c.key, c]));
-
-      payload.candidates.forEach(c => {{
-        const opt = document.createElement("option");
-        opt.value = c.key;
-        opt.textContent = c.label;
-        candidateSel.appendChild(opt);
-      }});
-      payload.count_buckets.forEach(b => {{
-        const opt = document.createElement("option");
-        opt.value = b.key;
-        opt.textContent = b.label;
-        countSel.appendChild(opt);
-      }});
-      payload.batter_hands.forEach(h => {{
-        const opt = document.createElement("option");
-        opt.value = h.key;
-        opt.textContent = h.label;
-        handSel.appendChild(opt);
-      }});
-      candidateSel.value = payload.default_candidate;
-      countSel.value = payload.default_count_bucket;
-      handSel.value = payload.default_batter_hand;
-
-      const baseLayout = {{
-        paper_bgcolor: "rgba(0,0,0,0)",
-        plot_bgcolor: "rgba(255,255,255,.86)",
-        margin: {{l: 12, r: 12, t: 28, b: 36}},
-        font: {{color: "#171512", family: "Inter, system-ui, sans-serif"}},
-        showlegend: false,
-        hovermode: "closest"
-      }};
-
-      function platePoints(rows, color, name) {{
-        return {{
-          type: "scattergl",
-          mode: "markers",
-          name,
-          x: rows.map(r => r.plate_x),
-          y: rows.map(r => r.plate_z),
-          customdata: rows.map(r => [r.release_speed ?? null, r.release_spin_rate ?? null]),
-          marker: {{
-            size: 10,
-            color,
-            opacity: 0.62,
-            line: {{ width: 0.6, color: REAL }}
-          }},
-          hovertemplate: name + "<br>Velo: %{{customdata[0]:.1f}} mph<br>Spin: %{{customdata[1]:.0f}} rpm<extra></extra>"
-        }};
-      }}
-
-      function strikeZoneShape() {{
-        return {{
-          type: "rect",
-          x0: -0.83, x1: 0.83,
-          y0: 1.5, y1: 3.5,
-          line: {{ color: REAL, width: 2 }}
-        }};
-      }}
-
-      function platesLayout() {{
-        return {{
-          ...baseLayout,
-          xaxis: {{title: "Plate X (ft)", range: [-2.2, 2.2], zeroline: false}},
-          yaxis: {{title: "Plate Z (ft)", range: [0.4, 4.6], zeroline: false, scaleanchor: "x", scaleratio: 1}},
-          shapes: [strikeZoneShape()]
-        }};
-      }}
-
-      function histTrace(rows, key, color, name) {{
-        const values = rows.map(r => r[key]).filter(v => v !== undefined && v !== null);
-        return {{
-          type: "histogram",
-          name,
-          x: values,
-          opacity: 0.65,
-          marker: {{ color, line: {{ color: REAL, width: 0.4 }} }},
-          autobinx: true
-        }};
-      }}
-
-      function histLayout(title) {{
-        return {{
-          ...baseLayout,
-          barmode: "overlay",
-          title: {{text: title, font: {{size: 13, color: "#5b5247"}}, x: 0, xanchor: "left"}},
-          xaxis: {{ zeroline: false }},
-          yaxis: {{ zeroline: false }}
-        }};
-      }}
-
-      function render() {{
-        const candidate = byKey[candidateSel.value];
-        if (!candidate) return;
-        const ctxKey = countSel.value + "_" + handSel.value;
-        const sims = candidate.samples[ctxKey] || [];
-        const real = candidate.real_holdout || [];
-
-        statusReadout.innerHTML = "<strong>Status:</strong> " + (STATUS_TEXT[candidate.status] || candidate.status);
-        sampleCounts.textContent = sims.length + " synthetic · " + real.length + " real holdout pitches";
-        caption.textContent =
-          candidate.label + " · " + (countSel.options[countSel.selectedIndex]?.text || "") +
-          " · " + (handSel.options[handSel.selectedIndex]?.text || "") +
-          " · model trained on " + candidate.train_count + " earlier pitches";
-
-        const plateData = [
-          platePoints(real, REAL, "Real holdout"),
-          platePoints(sims, SIM, "Simulated")
-        ];
-        Plotly.react("try-plate", plateData, platesLayout(), {{displayModeBar: false, responsive: true}});
-
-        Plotly.react("try-velocity", [
-          histTrace(real, "release_speed", REAL, "Real"),
-          histTrace(sims, "release_speed", SIM, "Simulated")
-        ], histLayout("Release velocity (mph)"), {{displayModeBar: false, responsive: true}});
-
-        Plotly.react("try-spin", [
-          histTrace(real, "release_spin_rate", REAL, "Real"),
-          histTrace(sims, "release_spin_rate", SIM, "Simulated")
-        ], histLayout("Spin rate (rpm)"), {{displayModeBar: false, responsive: true}});
-      }}
-
-      [candidateSel, countSel, handSel].forEach(el => el.addEventListener("change", render));
-      render();
-    }})();
-    </script>
     </body>
     </html>
     """
@@ -946,7 +842,7 @@ def main() -> None:
         cross_pitcher_div=cross_div or "<p class='caption'>Cross-pitcher board not present.</p>",
     )
 
-    output_path = OUTPUT_DIR / "index.html"
+    output_path = OUTPUT_DIR / "report.html"
     output_path.write_text(html)
     print(f"wrote {output_path} ({len(html):,} bytes)", flush=True)
 
