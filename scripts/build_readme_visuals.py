@@ -1,237 +1,278 @@
 #!/usr/bin/env python3
-"""Build README visuals from real Pitcher Twin artifacts."""
+"""Build README visuals from real Pitcher Twin data and artifacts.
+
+The README is meant to explain the product, not decorate it. These figures
+therefore use real Statcast rows, generated app samples, validation boards,
+and rolling validation artifacts.
+"""
 
 from __future__ import annotations
 
-import hashlib
+import io
 import json
-import math
+import textwrap
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import matplotlib
+
+matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
 
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSET_DIR = ROOT / "docs" / "assets" / "readme"
+SKUBAL_DATA_PATH = ROOT / "data" / "processed" / "skubal_2025.csv"
 SITE_DATA_PATH = ROOT / "site" / "data.json"
+SKUBAL_BOARD_PATH = ROOT / "outputs" / "validation_board_skubal_2025_top3_v4" / "leaderboard.csv"
+LATEST_BOARD_PATH = ROOT / "outputs" / "validation_board_latest_statcast_top3_v4" / "leaderboard.csv"
 TOURNAMENT_REPORT_PATH = ROOT / "outputs" / "model_tournament_skubal_2025_ff" / "model_tournament_report.json"
-LEADERBOARD_PATH = ROOT / "outputs" / "validation_board_skubal_2025_top3" / "leaderboard.csv"
 ROLLING_BOARD_PATH = ROOT / "outputs" / "rolling_validation_skubal_2025_ff" / "rolling_validation_board.json"
 
-INK = (25, 24, 21)
-MUTED = (98, 91, 80)
-PAPER = (247, 244, 236)
-CARD = (255, 255, 255)
-CREAM = (255, 250, 240)
-LINE = (216, 205, 184)
-GREEN = (31, 122, 77)
-BLUE = (47, 111, 130)
-AMBER = (215, 165, 49)
-RED = (164, 61, 50)
+FAMILY_FEATURES = [
+    "plate_x",
+    "plate_z",
+    "pfx_x",
+    "pfx_z",
+    "release_speed",
+    "release_spin_rate",
+]
+
+FAMILY_COLORS = ["#197a4d", "#2f6f82", "#d7a531", "#a43d32", "#5b4d91"]
+REAL_COLOR = "#197a4d"
+GEN_COLOR = "#d7a531"
+INK = "#191815"
+MUTED = "#625b50"
+GRID = "#d8cdb8"
+TARGET = "#d7a531"
+FAIL = "#a43d32"
 
 
-def _font(size: int, *, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    candidates = (
-        [
-            "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
-            "/System/Library/Fonts/Supplemental/Verdana Bold.ttf",
-        ]
-        if bold
-        else [
-            "/System/Library/Fonts/Supplemental/Arial.ttf",
-            "/System/Library/Fonts/Supplemental/Verdana.ttf",
-        ]
-    )
-    for path in candidates:
-        try:
-            return ImageFont.truetype(path, size=size)
-        except OSError:
-            continue
-    return ImageFont.load_default()
+@dataclass(frozen=True)
+class FamilyModel:
+    scaler: StandardScaler
+    kmeans: KMeans
+    label_map: dict[int, int]
+    centers: pd.DataFrame
+    labels: list[str]
 
 
-def _load_json(path: Path) -> dict[str, Any]:
+def _load_json(path: Path) -> Any:
     return json.loads(path.read_text())
 
 
-def _seed(value: str) -> int:
-    return int(hashlib.sha256(value.encode("utf-8")).hexdigest()[:8], 16)
+def _style_axes(ax: plt.Axes) -> None:
+    ax.grid(True, color=GRID, linewidth=0.8, alpha=0.75)
+    ax.set_axisbelow(True)
+    for spine in ax.spines.values():
+        spine.set_color("#3a3731")
+        spine.set_linewidth(1.1)
+    ax.tick_params(colors=INK, labelsize=9)
 
 
-def _blend(a: tuple[int, int, int], b: tuple[int, int, int], amount: float) -> tuple[int, int, int]:
-    return tuple(round(a[i] * amount + b[i] * (1 - amount)) for i in range(3))
+def _save_fig(fig: plt.Figure, path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(path, dpi=170, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
 
 
-def _save_gif(path: Path, frames: list[Image.Image], *, duration: int = 120) -> None:
-    frames[0].save(
-        path,
-        save_all=True,
-        append_images=frames[1:],
-        duration=duration,
-        loop=0,
-        optimize=True,
-    )
+def _fig_to_image(fig: plt.Figure) -> Image.Image:
+    buffer = io.BytesIO()
+    fig.savefig(buffer, dpi=145, facecolor="white")
+    plt.close(fig)
+    buffer.seek(0)
+    return Image.open(buffer).convert("RGB")
 
 
-def _base_canvas(width: int = 1400, height: int = 760) -> tuple[Image.Image, ImageDraw.ImageDraw]:
-    image = Image.new("RGB", (width, height), PAPER)
-    draw = ImageDraw.Draw(image)
-    draw.rounded_rectangle((42, 42, width - 42, height - 42), radius=30, fill=CARD)
-    return image, draw
+def _save_gif(path: Path, frames: list[Image.Image], *, duration: int = 1100) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    frames[0].save(path, save_all=True, append_images=frames[1:], duration=duration, loop=0, optimize=True)
 
 
-def _candidate(site_data: dict[str, Any], key: str = "skubal_ff") -> dict[str, Any]:
+def _load_skubal() -> pd.DataFrame:
+    data = pd.read_csv(SKUBAL_DATA_PATH)
+    data["game_date"] = pd.to_datetime(data["game_date"])
+    return data
+
+
+def _load_skubal_ff() -> pd.DataFrame:
+    data = _load_skubal()
+    ff = data[(data["pitcher"] == 669373) & (data["pitch_type"] == "FF")].copy()
+    ff = ff.dropna(subset=FAMILY_FEATURES)
+    ff = ff.sort_values(["game_date", "game_pk", "at_bat_number", "pitch_number"]).reset_index(drop=True)
+    return ff
+
+
+def _fit_family_model(ff: pd.DataFrame, *, n_families: int = 5) -> tuple[pd.DataFrame, FamilyModel]:
+    scaler = StandardScaler()
+    scaled = scaler.fit_transform(ff[FAMILY_FEATURES])
+    kmeans = KMeans(n_clusters=n_families, n_init=40, random_state=19)
+    original_labels = kmeans.fit_predict(scaled)
+
+    centers = pd.DataFrame(scaler.inverse_transform(kmeans.cluster_centers_), columns=FAMILY_FEATURES)
+    centers["original_label"] = range(n_families)
+    # Order families visually: high locations first, then left-to-right.
+    centers = centers.sort_values(["plate_z", "plate_x"], ascending=[False, True]).reset_index(drop=True)
+    label_map = {int(row.original_label): int(index) for index, row in centers.iterrows()}
+
+    labeled = ff.copy()
+    labeled["style_family"] = [label_map[int(label)] for label in original_labels]
+    centers["style_family"] = range(n_families)
+    centers = centers.set_index("style_family")
+    labels = [_family_label(index, centers.loc[index]) for index in range(n_families)]
+    return labeled, FamilyModel(scaler=scaler, kmeans=kmeans, label_map=label_map, centers=centers, labels=labels)
+
+
+def _predict_families(frame: pd.DataFrame, model: FamilyModel) -> np.ndarray:
+    clean = frame[FAMILY_FEATURES].astype(float)
+    original = model.kmeans.predict(model.scaler.transform(clean))
+    return np.array([model.label_map[int(label)] for label in original])
+
+
+def _family_label(index: int, center: pd.Series) -> str:
+    if center["plate_z"] >= 3.25:
+        height = "high zone"
+    elif center["plate_z"] <= 2.45:
+        height = "low zone"
+    else:
+        height = "middle zone"
+
+    if center["plate_x"] <= -0.45:
+        lane = "left edge"
+    elif center["plate_x"] >= 0.45:
+        lane = "right edge"
+    else:
+        lane = "center lane"
+
+    return f"F{index + 1}: {height}, {lane}"
+
+
+def _draw_strike_zone(ax: plt.Axes) -> None:
+    zone = plt.Rectangle((-0.83, 1.5), 1.66, 2.0, fill=False, color=INK, linewidth=1.8)
+    ax.add_patch(zone)
+    ax.set_xlim(-2.2, 2.2)
+    ax.set_ylim(0.7, 4.9)
+    ax.set_xlabel("plate_x (ft)")
+    ax.set_ylabel("plate_z (ft)")
+    ax.set_aspect("equal", adjustable="box")
+
+
+def _site_candidate(key: str = "skubal_ff") -> dict[str, Any]:
+    site_data = _load_json(SITE_DATA_PATH)
     for candidate in site_data["candidates"]:
         if candidate["key"] == key:
             return candidate
     raise KeyError(f"Missing candidate {key!r} in {SITE_DATA_PATH}")
 
 
-def _frame(records: list[dict[str, float]]) -> pd.DataFrame:
-    return pd.DataFrame.from_records(records).dropna(subset=["plate_x", "plate_z"])
-
-
-def _draw_plate(
-    draw: ImageDraw.ImageDraw,
-    box: tuple[int, int, int, int],
-    *,
-    title: str,
-    subtitle: str | None = None,
-) -> None:
-    x0, y0, x1, y1 = box
-    draw.rounded_rectangle((x0 - 26, y0 - 68, x1 + 26, y1 + 42), radius=22, fill=PAPER, outline=LINE, width=2)
-    draw.text((x0 - 6, y0 - 48), title, font=_font(25, bold=True), fill=INK)
-    if subtitle:
-        draw.text((x0 - 6, y0 - 18), subtitle, font=_font(18), fill=MUTED)
-    draw.rectangle(box, outline=INK, width=4)
-    for index in (1, 2):
-        x = x0 + index * ((x1 - x0) // 3)
-        y = y0 + index * ((y1 - y0) // 3)
-        draw.line((x, y0, x, y1), fill=LINE, width=2)
-        draw.line((x0, y, x1, y), fill=LINE, width=2)
-
-
-def _plate_xy(row: pd.Series | dict[str, float], box: tuple[int, int, int, int]) -> tuple[int, int]:
-    x0, y0, x1, y1 = box
-    plate_x = float(row["plate_x"])
-    plate_z = float(row["plate_z"])
-    x = x0 + (plate_x + 2.0) / 4.0 * (x1 - x0)
-    y = y1 - (plate_z - 0.5) / 4.7 * (y1 - y0)
-    return int(round(x)), int(round(y))
-
-
-def _draw_points(
-    draw: ImageDraw.ImageDraw,
-    frame: pd.DataFrame,
-    box: tuple[int, int, int, int],
-    *,
-    color: tuple[int, int, int],
-    outline: tuple[int, int, int] | None = None,
-    radius: int = 5,
-    limit: int | None = None,
-) -> None:
-    if limit is not None and len(frame) > limit:
-        frame = frame.sample(limit, random_state=7)
-    for _, row in frame.iterrows():
-        x, y = _plate_xy(row, box)
-        draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=color, outline=outline)
-
-
-def _zone_rate(frame: pd.DataFrame) -> float:
-    if frame.empty:
-        return 0.0
-    in_zone = (
-        frame["plate_x"].between(-0.83, 0.83)
-        & frame["plate_z"].between(1.5, 3.5)
+def build_pitch_family_map(ff: pd.DataFrame, family_model: FamilyModel) -> None:
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6.8))
+    fig.subplots_adjust(top=0.82, bottom=0.24, left=0.07, right=0.98, wspace=0.26)
+    fig.suptitle("Pitcher Twin learns style families inside one pitch type", fontsize=20, fontweight="bold", color=INK, y=0.98)
+    fig.text(
+        0.5,
+        0.91,
+        "Tarik Skubal 2025 four-seam fastballs only: clusters are learned from real pitch location, movement, velocity, and spin.",
+        ha="center",
+        fontsize=11,
+        color=MUTED,
     )
-    return float(in_zone.mean())
+
+    for family_id in range(len(family_model.labels)):
+        subset = ff[ff["style_family"] == family_id]
+        color = FAMILY_COLORS[family_id]
+        label = f"{family_model.labels[family_id]} ({len(subset)} pitches)"
+        axes[0].scatter(subset["plate_x"], subset["plate_z"], s=18, alpha=0.63, color=color, label=label, edgecolor="none")
+        axes[1].scatter(subset["pfx_x"] * 12, subset["pfx_z"] * 12, s=18, alpha=0.63, color=color, edgecolor="none")
+
+        center = family_model.centers.loc[family_id]
+        axes[0].scatter(center["plate_x"], center["plate_z"], s=165, color=color, edgecolor=INK, linewidth=1.4)
+        axes[0].text(center["plate_x"] + 0.05, center["plate_z"] + 0.05, f"F{family_id + 1}", fontsize=10, weight="bold")
+        axes[1].scatter(center["pfx_x"] * 12, center["pfx_z"] * 12, s=165, color=color, edgecolor=INK, linewidth=1.4)
+        axes[1].text(center["pfx_x"] * 12 + 0.25, center["pfx_z"] * 12 + 0.25, f"F{family_id + 1}", fontsize=10, weight="bold")
+
+    _draw_strike_zone(axes[0])
+    axes[0].set_title("Where the FF families finish at the plate", fontsize=13, fontweight="bold", color=INK)
+    axes[0].legend(loc="lower left", bbox_to_anchor=(-0.01, -0.33), fontsize=8, frameon=False, ncol=1)
+
+    axes[1].axhline(0, color=GRID, linewidth=1.1)
+    axes[1].axvline(0, color=GRID, linewidth=1.1)
+    axes[1].set_title("How those same families differ in movement", fontsize=13, fontweight="bold", color=INK)
+    axes[1].set_xlabel("horizontal movement, pfx_x (inches)")
+    axes[1].set_ylabel("vertical movement, pfx_z (inches)")
+    axes[1].set_aspect("equal", adjustable="box")
+    axes[1].set_xlim(-4.0, 11.0)
+    axes[1].set_ylim(10.5, 22.0)
+
+    for ax in axes:
+        _style_axes(ax)
+
+    _save_fig(fig, ASSET_DIR / "pitch-family-inside-ff.png")
 
 
-def build_best_result_summary() -> None:
-    leaderboard = pd.read_csv(LEADERBOARD_PATH)
-    row = leaderboard[(leaderboard["pitcher_name"] == "Skubal, Tarik") & (leaderboard["pitch_type"] == "FF")].iloc[0]
-    auc = float(row["physics_core_mean_auc"])
-    pass_rate = float(row["physics_core_pass_rate"])
+def build_real_vs_generated_diagnostics(family_model: FamilyModel) -> None:
+    candidate = _site_candidate()
+    real = pd.DataFrame(candidate["real_holdout"]).dropna(subset=FAMILY_FEATURES)
+    generated = pd.DataFrame(candidate["samples"]["even_R"]).dropna(subset=FAMILY_FEATURES)
+    generated["style_family"] = _predict_families(generated, family_model)
 
-    image, draw = _base_canvas()
-    draw.text((82, 82), "Best Real-Data Result", font=_font(58, bold=True), fill=INK)
-    draw.text((82, 150), "Tarik Skubal 2025 FF, trained on earlier games and tested on later games.", font=_font(25), fill=MUTED)
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    fig.subplots_adjust(top=0.86, bottom=0.07, left=0.08, right=0.98, hspace=0.35, wspace=0.18)
+    fig.suptitle("Generated Skubal FF samples compared with later real holdout pitches", fontsize=19, fontweight="bold", color=INK, y=0.975)
+    fig.text(
+        0.5,
+        0.915,
+        "Real holdout rows come from site/data.json; generated rows are model samples for one app context.",
+        ha="center",
+        fontsize=11,
+        color=MUTED,
+    )
 
-    metrics = [
-        ("Real FF pitches", f"{int(row['pitch_count']):,}", GREEN),
-        ("Games", str(int(row["game_count"])), BLUE),
-        ("Holdout pitches", str(int(row["holdout_count"])), AMBER),
-        ("Pass rate", f"{pass_rate:.0%}", GREEN),
-    ]
-    for index, (label, value, color) in enumerate(metrics):
-        x = 82 + index * 310
-        draw.rounded_rectangle((x, 238, x + 270, 370), radius=22, fill=CREAM, outline=color, width=3)
-        draw.text((x + 24, 262), label, font=_font(20, bold=True), fill=MUTED)
-        draw.text((x + 24, 300), value, font=_font(48, bold=True), fill=color)
+    axes[0, 0].scatter(real["plate_x"], real["plate_z"], s=18, alpha=0.52, color=REAL_COLOR, label=f"real holdout ({len(real)})")
+    axes[0, 0].scatter(generated["plate_x"], generated["plate_z"], s=36, alpha=0.76, color=GEN_COLOR, marker="x", label=f"generated ({len(generated)})")
+    _draw_strike_zone(axes[0, 0])
+    axes[0, 0].set_title("Plate-location envelope", fontsize=12, fontweight="bold")
+    axes[0, 0].legend(frameon=False, fontsize=9)
 
-    draw.rounded_rectangle((120, 470, 1280, 600), radius=28, fill=_blend(GREEN, CARD, 0.13))
-    draw.text((170, 492), "C2ST AUC", font=_font(28, bold=True), fill=MUTED)
-    draw.text((170, 525), f"{auc:.3f}", font=_font(56, bold=True), fill=GREEN)
-    draw.text((420, 512), "0.50 is ideal", font=_font(28, bold=True), fill=INK)
-    draw.text((420, 548), "0.60 is the pass line; lower is better.", font=_font(24), fill=MUTED)
+    axes[0, 1].scatter(real["pfx_x"] * 12, real["pfx_z"] * 12, s=18, alpha=0.52, color=REAL_COLOR)
+    axes[0, 1].scatter(generated["pfx_x"] * 12, generated["pfx_z"] * 12, s=36, alpha=0.76, color=GEN_COLOR, marker="x")
+    axes[0, 1].set_title("Movement envelope", fontsize=12, fontweight="bold")
+    axes[0, 1].set_xlabel("pfx_x (inches)")
+    axes[0, 1].set_ylabel("pfx_z (inches)")
 
-    x0, x1, y = 170, 1230, 665
-    draw.line((x0, y, x1, y), fill=LINE, width=12)
-    for value, color, label in [(0.50, GREEN, "ideal"), (0.60, AMBER, "target"), (1.00, RED, "easy to detect")]:
-        x = x0 + int(((value - 0.50) / 0.50) * (x1 - x0))
-        draw.line((x, y - 28, x, y + 28), fill=color, width=5)
-        draw.text((x - 44, y + 42), label, font=_font(18, bold=True), fill=color)
-    x = x0 + int(((auc - 0.50) / 0.50) * (x1 - x0))
-    draw.ellipse((x - 22, y - 22, x + 22, y + 22), fill=GREEN, outline=INK, width=3)
-    draw.text((x - 42, y - 72), f"{auc:.3f}", font=_font(27, bold=True), fill=INK)
-    image.save(ASSET_DIR / "best-result-summary.png", optimize=True)
+    bins = np.linspace(93.0, 102.5, 24)
+    axes[1, 0].hist(real["release_speed"], bins=bins, color=REAL_COLOR, alpha=0.48, density=True, label="real")
+    axes[1, 0].hist(generated["release_speed"], bins=bins, color=GEN_COLOR, alpha=0.55, density=True, label="generated")
+    axes[1, 0].set_title("Velocity distribution", fontsize=12, fontweight="bold")
+    axes[1, 0].set_xlabel("release_speed (mph)")
+    axes[1, 0].set_ylabel("density")
+    axes[1, 0].legend(frameon=False, fontsize=9)
 
+    counts = generated["style_family"].value_counts(normalize=True).reindex(range(len(family_model.labels)), fill_value=0)
+    axes[1, 1].bar(range(len(counts)), counts.values, color=FAMILY_COLORS, edgecolor=INK, linewidth=0.8)
+    axes[1, 1].set_title("Generated sample mix across learned FF families", fontsize=12, fontweight="bold")
+    axes[1, 1].set_xticks(range(len(counts)))
+    axes[1, 1].set_xticklabels([f"F{i + 1}" for i in range(len(counts))])
+    axes[1, 1].set_ylabel("sample share")
+    axes[1, 1].set_ylim(0, max(0.45, counts.max() + 0.1))
+    for index, value in enumerate(counts.values):
+        axes[1, 1].text(index, value + 0.015, f"{value:.0%}", ha="center", fontsize=9, fontweight="bold")
 
-def build_real_vs_generated_cloud(site_data: dict[str, Any]) -> None:
-    candidate = _candidate(site_data)
-    real = _frame(candidate["real_holdout"])
-    generated = _frame(candidate["samples"]["even_R"])
-    leaderboard = pd.read_csv(LEADERBOARD_PATH)
-    row = leaderboard[(leaderboard["pitcher_name"] == "Skubal, Tarik") & (leaderboard["pitch_type"] == "FF")].iloc[0]
-    auc = float(row["physics_core_mean_auc"])
-    pass_rate = float(row["physics_core_pass_rate"])
-    frames: list[Image.Image] = []
-    states = [
-        ("Later real holdout", real, None),
-        ("Generated samples", None, generated),
-        ("Overlay: real vs generated", real, generated),
-    ]
+    for ax in axes.ravel():
+        _style_axes(ax)
 
-    for title, real_frame, generated_frame in states:
-        image, draw = _base_canvas()
-        draw.text((82, 82), "Best Validated Result: Skubal 2025 FF", font=_font(55, bold=True), fill=INK)
-        draw.text((82, 148), "Holdout Statcast vs model samples.", font=_font(26), fill=MUTED)
-        draw.rounded_rectangle((82, 205, 468, 646), radius=26, fill=CREAM)
-        draw.text((118, 244), "Result", font=_font(22, bold=True), fill=MUTED)
-        draw.text((118, 284), f"{auc:.3f}", font=_font(76, bold=True), fill=GREEN)
-        draw.text((118, 360), "C2ST AUC", font=_font(27, bold=True), fill=INK)
-        draw.text((118, 410), f"{pass_rate:.0%} pass rate", font=_font(32, bold=True), fill=GREEN)
-        draw.text((118, 470), f"{int(row['pitch_count'])} real FF pitches", font=_font(24), fill=INK)
-        draw.text((118, 510), f"{int(row['game_count'])} games", font=_font(24), fill=INK)
-        draw.text((118, 550), f"{int(row['holdout_count'])} later holdout rows", font=_font(24), fill=INK)
-
-        box = (670, 235, 1160, 635)
-        subtitle = "green = real holdout, amber = generated"
-        _draw_plate(draw, box, title=title, subtitle=subtitle)
-        if real_frame is not None:
-            _draw_points(draw, real_frame, box, color=_blend(GREEN, CARD, 0.45), outline=GREEN, radius=4, limit=180)
-        if generated_frame is not None:
-            _draw_points(draw, generated_frame, box, color=_blend(AMBER, CARD, 0.55), outline=AMBER, radius=6)
-        draw.rounded_rectangle((670, 650, 1160, 690), radius=15, fill=_blend(GREEN, CARD, 0.14))
-        draw.text((696, 660), "Generated samples occupy the same plate-location cloud.", font=_font(18, bold=True), fill=GREEN)
-        frames.extend([image] * 10)
-    _save_gif(ASSET_DIR / "real-vs-generated-cloud.gif", frames, duration=150)
+    _save_fig(fig, ASSET_DIR / "real-vs-generated-diagnostics.png")
 
 
-def build_context_cloud_shift(site_data: dict[str, Any]) -> None:
-    candidate = _candidate(site_data)
+def build_family_probability_shift_gif(family_model: FamilyModel) -> None:
+    candidate = _site_candidate()
     contexts = [
         ("0-0 vs RHB", "first_pitch_R"),
         ("0-2 vs RHB", "ahead_R"),
@@ -240,366 +281,208 @@ def build_context_cloud_shift(site_data: dict[str, Any]) -> None:
         ("3-2 vs LHB", "full_L"),
     ]
     frames: list[Image.Image] = []
-    box = (820, 235, 1210, 635)
+    for label, sample_key in contexts:
+        generated = pd.DataFrame(candidate["samples"][sample_key]).dropna(subset=FAMILY_FEATURES)
+        generated["style_family"] = _predict_families(generated, family_model)
+        probs = generated["style_family"].value_counts(normalize=True).reindex(range(len(family_model.labels)), fill_value=0)
 
-    for label, key in contexts:
-        frame = _frame(candidate["samples"][key])
-        image, draw = _base_canvas()
-        draw.text((82, 82), "What The App Does", font=_font(56, bold=True), fill=INK)
-        draw.text((82, 148), "Move the context controls; the pitch envelope updates.", font=_font(26), fill=MUTED)
-        controls = [
-            ("Pitcher", "Tarik Skubal"),
-            ("Pitch", "FF"),
-            ("Context", label),
-            ("Samples", str(len(frame))),
-        ]
-        for index, (name, value) in enumerate(controls):
-            x = 82 + (index % 2) * 310
-            y = 240 + (index // 2) * 112
-            draw.rounded_rectangle((x, y, x + 270, y + 78), radius=18, fill=CREAM)
-            draw.text((x + 22, y + 14), name, font=_font(18), fill=MUTED)
-            draw.text((x + 22, y + 40), value, font=_font(26, bold=True), fill=INK)
-        draw.rounded_rectangle((82, 500, 670, 620), radius=22, fill=_blend(GREEN, CARD, 0.14))
-        draw.text((112, 528), "Real output from site/data.json", font=_font(26, bold=True), fill=GREEN)
-        draw.text(
-            (112, 568),
-            f"mean velo {frame['release_speed'].mean():.1f} mph  |  zone rate {_zone_rate(frame):.0%}",
-            font=_font(21),
-            fill=INK,
+        fig, axes = plt.subplots(1, 3, figsize=(15, 5.8))
+        fig.subplots_adjust(top=0.80, bottom=0.19, left=0.06, right=0.98, wspace=0.30)
+        fig.suptitle(f"Conditional generator shifts the mix of FF style families: {label}", fontsize=17, fontweight="bold", color=INK, y=0.975)
+        fig.text(
+            0.5,
+            0.885,
+            "Each frame uses actual generated samples from site/data.json and assigns them to the learned Skubal FF families.",
+            ha="center",
+            fontsize=10.5,
+            color=MUTED,
         )
-        _draw_plate(draw, box, title=f"Generated cloud: {label}", subtitle="actual pre-sampled app payload")
-        _draw_points(draw, frame, box, color=_blend(GREEN, CARD, 0.55), outline=GREEN, radius=6)
-        frames.extend([image] * 12)
-    _save_gif(ASSET_DIR / "context-cloud-shift.gif", frames, duration=150)
+
+        for family_id in range(len(family_model.labels)):
+            subset = generated[generated["style_family"] == family_id]
+            color = FAMILY_COLORS[family_id]
+            axes[0].scatter(subset["plate_x"], subset["plate_z"], s=34, alpha=0.78, color=color, label=f"F{family_id + 1}")
+            axes[1].scatter(subset["pfx_x"] * 12, subset["pfx_z"] * 12, s=34, alpha=0.78, color=color)
+
+        _draw_strike_zone(axes[0])
+        axes[0].set_title("Generated plate cloud", fontsize=12, fontweight="bold")
+        axes[0].legend(frameon=False, fontsize=8, ncol=3, loc="lower center", bbox_to_anchor=(0.5, -0.25))
+
+        axes[1].set_title("Generated movement cloud", fontsize=12, fontweight="bold")
+        axes[1].set_xlabel("pfx_x (inches)")
+        axes[1].set_ylabel("pfx_z (inches)")
+        axes[1].set_xlim(-4.0, 11.0)
+        axes[1].set_ylim(10.5, 22.0)
+        axes[1].set_aspect("equal", adjustable="box")
+
+        axes[2].barh(range(len(probs)), probs.values, color=FAMILY_COLORS, edgecolor=INK, linewidth=0.8)
+        axes[2].set_yticks(range(len(probs)))
+        axes[2].set_yticklabels([f"F{i + 1}" for i in range(len(probs))])
+        axes[2].invert_yaxis()
+        axes[2].set_xlim(0, 0.55)
+        axes[2].set_xlabel("share of generated samples")
+        axes[2].set_title("Family probability mix", fontsize=12, fontweight="bold")
+        for index, value in enumerate(probs.values):
+            axes[2].text(value + 0.015, index, f"{value:.0%}", va="center", fontsize=9, fontweight="bold")
+
+        for ax in axes:
+            _style_axes(ax)
+        frames.append(_fig_to_image(fig))
+
+    _save_gif(ASSET_DIR / "family-probability-shift.gif", frames, duration=1250)
 
 
-def build_model_architecture() -> None:
-    image, draw = _base_canvas()
-    draw.text((82, 82), "How The Model Learns A Pitcher's Style", font=_font(50, bold=True), fill=INK)
-    draw.text(
-        (82, 142),
-        "The generator samples pitch physics in layers instead of averaging every feature together.",
-        font=_font(25),
-        fill=MUTED,
-    )
-    steps = [
-        ("Real Statcast", "plate, release, spin, movement", GREEN),
-        ("Release state", "velocity + spin + geometry", BLUE),
-        ("Movement residual", "break around release", AMBER),
-        ("Trajectory residual", "vx/vy/vz + acceleration", RED),
-        ("Command cloud", "plate_x / plate_z", GREEN),
-        ("Trajekt JSON", "sampled session export", BLUE),
-    ]
-    positions = [(78, 250), (500, 250), (922, 250), (922, 500), (500, 500), (78, 500)]
-    for index, ((title, subtitle, color), (x, y)) in enumerate(zip(steps, positions, strict=True)):
-        draw.rounded_rectangle((x, y, x + 310, y + 118), radius=22, fill=CREAM, outline=color, width=4)
-        draw.ellipse((x + 22, y + 22, x + 66, y + 66), fill=color)
-        draw.text((x + 36, y + 31), str(index + 1), font=_font(22, bold=True), fill=CREAM)
-        draw.text((x + 88, y + 30), title, font=_font(27, bold=True), fill=INK)
-        draw.text((x + 88, y + 70), subtitle, font=_font(18), fill=MUTED)
-    arrows = [
-        ((390, 309), (490, 309)),
-        ((812, 309), (912, 309)),
-        ((1077, 372), (1077, 488)),
-        ((922, 559), (820, 559)),
-        ((500, 559), (398, 559)),
-    ]
-    for start, end in arrows:
-        _draw_arrow(draw, start, end, INK)
-    image.save(ASSET_DIR / "model-architecture.png", optimize=True)
-    build_excalidraw_architecture()
-
-
-def _draw_arrow(
-    draw: ImageDraw.ImageDraw,
-    start: tuple[int, int],
-    end: tuple[int, int],
-    color: tuple[int, int, int],
-) -> None:
-    draw.line((start, end), fill=color, width=5)
-    angle = math.atan2(end[1] - start[1], end[0] - start[0])
-    size = 18
-    points = [
-        end,
-        (
-            round(end[0] - size * math.cos(angle - math.pi / 6)),
-            round(end[1] - size * math.sin(angle - math.pi / 6)),
-        ),
-        (
-            round(end[0] - size * math.cos(angle + math.pi / 6)),
-            round(end[1] - size * math.sin(angle + math.pi / 6)),
-        ),
-    ]
-    draw.polygon(points, fill=color)
-
-
-def build_c2st_workflow() -> None:
-    image, draw = _base_canvas()
-    draw.text((82, 82), "How We Prove Realism", font=_font(56, bold=True), fill=INK)
-    draw.text(
-        (82, 148),
-        "A classifier two-sample test asks whether generated pitches are detectable.",
-        font=_font(26),
-        fill=MUTED,
-    )
-    steps = [
-        ("1", "Train", "early real pitches", GREEN),
-        ("2", "Generate", "synthetic samples", BLUE),
-        ("3", "Hold out", "later real pitches", AMBER),
-        ("4", "Classifier", "tries to spot fakes", RED),
-        ("5", "AUC", "0.533 best result", GREEN),
-    ]
-    for index, (number, title, subtitle, color) in enumerate(steps):
-        x = 82 + index * 255
-        y = 305
-        draw.rounded_rectangle((x, y, x + 210, y + 140), radius=22, fill=CREAM, outline=color, width=4)
-        draw.ellipse((x + 22, y + 24, x + 66, y + 68), fill=color)
-        draw.text((x + 37, y + 33), number, font=_font(22, bold=True), fill=CREAM)
-        draw.text((x + 24, y + 82), title, font=_font(28, bold=True), fill=INK)
-        draw.text((x + 24, y + 116), subtitle, font=_font(18), fill=MUTED)
-        if index < len(steps) - 1:
-            _draw_arrow(draw, (x + 220, y + 70), (x + 248, y + 70), INK)
-    draw.line((320, 575, 1080, 575), fill=LINE, width=12)
-    for value, color, label in [(0.50, GREEN, "ideal 0.50"), (0.60, AMBER, "target 0.60"), (1.00, RED, "obvious fake")]:
-        x = 320 + int(((value - 0.50) / 0.50) * 760)
-        draw.line((x, 550, x, 600), fill=color, width=5)
-        draw.text((x - 50, 614), label, font=_font(17, bold=True), fill=color)
-    auc = 0.533
-    x = 320 + int(((auc - 0.50) / 0.50) * 760)
-    draw.ellipse((x - 19, 556, x + 19, 594), fill=GREEN, outline=INK, width=3)
-    draw.text((x - 42, 512), f"{auc:.3f}", font=_font(28, bold=True), fill=INK)
-    image.save(ASSET_DIR / "c2st-validation-workflow.png", optimize=True)
-
-
-def build_layer_results() -> None:
+def _load_layer_results() -> pd.DataFrame:
     report = _load_json(TOURNAMENT_REPORT_PATH)
-    order = [
-        ("command_representation", "command"),
-        ("movement_only", "movement"),
-        ("trajectory_only", "trajectory"),
-        ("release_only", "release"),
-        ("physics_core", "physics core"),
-    ]
     rows = []
-    for layer, label in order:
+    labels = {
+        "command_representation": "command",
+        "movement_only": "movement",
+        "trajectory_only": "trajectory",
+        "release_only": "release",
+        "physics_core": "physics core",
+    }
+    for layer, label in labels.items():
         model_name = report["best_by_layer"][layer]
         result = report["layer_results"][layer][model_name]
-        rows.append((label, float(result["mean_auc"]), float(result["pass_rate"]), model_name))
-
-    image, draw = _base_canvas()
-    draw.text((82, 82), "Layer Validation Results", font=_font(56, bold=True), fill=INK)
-    draw.text(
-        (82, 148),
-        "Repeated-seed tournament on Skubal 2025 FF; lower C2ST AUC is better.",
-        font=_font(26),
-        fill=MUTED,
-    )
-    chart = (330, 245, 1160, 620)
-    x0, y0, x1, y1 = chart
-    draw.line((x0, y1, x1, y1), fill=INK, width=3)
-    draw.line((x0, y0, x0, y1), fill=INK, width=3)
-    for value, color, label in [(0.50, GREEN, "ideal"), (0.60, AMBER, "target")]:
-        x = x0 + int(((value - 0.48) / 0.22) * (x1 - x0))
-        draw.line((x, y0, x, y1), fill=color, width=3)
-        draw.text((x - 28, y0 - 32), label, font=_font(16, bold=True), fill=color)
-    bar_h = 48
-    for index, (label, auc, pass_rate, model_name) in enumerate(rows):
-        y = y0 + 35 + index * 68
-        draw.text((82, y + 9), label, font=_font(25, bold=True), fill=INK)
-        bar_x = x0
-        bar_w = int(((auc - 0.48) / 0.22) * (x1 - x0))
-        color = GREEN if auc <= 0.60 else AMBER
-        draw.rounded_rectangle((bar_x, y, bar_x + bar_w, y + bar_h), radius=12, fill=_blend(color, CARD, 0.22))
-        draw.text((bar_x + bar_w + 16, y + 9), f"{auc:.3f}", font=_font(24, bold=True), fill=INK)
-        draw.text((1168, y + 11), f"{pass_rate:.0%}", font=_font(21, bold=True), fill=color)
-    draw.text((1160, y0 - 32), "pass", font=_font(16, bold=True), fill=MUTED)
-    draw.rounded_rectangle((82, 650, 1318, 700), radius=18, fill=_blend(GREEN, CARD, 0.12))
-    draw.text(
-        (112, 662),
-        "This is the model evidence: command, movement, trajectory, release, and full physics are scored separately.",
-        font=_font(22, bold=True),
-        fill=GREEN,
-    )
-    image.save(ASSET_DIR / "layer-results.png", optimize=True)
-
-
-def build_rolling_folds() -> None:
-    board = _load_json(ROLLING_BOARD_PATH)
-    folds = board["folds"]
-    aucs = [float(fold["physics_core_mean_auc"]) for fold in folds]
-    frames: list[Image.Image] = []
-    width, height = 1400, 760
-    plot_left, plot_top, plot_right, plot_bottom = 110, 260, 1260, 585
-    min_auc, max_auc = 0.55, 0.95
-
-    def xy(index: int, auc: float) -> tuple[int, int]:
-        x = plot_left + int(index * ((plot_right - plot_left) / (len(aucs) - 1)))
-        y = plot_bottom - int(((auc - min_auc) / (max_auc - min_auc)) * (plot_bottom - plot_top))
-        return x, y
-
-    for active in range(len(folds)):
-        image, draw = _base_canvas(width, height)
-        draw.text((82, 82), "Future-Window Stress Test", font=_font(56, bold=True), fill=INK)
-        draw.text(
-            (82, 148),
-            "Train on past games, then test the next unseen game window.",
-            font=_font(26),
-            fill=MUTED,
+        rows.append(
+            {
+                "layer": label,
+                "mean_auc": float(result["mean_auc"]),
+                "pass_rate": float(result["pass_rate"]),
+                "model": model_name,
+            }
         )
-        fold = folds[active]
-        draw.rounded_rectangle((935, 82, 1285, 170), radius=20, fill=CREAM)
-        draw.text((965, 104), f"Fold {fold['fold_index']}/10", font=_font(28, bold=True), fill=INK)
-        draw.text((965, 138), f"AUC {float(fold['physics_core_mean_auc']):.3f}", font=_font(24, bold=True), fill=AMBER)
-        draw.line((plot_left, plot_bottom, plot_right, plot_bottom), fill=INK, width=3)
-        draw.line((plot_left, plot_top, plot_left, plot_bottom), fill=INK, width=3)
-        for value, label, color in [(0.60, "fold target 0.60", GREEN), (0.80, "worst-fold ceiling 0.80", RED)]:
-            _, y = xy(0, value)
-            draw.line((plot_left, y, plot_right, y), fill=color, width=3)
-            draw.text((plot_right - 220, y - 28), label, font=_font(18, bold=True), fill=color)
-        points = [xy(i, auc) for i, auc in enumerate(aucs)]
-        for index in range(active):
-            draw.line((points[index], points[index + 1]), fill=INK, width=5)
-        for index, (x, y) in enumerate(points[: active + 1]):
-            auc = aucs[index]
-            color = GREEN if auc <= 0.60 else AMBER if auc < 0.80 else RED
-            radius = 10 if index != active else 16
-            draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=color, outline=INK, width=2)
-            draw.text((x - 10, plot_bottom + 18), str(index + 1), font=_font(16, bold=True), fill=MUTED)
-        draw.rounded_rectangle((110, 625, 1260, 690), radius=18, fill=CREAM)
-        draw.text(
-            (140, 645),
-            "Use this as the reliability frontier, not the headline result.",
-            font=_font(26, bold=True),
-            fill=INK,
-        )
-        frames.extend([image] * 8)
-    _save_gif(ASSET_DIR / "rolling-folds.gif", frames, duration=120)
+    return pd.DataFrame(rows)
 
 
-def build_excalidraw_architecture() -> None:
-    def rect(element_id: str, x: int, y: int, w: int, h: int, text: str, color: str) -> list[dict[str, Any]]:
-        box = {
-            "id": element_id,
-            "type": "rectangle",
-            "x": x,
-            "y": y,
-            "width": w,
-            "height": h,
-            "angle": 0,
-            "strokeColor": "#191815",
-            "backgroundColor": color,
-            "fillStyle": "solid",
-            "strokeWidth": 2,
-            "strokeStyle": "solid",
-            "roughness": 1,
-            "opacity": 100,
-            "groupIds": [],
-            "frameId": None,
-            "roundness": {"type": 3},
-            "seed": _seed(element_id),
-            "version": 1,
-            "versionNonce": _seed(element_id + "v"),
-            "isDeleted": False,
-            "boundElements": None,
-            "updated": 1,
-            "link": None,
-            "locked": False,
-        }
-        label = {
-            "id": f"{element_id}_label",
-            "type": "text",
-            "x": x + 18,
-            "y": y + 20,
-            "width": w - 36,
-            "height": 52,
-            "angle": 0,
-            "strokeColor": "#191815",
-            "backgroundColor": "transparent",
-            "fillStyle": "solid",
-            "strokeWidth": 1,
-            "strokeStyle": "solid",
-            "roughness": 1,
-            "opacity": 100,
-            "groupIds": [],
-            "frameId": None,
-            "roundness": None,
-            "seed": _seed(element_id + "label"),
-            "version": 1,
-            "versionNonce": _seed(element_id + "labelv"),
-            "isDeleted": False,
-            "boundElements": None,
-            "updated": 1,
-            "link": None,
-            "locked": False,
-            "text": text,
-            "fontSize": 22,
-            "fontFamily": 1,
-            "textAlign": "center",
-            "verticalAlign": "middle",
-            "containerId": None,
-            "originalText": text,
-            "lineHeight": 1.25,
-        }
-        return [box, label]
+def build_overall_results_dashboard() -> None:
+    skubal_board = pd.read_csv(SKUBAL_BOARD_PATH)
+    latest_board = pd.read_csv(LATEST_BOARD_PATH)
+    layer_results = _load_layer_results()
+    rolling = _load_json(ROLLING_BOARD_PATH)
+    folds = pd.DataFrame(rolling["folds"])
 
-    elements: list[dict[str, Any]] = []
-    cards = [
-        ("statcast", 80, 120, "Real Statcast\npitch rows", "#dcefe5"),
-        ("release", 330, 120, "Release state\nvelocity + spin", "#e5edf0"),
-        ("movement", 580, 120, "Movement\nresidual", "#f4e6bd"),
-        ("trajectory", 830, 120, "Trajectory\nresidual", "#f0d3cd"),
-        ("command", 1080, 120, "Command\ncloud", "#dcefe5"),
-        ("export", 580, 310, "Trajekt-shaped\nsession JSON", "#e5edf0"),
+    fig = plt.figure(figsize=(15.5, 12))
+    fig.subplots_adjust(top=0.88, bottom=0.07, left=0.07, right=0.98, hspace=0.55, wspace=0.28)
+    grid = fig.add_gridspec(3, 2, height_ratios=[1.0, 1.0, 1.05])
+    fig.suptitle("Full overall results: what validated, what is candidate, what is still diagnostic", fontsize=19, fontweight="bold", color=INK, y=0.985)
+    fig.text(
+        0.5,
+        0.94,
+        "C2ST AUC: 0.50 is ideal, <= 0.60 is the realism target, lower is better.",
+        ha="center",
+        fontsize=11,
+        color=MUTED,
+    )
+
+    ax_pitch = fig.add_subplot(grid[0, 0])
+    labels = [f"Skubal {row.pitch_type}" for _, row in skubal_board.iterrows()]
+    colors = [REAL_COLOR if row.physics_core_mean_auc <= 0.60 else TARGET if row.physics_core_mean_auc < 0.67 else FAIL for _, row in skubal_board.iterrows()]
+    ax_pitch.barh(labels, skubal_board["physics_core_mean_auc"], color=colors, edgecolor=INK, linewidth=0.7)
+    ax_pitch.axvline(0.60, color=TARGET, linewidth=2, linestyle="--", label="target 0.60")
+    ax_pitch.axvline(0.50, color=REAL_COLOR, linewidth=2, linestyle=":", label="ideal 0.50")
+    ax_pitch.set_xlim(0.48, 0.72)
+    ax_pitch.set_xlabel("physics-core mean AUC")
+    ax_pitch.set_title("Skubal 2025 pitch-type board", fontsize=12, fontweight="bold")
+    for index, row in skubal_board.iterrows():
+        ax_pitch.text(row.physics_core_mean_auc + 0.006, index, f"{row.physics_core_mean_auc:.3f} / {row.physics_core_pass_rate:.0%}", va="center", fontsize=9)
+    ax_pitch.legend(frameon=False, fontsize=8, loc="lower right")
+    _style_axes(ax_pitch)
+
+    ax_latest = fig.add_subplot(grid[0, 1])
+    latest_labels = [f"{row.pitcher_name.split()[-1]} {row.pitch_type}" for _, row in latest_board.iterrows()]
+    colors = [REAL_COLOR if row.physics_core_mean_auc <= 0.60 else TARGET if row.physics_core_mean_auc < 0.67 else FAIL for _, row in latest_board.iterrows()]
+    ax_latest.barh(latest_labels, latest_board["physics_core_mean_auc"], color=colors, edgecolor=INK, linewidth=0.7)
+    ax_latest.axvline(0.60, color=TARGET, linewidth=2, linestyle="--")
+    ax_latest.axvline(0.50, color=REAL_COLOR, linewidth=2, linestyle=":")
+    ax_latest.set_xlim(0.48, 0.72)
+    ax_latest.set_xlabel("physics-core mean AUC")
+    ax_latest.set_title("Latest-Statcast candidate board", fontsize=12, fontweight="bold")
+    for index, row in latest_board.iterrows():
+        ax_latest.text(row.physics_core_mean_auc + 0.006, index, f"{row.physics_core_mean_auc:.3f} / {row.physics_core_pass_rate:.0%}", va="center", fontsize=9)
+    _style_axes(ax_latest)
+
+    ax_layers = fig.add_subplot(grid[1, :])
+    layer_colors = [REAL_COLOR if value <= 0.60 else TARGET for value in layer_results["mean_auc"]]
+    ax_layers.bar(layer_results["layer"], layer_results["mean_auc"], color=layer_colors, edgecolor=INK, linewidth=0.8)
+    ax_layers.axhline(0.60, color=TARGET, linewidth=2, linestyle="--", label="target 0.60")
+    ax_layers.axhline(0.50, color=REAL_COLOR, linewidth=2, linestyle=":", label="ideal 0.50")
+    ax_layers.set_ylim(0.48, 0.64)
+    ax_layers.set_ylabel("mean AUC")
+    ax_layers.set_title("Skubal FF layer tournament: each part of the pitch is scored separately", fontsize=12, fontweight="bold")
+    for index, row in layer_results.iterrows():
+        ax_layers.text(index, row.mean_auc + 0.006, f"{row.mean_auc:.3f}\npass {row.pass_rate:.0%}", ha="center", va="bottom", fontsize=9)
+    ax_layers.legend(frameon=False, fontsize=8, loc="upper left")
+    _style_axes(ax_layers)
+
+    ax_roll = fig.add_subplot(grid[2, 0])
+    ax_roll.plot(folds["fold_index"], folds["physics_core_mean_auc"], color=INK, linewidth=2.3, marker="o")
+    ax_roll.axhline(0.60, color=TARGET, linewidth=2, linestyle="--", label="fold target 0.60")
+    ax_roll.axhline(0.80, color=FAIL, linewidth=2, linestyle="--", label="worst-fold ceiling 0.80")
+    ax_roll.set_ylim(0.55, 0.96)
+    ax_roll.set_xlabel("rolling fold")
+    ax_roll.set_ylabel("physics-core AUC")
+    ax_roll.set_title("Rolling future-window stress test", fontsize=12, fontweight="bold")
+    ax_roll.legend(frameon=False, fontsize=8)
+    _style_axes(ax_roll)
+
+    ax_summary = fig.add_subplot(grid[2, 1])
+    ax_summary.axis("off")
+    current = rolling["primary_scoreboard"]["current"]
+    lines = [
+        ("Built", "real Statcast pipeline, conditional sampler, validation boards, static app, Trajekt-style export"),
+        ("Validated", "Skubal FF single temporal split and all Skubal FF component layers are under the 0.60 target"),
+        ("Candidate", "Isaac Mattson FF candidate on latest Statcast board; Skubal SI improved but remains diagnostic"),
+        ("Still hard", "rolling future-window robustness and non-FF physics-core validation"),
+        ("Rolling mean", f"{current['mean_rolling_physics_core_auc']:.3f}"),
+        ("Rolling target hit rate", f"{current['target_hit_rate']:.0%}"),
+        ("Worst rolling fold", f"{current['worst_fold_physics_core_auc']:.3f}"),
     ]
-    for card in cards:
-        elements.extend(rect(card[0], card[1], card[2], 180, 96, card[3], card[4]))
-    payload = {
-        "type": "excalidraw",
-        "version": 2,
-        "source": "https://excalidraw.com",
-        "elements": elements,
-        "appState": {"gridSize": None, "viewBackgroundColor": "#f7f4ec", "currentItemFontFamily": 1},
-        "files": {},
-    }
-    (ASSET_DIR / "model-architecture.excalidraw").write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    y = 0.97
+    ax_summary.text(0.0, y, "Overall project status", fontsize=14, fontweight="bold", color=INK, transform=ax_summary.transAxes)
+    y -= 0.12
+    for label, value in lines:
+        ax_summary.text(0.0, y, label, fontsize=10.5, fontweight="bold", color=INK, transform=ax_summary.transAxes)
+        wrapped = "\n".join(textwrap.wrap(value, width=72))
+        ax_summary.text(0.36, y, wrapped, fontsize=10.0, color=MUTED, transform=ax_summary.transAxes)
+        y -= 0.095 + 0.055 * max(0, wrapped.count("\n"))
+
+    _save_fig(fig, ASSET_DIR / "overall-results-dashboard.png")
 
 
 def build_asset_readme() -> None:
     note = """# README Evidence Visual Assets
 
-All displayed README visuals are generated from tracked project artifacts.
+All displayed README visuals are generated from tracked real-data artifacts.
 
 ## Data Sources
 
+- `data/processed/skubal_2025.csv`: real Tarik Skubal 2025 Statcast rows.
 - `site/data.json`: real holdout rows and generated app samples.
-- `outputs/validation_board_skubal_2025_top3/leaderboard.csv`: best validated result.
-- `outputs/model_tournament_skubal_2025_ff/model_tournament_report.json`: layer AUCs.
-- `outputs/rolling_validation_skubal_2025_ff/rolling_validation_board.json`: rolling fold AUCs.
+- `outputs/validation_board_skubal_2025_top3_v4/leaderboard.csv`: Skubal pitch-type board.
+- `outputs/validation_board_latest_statcast_top3_v4/leaderboard.csv`: latest-Statcast candidate board.
+- `outputs/model_tournament_skubal_2025_ff/model_tournament_report.json`: layer tournament.
+- `outputs/rolling_validation_skubal_2025_ff/rolling_validation_board.json`: rolling future-window validation.
 
 ## Displayed Assets
 
-- `best-result-summary.png`: top-line Skubal FF validation summary.
-- `real-vs-generated-cloud.gif`: real held-out Skubal FF vs generated samples.
-- `context-cloud-shift.gif`: actual pre-sampled app contexts from `site/data.json`.
-- `model-architecture.png`: factorized model structure.
-- `c2st-validation-workflow.png`: classifier two-sample validation flow.
-- `layer-results.png`: real repeated-seed tournament layer results.
-- `rolling-folds.gif`: real rolling future-window stress test.
-- `model-architecture.excalidraw`: editable architecture source.
+- `pitch-family-inside-ff.png`: learned style families inside Skubal's FF.
+- `overall-results-dashboard.png`: full project result summary.
+- `real-vs-generated-diagnostics.png`: real holdout vs generated Skubal FF diagnostics.
+- `family-probability-shift.gif`: context-driven family probability changes.
 """
     (ASSET_DIR / "README.md").write_text(note, encoding="utf-8")
 
 
 def main() -> int:
     ASSET_DIR.mkdir(parents=True, exist_ok=True)
-    site_data = _load_json(SITE_DATA_PATH)
-    build_best_result_summary()
-    build_real_vs_generated_cloud(site_data)
-    build_context_cloud_shift(site_data)
-    build_model_architecture()
-    build_c2st_workflow()
-    build_layer_results()
-    build_rolling_folds()
+    ff = _load_skubal_ff()
+    labeled_ff, family_model = _fit_family_model(ff)
+    build_pitch_family_map(labeled_ff, family_model)
+    build_real_vs_generated_diagnostics(family_model)
+    build_family_probability_shift_gif(family_model)
+    build_overall_results_dashboard()
     build_asset_readme()
     return 0
 

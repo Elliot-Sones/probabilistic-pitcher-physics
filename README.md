@@ -1,64 +1,111 @@
 # Pitcher Twin
 
-Pitcher Twin learns a pitcher's probability cloud from real Statcast data. Pick a pitcher, pitch type, and game context, then generate realistic pitch samples with validation metadata attached.
+Pitcher Twin learns **style families inside one pitch type** from real Statcast data, then generates realistic pitch envelopes for chosen game contexts.
+
+The product idea is not "Skubal throws a fastball." It is:
+
+> Skubal's fastball has repeatable sub-styles. Some finish higher, some live lower, some move differently, and some appear more often in certain game contexts. Pitcher Twin learns those families and samples from them.
 
 [Try the live app](https://pitcher-twin.vercel.app) | [Read the static report](https://pitcher-twin.vercel.app/report)
 
-## Best Result
+## 1. Pitch Families Inside One Pitch Type
 
-The strongest real-data result is **Tarik Skubal's 2025 four-seam fastball**. The model trains on earlier games, generates new pitch samples, and is tested against later held-out Statcast pitches.
+This is the core model target.
 
-![Best real-data result summary](docs/assets/readme/best-result-summary.png)
+For a single pitcher and a single pitch type, the model looks for recurring **style families**. In the example below, every point is a real Tarik Skubal 2025 four-seam fastball. The colors are learned families inside that one pitch type.
 
-| Metric | Result |
-|---|---:|
-| Real Skubal FF pitches | **835** |
-| Games represented | **31** |
-| Later holdout pitches | **251** |
-| Classifier two-sample AUC | **0.533** |
-| Repeated-seed pass rate | **100%** |
+![Learned style families inside Skubal FF](docs/assets/readme/pitch-family-inside-ff.png)
 
-Lower AUC is better. `0.50` means a classifier cannot tell generated pitches from real held-out pitches. The pass line is `0.60`.
+This is what the generator is trying to reproduce: not one average fastball, but a mixture of fastball families with different location, movement, velocity, and spin patterns.
 
-![Real held-out Skubal FF pitches compared with generated samples](docs/assets/readme/real-vs-generated-cloud.gif)
+## 2. Full Overall Results
 
-## What The App Shows
+This is the current project status across the artifacts we built: pitch-type boards, candidate boards, layer-level validation, and rolling future-window validation.
 
-The app is a **conditional pitch probability explorer**. It does not predict one exact pitch. It shows the likely envelope of a pitch under a selected game situation.
+![Full overall results dashboard](docs/assets/readme/overall-results-dashboard.png)
 
-The current UI lets you vary:
+### Result Summary
 
-- pitcher and pitch type
-- count bucket
-- batter handedness
-- game-state context used by the sampler
-- number of generated samples
+| Area | What happened |
+|---|---|
+| Skubal FF | Validated on the main temporal board: physics-core AUC `0.533`, pass rate `100%`. |
+| Skubal SI | Improved candidate direction, but still diagnostic: physics-core AUC `0.644`, pass rate `33%`. |
+| Skubal CH | Still diagnostic: physics-core AUC `0.680`, pass rate `0%`. |
+| Latest Statcast candidates | Isaac Mattson FF is a candidate: AUC `0.576`, pass rate `50%`; Peralta FF and Bradley FF remain diagnostic. |
+| Skubal FF layers | Command, movement, trajectory, release, and physics core are all under the `0.60` target in the repeated-seed tournament. |
+| Rolling validation | Still the hard frontier: mean rolling AUC `0.702`, target hit rate `10%`, worst fold `0.929`. |
 
-Each generated context comes from the real pre-sampled app payload in [`site/data.json`](site/data.json).
+The honest takeaway:
 
-![Context controls changing the generated pitch cloud](docs/assets/readme/context-cloud-shift.gif)
+> The system can learn and regenerate a strong single-pitch-type family distribution, especially for Skubal FF. The harder remaining problem is making that realism stable across every future game window and across more pitch types.
 
-## How The Model Learns Style
+## 3. What We Built
 
-The model learns style by separating a pitch into physical layers. Instead of treating every feature as one flat vector, it models the sequence that makes baseball sense:
+The repo now contains a full real-data pipeline:
+
+1. **Statcast data layer**: loads real pitch rows from public Statcast exports.
+2. **Feature layer**: extracts plate location, movement, velocity, spin, release, trajectory, count, handedness, and game context features.
+3. **Pitch-family model**: learns recurring families inside one pitch type.
+4. **Conditional sampler**: generates pitch samples for chosen game contexts.
+5. **Validation system**: compares generated samples against later real pitches using classifier two-sample tests.
+6. **Tournament runner**: compares model variants and records layer-level results.
+7. **Rolling validator**: tests future game windows instead of one static split.
+8. **Static app and report**: exposes the generator and pre-sampled outputs in `site/`.
+9. **Trajekt-style export path**: prepares generated pitch sessions as structured JSON.
+
+## 4. How Pitch Families Are Learned
+
+For one pitcher and one pitch type, the model builds a feature vector for every real pitch:
 
 ```text
-release state
-  -> movement residual
-  -> trajectory residual
-  -> command cloud
-  -> Trajekt-shaped export
+plate location
++ movement
++ velocity
++ spin
++ release information
++ game context
 ```
 
-That means it can learn more than "Skubal throws hard." It learns where his release tends to live, how his spin and velocity move together, how movement drifts from that release state, and where the ball tends to finish at the plate.
+Then it learns recurring sub-families inside that pitch type. For Skubal FF, the families are not hand-labeled. They are learned from real pitch geometry and physics. A family can represent a high-zone fastball shape, a lower-zone shape, a left-edge/right-edge command shape, or a movement-heavy cluster.
 
-![Factorized model architecture](docs/assets/readme/model-architecture.png)
+The point is that the generated pitch is sampled from a **mixture of style families**, not from one average fastball.
 
-Editable architecture source: [model-architecture.excalidraw](docs/assets/readme/model-architecture.excalidraw)
+## 5. How Conditional Generation Works
 
-## How Validation Works
+Given:
 
-The key test is a classifier two-sample test:
+```text
+pitcher = Tarik Skubal
+pitch type = FF
+context = count / batter hand / game state
+```
+
+the generator returns a probability distribution over realistic pitch characteristics:
+
+- plate location
+- movement
+- velocity
+- spin
+- family membership
+- generated samples for the app/export layer
+
+The GIF below uses generated samples from [`site/data.json`](site/data.json). Each frame assigns generated pitches back to the learned Skubal FF families and shows how the family mix changes by context.
+
+![Conditional family probability shift](docs/assets/readme/family-probability-shift.gif)
+
+## 6. Real vs Generated Diagnostics
+
+The validation question is:
+
+> Do generated pitches look like later real pitches?
+
+This plot compares later real Skubal FF holdout rows with generated samples from the app payload.
+
+![Real vs generated Skubal FF diagnostics](docs/assets/readme/real-vs-generated-diagnostics.png)
+
+## 7. How Validation Works
+
+The main validation method is a **classifier two-sample test**:
 
 1. Train the generator on earlier real pitches.
 2. Generate synthetic pitch samples.
@@ -66,23 +113,17 @@ The key test is a classifier two-sample test:
 4. Train a classifier to separate real from generated.
 5. Report ROC-AUC.
 
-If the classifier struggles, the generated distribution looks realistic under that feature set.
+Interpretation:
 
-![Classifier two-sample validation workflow](docs/assets/readme/c2st-validation-workflow.png)
+- `0.50`: ideal; classifier cannot tell real from generated.
+- `<= 0.60`: target pass range.
+- `> 0.60`: generated samples are detectably different.
 
-The project scores each layer separately so the UI and export can say exactly what is validated.
+The project reports results by pitch type, by physics layer, and by rolling future-game windows so the README does not hide where the model still struggles.
 
-![Layer validation results from the real Skubal FF tournament](docs/assets/readme/layer-results.png)
+## 8. Demo And How To Run
 
-## Reliability Stress Test
-
-The best single split is the headline result. The rolling test is the harder future-window check: train on games 1-10, test games 11-12, then train on games 1-12, test games 13-14, and continue forward.
-
-![Rolling future-window validation folds](docs/assets/readme/rolling-folds.gif)
-
-This stress test is useful because it shows where the model still needs work: some future windows are close to the target, while others expose game-to-game drift that the current sampler does not fully explain.
-
-## Quick Start
+Preview the static app:
 
 ```bash
 pip install -r requirements.txt
@@ -94,6 +135,12 @@ python -m http.server 8000 --directory site
 ```
 
 Then open `http://localhost:8000`.
+
+Regenerate the README visuals:
+
+```bash
+.venv/bin/python scripts/build_readme_visuals.py
+```
 
 Regenerate the main validation artifacts:
 
@@ -107,7 +154,7 @@ python scripts/run_model_tournament.py \
 
 python scripts/run_validation_board.py \
   --data data/processed/skubal_2025.csv \
-  --output-dir outputs/validation_board_skubal_2025_top3 \
+  --output-dir outputs/validation_board_skubal_2025_top3_v4 \
   --top 3 --repeats 3 --samples 260
 
 .venv/bin/python scripts/run_rolling_temporal_board.py \
@@ -121,12 +168,6 @@ python scripts/run_validation_board.py \
   --repeats 4
 ```
 
-Regenerate the README visuals from tracked outputs:
-
-```bash
-.venv/bin/python scripts/build_readme_visuals.py
-```
-
 Run tests:
 
 ```bash
@@ -138,13 +179,14 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 pytest -q
 | Path | What lives there |
 |---|---|
 | [`site/`](site) | Hosted static app, report page, and pre-sampled app payload |
-| [`src/pitcher_twin/`](src/pitcher_twin) | Core generator, validation, tournament, and conditional sampling code |
-| [`scripts/build_interactive_data.py`](scripts/build_interactive_data.py) | Builds the app's pitcher and context sample grid |
+| [`src/pitcher_twin/`](src/pitcher_twin) | Core generator, validation, tournament, rolling validation, and conditional sampling code |
+| [`scripts/build_readme_visuals.py`](scripts/build_readme_visuals.py) | Reproducible Matplotlib README visual builder |
+| [`scripts/build_interactive_data.py`](scripts/build_interactive_data.py) | Builds the app's pitcher/context sample grid |
 | [`scripts/run_model_tournament.py`](scripts/run_model_tournament.py) | Trains and compares model variants |
-| [`scripts/run_validation_board.py`](scripts/run_validation_board.py) | Builds the cross-pitch validation leaderboard |
-| [`scripts/run_rolling_temporal_board.py`](scripts/run_rolling_temporal_board.py) | Runs the rolling future-window stress test |
+| [`scripts/run_validation_board.py`](scripts/run_validation_board.py) | Builds pitch-type validation leaderboards |
+| [`scripts/run_rolling_temporal_board.py`](scripts/run_rolling_temporal_board.py) | Runs rolling future-window validation |
 | [`data/processed/skubal_2025.csv`](data/processed/skubal_2025.csv) | Real Statcast dataset used by the app and README |
-| [`outputs/`](outputs) | Generated reports, leaderboards, and validation boards |
+| [`outputs/`](outputs) | Generated reports, leaderboards, tournaments, and rolling validation boards |
 | [`docs/research-log.md`](docs/research-log.md) | Model chronology and ablations |
 | [`docs/assets/readme/`](docs/assets/readme) | README visuals generated from real artifacts |
 
@@ -153,8 +195,8 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 pytest -q
 - Real public Statcast rows only.
 - Generated pitches are always labeled as generated.
 - Holdout rows are split temporally, not randomly.
-- Weather is not claimed in the headline model unless it improves validation.
+- Weather is not part of the headline claim unless it improves validation.
 
 ## Current Frontier
 
-The impressive part is already real: the model can generate Skubal FF samples that are difficult to distinguish from later real pitches on the validated split. The next meaningful frontier is rolling robustness: reducing the bad future windows by improving release geometry, spin-axis behavior, and game-to-game drift.
+The next meaningful work is not making the README louder. It is improving rolling robustness and generalizing the family model across more pitch types and pitchers without losing the strong Skubal FF result.
