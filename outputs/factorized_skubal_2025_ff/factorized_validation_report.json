@@ -1,0 +1,182 @@
+{
+  "model_name": "player_factorized_physics_residual",
+  "pitcher_name": "Skubal, Tarik",
+  "pitch_type": "FF",
+  "n_train": 584,
+  "n_holdout": 251,
+  "release_model": "player_recent_weighted_game_drift_copula",
+  "layer_results": {
+    "command_representation": {
+      "features": [
+        "plate_x",
+        "plate_z"
+      ],
+      "factorized_auc": 0.5193905817174516,
+      "game_drift_gaussian_auc": 0.5867382271468145,
+      "game_drift_copula_auc": 0.5140235457063712,
+      "factorized_top_leakage": [
+        {
+          "feature": "plate_x",
+          "importance": 0.09727903318332139
+        },
+        {
+          "feature": "plate_z",
+          "importance": 0.040749675491225205
+        }
+      ]
+    },
+    "movement_only": {
+      "features": [
+        "pfx_x",
+        "pfx_z",
+        "plate_x",
+        "plate_z"
+      ],
+      "factorized_auc": 0.5538434903047091,
+      "game_drift_gaussian_auc": 0.5884695290858726,
+      "game_drift_copula_auc": 0.5069252077562327,
+      "factorized_top_leakage": [
+        {
+          "feature": "plate_x",
+          "importance": 0.12376410323479338
+        },
+        {
+          "feature": "pfx_x",
+          "importance": 0.02514545703908798
+        },
+        {
+          "feature": "plate_z",
+          "importance": 0.004946806017483366
+        },
+        {
+          "feature": "pfx_z",
+          "importance": 0.002793828624363873
+        }
+      ]
+    },
+    "release_only": {
+      "features": [
+        "release_speed",
+        "release_spin_rate",
+        "spin_axis_cos",
+        "spin_axis_sin",
+        "release_pos_x",
+        "release_pos_y",
+        "release_pos_z",
+        "release_extension"
+      ],
+      "factorized_auc": 0.5753116343490304,
+      "game_drift_gaussian_auc": 0.6407548476454293,
+      "game_drift_copula_auc": 0.6116689750692521,
+      "factorized_top_leakage": [
+        {
+          "feature": "spin_axis_sin",
+          "importance": 0.6399378974376432
+        },
+        {
+          "feature": "release_pos_y",
+          "importance": 0.5103894490466571
+        },
+        {
+          "feature": "release_extension",
+          "importance": 0.4855087382596824
+        },
+        {
+          "feature": "release_pos_x",
+          "importance": 0.34826365048578517
+        },
+        {
+          "feature": "release_speed",
+          "importance": 0.2826380826071239
+        }
+      ]
+    },
+    "trajectory_only": {
+      "features": [
+        "vx0",
+        "vy0",
+        "vz0",
+        "ax",
+        "ay",
+        "az"
+      ],
+      "factorized_auc": 0.5995498614958449,
+      "game_drift_gaussian_auc": 0.6289819944598338,
+      "game_drift_copula_auc": 0.6504501385041551,
+      "factorized_top_leakage": [
+        {
+          "feature": "ay",
+          "importance": 0.4300769548765628
+        },
+        {
+          "feature": "vy0",
+          "importance": 0.408928246274618
+        },
+        {
+          "feature": "az",
+          "importance": 0.3439203110961989
+        },
+        {
+          "feature": "vx0",
+          "importance": 0.19655385773307052
+        },
+        {
+          "feature": "vz0",
+          "importance": 0.087829373857149
+        }
+      ]
+    },
+    "physics_core": {
+      "features": [
+        "release_speed",
+        "release_spin_rate",
+        "spin_axis_cos",
+        "spin_axis_sin",
+        "release_pos_x",
+        "release_pos_y",
+        "release_pos_z",
+        "release_extension",
+        "pfx_x",
+        "pfx_z",
+        "plate_x",
+        "plate_z",
+        "vx0",
+        "vy0",
+        "vz0",
+        "ax",
+        "ay",
+        "az"
+      ],
+      "factorized_auc": 0.6114958448753463,
+      "game_drift_gaussian_auc": 0.6632617728531855,
+      "game_drift_copula_auc": 0.6963296398891967,
+      "factorized_top_leakage": [
+        {
+          "feature": "spin_axis_sin",
+          "importance": 0.5505844723074073
+        },
+        {
+          "feature": "ay",
+          "importance": 0.45268563205631746
+        },
+        {
+          "feature": "release_extension",
+          "importance": 0.4491026769197068
+        },
+        {
+          "feature": "release_pos_y",
+          "importance": 0.40701265701518735
+        },
+        {
+          "feature": "pfx_z",
+          "importance": 0.35491303955931436
+        }
+      ]
+    }
+  },
+  "data_path": "/Users/elliot18/Desktop/Home/Projects/pitch-pitcher-twin/data/processed/skubal_2025.csv",
+  "pitcher_id": 669373,
+  "rows_raw": 2849,
+  "rows_clean": 2849,
+  "rows_subset": 835
+}

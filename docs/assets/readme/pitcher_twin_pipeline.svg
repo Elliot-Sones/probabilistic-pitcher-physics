@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1290" height="300" viewBox="0 0 1290 300">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#374151"/>
+    </marker>
+  </defs>
+  <rect width="1290" height="300" fill="white"/>
+  <text x="40" y="44" font-size="24" font-weight="800" fill="#111827">Pitcher Twin technical pipeline</text>
+  <text x="40" y="72" font-size="14" fill="#4b5563">Train on early real pitches, generate samples, then ask whether a classifier can distinguish them from later real pitches.</text>
+  
+    <rect x="40" y="96" width="160" height="92" rx="16" fill="#eff6ff" stroke="#1f2937" stroke-width="2"/>
+    <text x="120.0" y="130" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Statcast</text>
+    <text x="120.0" y="155" text-anchor="middle" font-size="12" fill="#4b5563">real pitch rows</text>
+    
+
+    <rect x="240" y="96" width="170" height="92" rx="16" fill="#ecfdf5" stroke="#1f2937" stroke-width="2"/>
+    <text x="325.0" y="130" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Feature layers</text>
+    <text x="325.0" y="155" text-anchor="middle" font-size="12" fill="#4b5563">release/move/cmd</text>
+    
+
+    <rect x="450" y="96" width="170" height="92" rx="16" fill="#fffbeb" stroke="#1f2937" stroke-width="2"/>
+    <text x="535.0" y="130" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Generators</text>
+    <text x="535.0" y="155" text-anchor="middle" font-size="12" fill="#4b5563">drift + copula</text>
+    
+
+    <rect x="660" y="96" width="170" height="92" rx="16" fill="#f5f3ff" stroke="#1f2937" stroke-width="2"/>
+    <text x="745.0" y="130" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Holdout</text>
+    <text x="745.0" y="155" text-anchor="middle" font-size="12" fill="#4b5563">later games</text>
+    
+
+    <rect x="870" y="96" width="170" height="92" rx="16" fill="#fef2f2" stroke="#1f2937" stroke-width="2"/>
+    <text x="955.0" y="130" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">C2ST</text>
+    <text x="955.0" y="155" text-anchor="middle" font-size="12" fill="#4b5563">can it tell?</text>
+    
+
+    <rect x="1080" y="96" width="170" height="92" rx="16" fill="#f8fafc" stroke="#1f2937" stroke-width="2"/>
+    <text x="1165.0" y="130" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Machine Session JSON</text>
+    <text x="1165.0" y="155" text-anchor="middle" font-size="12" fill="#4b5563">validated export</text>
+    
+  
+    <line x1="200" y1="142" x2="240" y2="142" stroke="#374151" stroke-width="2.2" marker-end="url(#arrow)"/>
+    
+    <line x1="410" y1="142" x2="450" y2="142" stroke="#374151" stroke-width="2.2" marker-end="url(#arrow)"/>
+    
+    <line x1="620" y1="142" x2="660" y2="142" stroke="#374151" stroke-width="2.2" marker-end="url(#arrow)"/>
+    
+    <line x1="830" y1="142" x2="870" y2="142" stroke="#374151" stroke-width="2.2" marker-end="url(#arrow)"/>
+    
+    <line x1="1040" y1="142" x2="1080" y2="142" stroke="#374151" stroke-width="2.2" marker-end="url(#arrow)"/>
+    
+  <text x="645" y="246" text-anchor="middle" font-size="14" fill="#374151">Lower C2ST AUC means generated pitches look more like held-out real pitches.</text>
+</svg>

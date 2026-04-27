@@ -1,0 +1,2 @@
+pitcher,pitcher_name,pitch_type,n,games,train_n,holdout_n,feature_completeness,context_coverage,variability_signal,candidate_score,passes_thresholds,core_columns_checked
+669373,"Skubal, Tarik",FF,835,31,584,251,1.0,1.0,0.6083202820999787,0.930416014104999,True,17

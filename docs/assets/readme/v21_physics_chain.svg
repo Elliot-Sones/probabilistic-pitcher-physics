@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1190" height="360" viewBox="0 0 1190 360">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#374151"/>
+    </marker>
+  </defs>
+  <rect width="1190" height="360" fill="white"/>
+  <text x="70" y="48" font-size="24" font-weight="800" fill="#111827">V2.1 factorized physics-residual model</text>
+  <text x="70" y="76" font-size="14" fill="#4b5563">Instead of sampling one flat physics vector, V2.1 samples a pitch as a coupled physics chain.</text>
+  
+    <rect x="70" y="108" width="210" height="100" rx="16" fill="#eff6ff" stroke="#1f2937" stroke-width="2"/>
+    <text x="175.0" y="142" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Release</text>
+    <text x="175.0" y="167" text-anchor="middle" font-size="12" fill="#4b5563">velocity / spin / slot</text>
+    
+    <rect x="350" y="108" width="210" height="100" rx="16" fill="#ecfdf5" stroke="#1f2937" stroke-width="2"/>
+    <text x="455.0" y="142" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Movement residual</text>
+    <text x="455.0" y="167" text-anchor="middle" font-size="12" fill="#4b5563">pfx_x / pfx_z</text>
+    
+    <rect x="630" y="108" width="210" height="100" rx="16" fill="#fffbeb" stroke="#1f2937" stroke-width="2"/>
+    <text x="735.0" y="142" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Trajectory residual</text>
+    <text x="735.0" y="167" text-anchor="middle" font-size="12" fill="#4b5563">vx/vy/vz + accel</text>
+    
+    <rect x="910" y="108" width="210" height="100" rx="16" fill="#f5f3ff" stroke="#1f2937" stroke-width="2"/>
+    <text x="1015.0" y="142" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Command residual</text>
+    <text x="1015.0" y="167" text-anchor="middle" font-size="12" fill="#4b5563">plate_x / plate_z</text>
+    
+  
+    <line x1="280" y1="158" x2="350" y2="158" stroke="#374151" stroke-width="2.2" marker-end="url(#arrow)"/>
+    
+  
+    <line x1="560" y1="158" x2="630" y2="158" stroke="#374151" stroke-width="2.2" marker-end="url(#arrow)"/>
+    
+  
+    <line x1="840" y1="158" x2="910" y2="158" stroke="#374151" stroke-width="2.2" marker-end="url(#arrow)"/>
+    
+  <rect x="180" y="260" width="300" height="54" rx="14" fill="#f8fafc" stroke="#64748b" stroke-width="1.5"/>
+  <text x="330" y="283" text-anchor="middle" font-size="13" font-weight="700" fill="#111827">release variance floor</text>
+  <text x="330" y="302" text-anchor="middle" font-size="11" fill="#475569">prevents collapsed release spread</text>
+  <rect x="690" y="260" width="330" height="54" rx="14" fill="#f8fafc" stroke="#64748b" stroke-width="1.5"/>
+  <text x="855" y="283" text-anchor="middle" font-size="13" font-weight="700" fill="#111827">recent-game residual drift</text>
+  <text x="855" y="302" text-anchor="middle" font-size="11" fill="#475569">later games can shift downstream physics</text>
+</svg>

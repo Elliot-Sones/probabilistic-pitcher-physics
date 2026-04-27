@@ -1,0 +1,3980 @@
+{
+  "data_path": "data/processed/skubal_2025.csv",
+  "rows_raw": 2849,
+  "rows_clean": 2849,
+  "selected_candidate": {
+    "pitcher": 669373,
+    "pitcher_name": "Skubal, Tarik",
+    "pitch_type": "FF",
+    "n": 835,
+    "games": 31,
+    "train_n": 584,
+    "holdout_n": 251,
+    "feature_completeness": 1.0,
+    "context_coverage": 1.0,
+    "variability_signal": 0.6083202820999787,
+    "candidate_score": 0.930416014104999,
+    "passes_thresholds": true,
+    "core_columns_checked": 17
+  },
+  "selected_feature_group": "command_representation",
+  "selected_model": "player_recent_weighted_game_drift_copula",
+  "selected_auc": 0.5334141274238227,
+  "physics_temporal_auc": 0.6504501385041551,
+  "artifact_status": "validated_component_layers_physics_diagnostic",
+  "validated_layers": [
+    {
+      "feature_group": "command_representation",
+      "features": [
+        "plate_x",
+        "plate_z"
+      ],
+      "model": "player_recent_weighted_game_drift_copula",
+      "auc": 0.5334141274238227,
+      "minimum_auc": 0.5015581717451524,
+      "robust_mean_auc": 0.5341989843028624,
+      "robust_pass_rate": 0.9666666666666667
+    },
+    {
+      "feature_group": "movement_only",
+      "features": [
+        "pfx_x",
+        "pfx_z",
+        "plate_x",
+        "plate_z"
+      ],
+      "model": "player_recent_weighted_game_drift_gaussian",
+      "auc": 0.5460526315789473,
+      "minimum_auc": 0.501904432132964,
+      "robust_mean_auc": 0.5451465835641736,
+      "robust_pass_rate": 0.9333333333333333
+    }
+  ],
+  "borderline_layers": [
+    {
+      "feature_group": "trajectory_only",
+      "features": [
+        "vx0",
+        "vy0",
+        "vz0",
+        "ax",
+        "ay",
+        "az"
+      ],
+      "model": "player_recent_empirical_bootstrap",
+      "auc": 0.5888157894736842,
+      "minimum_auc": 0.5770429362880887,
+      "robust_mean_auc": 0.5918917359187442,
+      "robust_pass_rate": 0.5666666666666667
+    }
+  ],
+  "diagnostic_layers": [
+    {
+      "feature_group": "release_only",
+      "features": [
+        "release_speed",
+        "release_spin_rate",
+        "spin_axis_cos",
+        "spin_axis_sin",
+        "release_pos_x",
+        "release_pos_y",
+        "release_pos_z",
+        "release_extension"
+      ],
+      "model": "player_recent_weighted_game_drift_copula",
+      "auc": 0.6431786703601108,
+      "minimum_auc": 0.5971260387811634,
+      "robust_mean_auc": 0.6269679132040628,
+      "robust_pass_rate": 0.3
+    },
+    {
+      "feature_group": "physics_core",
+      "features": [
+        "release_speed",
+        "release_spin_rate",
+        "spin_axis_cos",
+        "spin_axis_sin",
+        "release_pos_x",
+        "release_pos_y",
+        "release_pos_z",
+        "release_extension",
+        "pfx_x",
+        "pfx_z",
+        "plate_x",
+        "plate_z",
+        "vx0",
+        "vy0",
+        "vz0",
+        "ax",
+        "ay",
+        "az"
+      ],
+      "model": "player_recent_weighted_game_drift_copula",
+      "auc": 0.6504501385041551,
+      "minimum_auc": 0.6504501385041551,
+      "robust_mean_auc": 0.6642774699907664,
+      "robust_pass_rate": 0.03333333333333333
+    },
+    {
+      "feature_group": "physics_batter_context",
+      "features": [
+        "release_speed",
+        "release_spin_rate",
+        "spin_axis_cos",
+        "spin_axis_sin",
+        "release_pos_x",
+        "release_pos_y",
+        "release_pos_z",
+        "release_extension",
+        "pfx_x",
+        "pfx_z",
+        "plate_x",
+        "plate_z",
+        "vx0",
+        "vy0",
+        "vz0",
+        "ax",
+        "ay",
+        "az",
+        "batter_stand_code",
+        "score_diff"
+      ],
+      "model": "player_recent_weighted_game_drift_gaussian",
+      "auc": 0.6710526315789473,
+      "minimum_auc": 0.6326177285318559
+    },
+    {
+      "feature_group": "physics_count",
+      "features": [
+        "release_speed",
+        "release_spin_rate",
+        "spin_axis_cos",
+        "spin_axis_sin",
+        "release_pos_x",
+        "release_pos_y",
+        "release_pos_z",
+        "release_extension",
+        "pfx_x",
+        "pfx_z",
+        "plate_x",
+        "plate_z",
+        "vx0",
+        "vy0",
+        "vz0",
+        "ax",
+        "ay",
+        "az",
+        "balls",
+        "strikes",
+        "count_bucket_code"
+      ],
+      "model": "player_recent_weighted_game_drift_copula",
+      "auc": 0.6542590027700831,
+      "minimum_auc": 0.6502770083102493
+    },
+    {
+      "feature_group": "physics_fatigue",
+      "features": [
+        "release_speed",
+        "release_spin_rate",
+        "spin_axis_cos",
+        "spin_axis_sin",
+        "release_pos_x",
+        "release_pos_y",
+        "release_pos_z",
+        "release_extension",
+        "pfx_x",
+        "pfx_z",
+        "plate_x",
+        "plate_z",
+        "vx0",
+        "vy0",
+        "vz0",
+        "ax",
+        "ay",
+        "az",
+        "pitch_number",
+        "inning",
+        "days_rest",
+        "times_through_order"
+      ],
+      "model": "player_context_weighted_gaussian",
+      "auc": 0.8159626038781164,
+      "minimum_auc": 0.7794321329639889
+    },
+    {
+      "feature_group": "shape_representation",
+      "features": [
+        "release_speed",
+        "release_spin_rate",
+        "spin_axis_cos",
+        "spin_axis_sin",
+        "release_pos_x",
+        "release_pos_y",
+        "release_pos_z",
+        "release_extension",
+        "pfx_x",
+        "pfx_z",
+        "plate_x",
+        "plate_z"
+      ],
+      "model": "player_recent_weighted_game_drift_copula",
+      "auc": 0.6681094182825484,
+      "minimum_auc": 0.6253462603878116
+    }
+  ],
+  "robustness_checks": {
+    "seed_count": 30,
+    "temporal_success_auc": 0.6,
+    "results": {
+      "command_representation": {
+        "model": "player_recent_weighted_game_drift_copula",
+        "mean_auc": 0.5341989843028624,
+        "std_auc": 0.0316832898152154,
+        "min_auc": 0.5001731301939059,
+        "max_auc": 0.6274238227146814,
+        "pass_rate": 0.9666666666666667,
+        "aucs": [
+          0.534106648199446,
+          0.558691135734072,
+          0.5429362880886426,
+          0.5129847645429363,
+          0.568213296398892,
+          0.503808864265928,
+          0.5031163434903048,
+          0.5193905817174516,
+          0.5001731301939059,
+          0.5041551246537397,
+          0.5207756232686981,
+          0.5190443213296398,
+          0.6274238227146814,
+          0.5159279778393352,
+          0.5721952908587258,
+          0.5041551246537397,
+          0.5439750692520776,
+          0.5415512465373962,
+          0.5976454293628809,
+          0.5273545706371191,
+          0.5043282548476454,
+          0.5585180055401662,
+          0.5098684210526316,
+          0.554016620498615,
+          0.5247576177285319,
+          0.5008656509695291,
+          0.5623268698060941,
+          0.5091759002770083,
+          0.5154085872576177,
+          0.569078947368421
+        ]
+      },
+      "physics_core": {
+        "model": "player_recent_weighted_game_drift_copula",
+        "mean_auc": 0.6642774699907664,
+        "std_auc": 0.04058734611867574,
+        "min_auc": 0.5704639889196675,
+        "max_auc": 0.7553670360110804,
+        "pass_rate": 0.03333333333333333,
+        "aucs": [
+          0.6327908587257618,
+          0.6781509695290858,
+          0.6206717451523546,
+          0.6565096952908587,
+          0.7087950138504155,
+          0.6388504155124654,
+          0.7042936288088643,
+          0.6232686980609419,
+          0.6726108033240997,
+          0.6594529085872576,
+          0.6527008310249307,
+          0.616516620498615,
+          0.6897506925207756,
+          0.7489612188365651,
+          0.6767659279778393,
+          0.7553670360110804,
+          0.6343490304709142,
+          0.662915512465374,
+          0.6301939058171745,
+          0.6617036011080333,
+          0.6854224376731302,
+          0.6166897506925207,
+          0.6757271468144044,
+          0.6452562326869806,
+          0.694078947368421,
+          0.6461218836565097,
+          0.731994459833795,
+          0.6717451523545707,
+          0.6662049861495845,
+          0.5704639889196675
+        ]
+      },
+      "release_only": {
+        "model": "player_recent_weighted_game_drift_copula",
+        "mean_auc": 0.6269679132040628,
+        "std_auc": 0.05131582096190145,
+        "min_auc": 0.5412049861495845,
+        "max_auc": 0.7110457063711911,
+        "pass_rate": 0.3,
+        "aucs": [
+          0.6386772853185596,
+          0.6476800554016621,
+          0.6769390581717452,
+          0.677112188365651,
+          0.5626731301939059,
+          0.6324445983379502,
+          0.5621537396121884,
+          0.682825484764543,
+          0.5458795013850416,
+          0.6900969529085873,
+          0.5439750692520776,
+          0.6175554016620498,
+          0.5514196675900277,
+          0.6920013850415513,
+          0.646814404432133,
+          0.7110457063711911,
+          0.641101108033241,
+          0.6011080332409973,
+          0.5773891966759003,
+          0.6322714681440443,
+          0.6653393351800554,
+          0.6118421052631579,
+          0.6729570637119113,
+          0.6140927977839336,
+          0.5687326869806094,
+          0.6731301939058172,
+          0.665685595567867,
+          0.6684556786703602,
+          0.5964335180055401,
+          0.5412049861495845
+        ]
+      },
+      "movement_only": {
+        "model": "player_recent_weighted_game_drift_gaussian",
+        "mean_auc": 0.5451465835641736,
+        "std_auc": 0.03448556864360415,
+        "min_auc": 0.5012119113573408,
+        "max_auc": 0.6407548476454293,
+        "pass_rate": 0.9333333333333333,
+        "aucs": [
+          0.5159279778393352,
+          0.5614612188365651,
+          0.5306440443213296,
+          0.5012119113573408,
+          0.532202216066482,
+          0.5195637119113573,
+          0.6208448753462604,
+          0.5657894736842105,
+          0.5907202216066482,
+          0.5223337950138505,
+          0.5777354570637119,
+          0.5373961218836565,
+          0.5367036011080333,
+          0.5403393351800554,
+          0.511253462603878,
+          0.519909972299169,
+          0.5192174515235457,
+          0.5424168975069252,
+          0.5031163434903048,
+          0.5711565096952909,
+          0.5564404432132963,
+          0.5060595567867036,
+          0.5095221606648199,
+          0.5313365650969529,
+          0.588123268698061,
+          0.5280470914127424,
+          0.6407548476454293,
+          0.5779085872576177,
+          0.5436288088642659,
+          0.5526315789473685
+        ]
+      },
+      "trajectory_only": {
+        "model": "player_recent_empirical_bootstrap",
+        "mean_auc": 0.5918917359187442,
+        "std_auc": 0.03895896808469188,
+        "min_auc": 0.5086565096952909,
+        "max_auc": 0.6670706371191135,
+        "pass_rate": 0.5666666666666667,
+        "aucs": [
+          0.5365304709141274,
+          0.5493421052631579,
+          0.6274238227146814,
+          0.6158240997229917,
+          0.6270775623268698,
+          0.5848337950138505,
+          0.6597991689750693,
+          0.6007617728531855,
+          0.6078601108033241,
+          0.6206717451523546,
+          0.5725415512465374,
+          0.5730609418282548,
+          0.5924515235457064,
+          0.603185595567867,
+          0.5775623268698061,
+          0.641101108033241,
+          0.5086565096952909,
+          0.5309903047091413,
+          0.5410318559556787,
+          0.6670706371191135,
+          0.5742728531855956,
+          0.5921052631578947,
+          0.6130540166204986,
+          0.5742728531855956,
+          0.6177285318559557,
+          0.5476108033240997,
+          0.5959141274238227,
+          0.599376731301939,
+          0.6464681440443213,
+          0.5581717451523546
+        ]
+      }
+    }
+  },
+  "export": {
+    "export_strategy": "validated_layer_over_physics_core",
+    "export_selected_feature_group": "command_representation",
+    "export_selected_model": "player_recent_weighted_game_drift_copula",
+    "export_physics_feature_group": "physics_core",
+    "export_physics_model": "player_recent_weighted_game_drift_copula",
+    "export_physics_auc": 0.6504501385041551,
+    "physics_temporal_auc": 0.6504501385041551
+  },
+  "validation_thresholds": {
+    "candidate_thresholds": {
+      "min_pitches": 450,
+      "min_holdout": 120,
+      "min_games": 10,
+      "min_completeness": 0.95
+    },
+    "temporal_success_auc": 0.6,
+    "classifier_split": {
+      "strategy": "stratified_holdout",
+      "test_fraction": 0.3
+    },
+    "official_layer_validation": {
+      "mean_auc_max": 0.6,
+      "pass_rate_min": 0.8
+    },
+    "model_selection": {
+      "policy": "prefer contextual/parametric models within 0.05 C2ST AUC of the minimum",
+      "tolerance": 0.05,
+      "priority": [
+        "player_recent_weighted_game_drift_copula",
+        "player_recent_weighted_game_drift_gaussian",
+        "player_context_weighted_gaussian",
+        "player_recent_multivariate_gaussian",
+        "player_multivariate_gaussian",
+        "player_gmm",
+        "player_recent_game_window_empirical",
+        "player_recent_empirical_bootstrap",
+        "player_empirical_bootstrap",
+        "random_independent_noise",
+        "league_same_pitch_empirical"
+      ]
+    }
+  },
+  "feature_group_results": {
+    "release_only": {
+      "best_model": "player_recent_weighted_game_drift_copula",
+      "best_auc": 0.6431786703601108,
+      "minimum_auc_model": "player_recent_weighted_game_drift_gaussian",
+      "minimum_auc": 0.5971260387811634,
+      "model_results": {
+        "random_independent_noise": {
+          "auc": 0.7690443213296398,
+          "raw_auc": 0.7690443213296398,
+          "train_auc": 0.7245387755102041,
+          "train_raw_auc": 0.7245387755102041,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.5825791582969344
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.5535724542793993
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.22354571476065618
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.11335560919174928
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.11187082659335153
+            }
+          ]
+        },
+        "league_same_pitch_empirical": {
+          "auc": 0.7593490304709142,
+          "raw_auc": 0.7593490304709142,
+          "train_auc": 0.7291755102040817,
+          "train_raw_auc": 0.7291755102040817,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 1.032854647080724
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.5846784194441447
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.3690023041642968
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.3639020569435002
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.3553628664956623
+            }
+          ]
+        },
+        "player_empirical_bootstrap": {
+          "auc": 0.7593490304709142,
+          "raw_auc": 0.7593490304709142,
+          "train_auc": 0.7291755102040817,
+          "train_raw_auc": 0.7291755102040817,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 1.032854647080724
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.5846784194441447
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.3690023041642968
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.3639020569435002
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.3553628664956623
+            }
+          ]
+        },
+        "player_multivariate_gaussian": {
+          "auc": 0.6417936288088643,
+          "raw_auc": 0.6417936288088643,
+          "train_auc": 0.7243102040816326,
+          "train_raw_auc": 0.7243102040816326,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.6858918506455479
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.43794703233954946
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.2529443567132289
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.24054930719639075
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.20527475303192586
+            }
+          ]
+        },
+        "player_recent_empirical_bootstrap": {
+          "auc": 0.6611842105263158,
+          "raw_auc": 0.6611842105263158,
+          "train_auc": 0.6893387755102041,
+          "train_raw_auc": 0.6893387755102041,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_extension",
+              "importance": 0.698232822743601
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.5929399454994739
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.5745561361104062
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.46742520401558035
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.10219101469369868
+            }
+          ]
+        },
+        "player_recent_multivariate_gaussian": {
+          "auc": 0.6166897506925207,
+          "raw_auc": 0.6166897506925207,
+          "train_auc": 0.6634122448979591,
+          "train_raw_auc": 0.6634122448979591,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.46928879416703173
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.4226347579883035
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.40420921438434276
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.18475115414924
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.11119789336734219
+            }
+          ]
+        },
+        "player_recent_game_window_empirical": {
+          "auc": 0.6175554016620498,
+          "raw_auc": 0.6175554016620498,
+          "train_auc": 0.7006040816326531,
+          "train_raw_auc": 0.7006040816326531,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.8821132402964849
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.8274912586026774
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.5855707716236875
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.46401805051932704
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.3655576804907724
+            }
+          ]
+        },
+        "player_context_weighted_gaussian": {
+          "auc": 0.6513157894736842,
+          "raw_auc": 0.6513157894736842,
+          "train_auc": 0.7265959183673469,
+          "train_raw_auc": 0.7265959183673469,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.6522372011408135
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.3406426764775916
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.32403076856527896
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.22756782279947593
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.20372347603729257
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_gaussian": {
+          "auc": 0.5971260387811634,
+          "raw_auc": 0.5971260387811634,
+          "train_auc": 0.667330612244898,
+          "train_raw_auc": 0.667330612244898,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_extension",
+              "importance": 0.7146251506229758
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.554098315858585
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.5427595787804484
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.24582396143710092
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.21573635587164167
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_copula": {
+          "auc": 0.6431786703601108,
+          "raw_auc": 0.6431786703601108,
+          "train_auc": 0.6790857142857143,
+          "train_raw_auc": 0.6790857142857143,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.7961547153156453
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.6068371659132814
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.5582167935915231
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.4378172219329147
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.2885303540670675
+            }
+          ]
+        }
+      },
+      "feature_count": 8
+    },
+    "movement_only": {
+      "best_model": "player_recent_weighted_game_drift_gaussian",
+      "best_auc": 0.5460526315789473,
+      "minimum_auc_model": "player_recent_empirical_bootstrap",
+      "minimum_auc": 0.501904432132964,
+      "model_results": {
+        "random_independent_noise": {
+          "auc": 0.528393351800554,
+          "raw_auc": 0.528393351800554,
+          "train_auc": 0.6129632653061224,
+          "train_raw_auc": 0.6129632653061224,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "pfx_x",
+              "importance": 0.2772813793591926
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.23254067334736447
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.08756896221915407
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.035749491423842476
+            }
+          ]
+        },
+        "league_same_pitch_empirical": {
+          "auc": 0.5342797783933518,
+          "raw_auc": 0.5342797783933518,
+          "train_auc": 0.6103836734693877,
+          "train_raw_auc": 0.6103836734693877,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "pfx_x",
+              "importance": 0.40706392336606223
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.21337700839031473
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.05401492580709936
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.01429206009508752
+            }
+          ]
+        },
+        "player_empirical_bootstrap": {
+          "auc": 0.5342797783933518,
+          "raw_auc": 0.5342797783933518,
+          "train_auc": 0.6103836734693877,
+          "train_raw_auc": 0.6103836734693877,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "pfx_x",
+              "importance": 0.40706392336606223
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.21337700839031473
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.05401492580709936
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.01429206009508752
+            }
+          ]
+        },
+        "player_multivariate_gaussian": {
+          "auc": 0.5649238227146814,
+          "raw_auc": 0.5649238227146814,
+          "train_auc": 0.6215836734693878,
+          "train_raw_auc": 0.6215836734693878,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "pfx_x",
+              "importance": 0.29162700545356157
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.2694298602913808
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.13036696101815062
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.07695007176198661
+            }
+          ]
+        },
+        "player_recent_empirical_bootstrap": {
+          "auc": 0.501904432132964,
+          "raw_auc": 0.501904432132964,
+          "train_auc": 0.6304979591836735,
+          "train_raw_auc": 0.6304979591836735,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 0.37675592336615304
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.16321643843875236
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.09353738345854529
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.057785753377260524
+            }
+          ]
+        },
+        "player_recent_multivariate_gaussian": {
+          "auc": 0.5588642659279779,
+          "raw_auc": 0.5588642659279779,
+          "train_auc": 0.5762285714285714,
+          "train_raw_auc": 0.5762285714285714,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 0.2688182614543985
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.12971413696068393
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.10461998381462019
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.014575918915779742
+            }
+          ]
+        },
+        "player_recent_game_window_empirical": {
+          "auc": 0.52648891966759,
+          "raw_auc": 0.52648891966759,
+          "train_auc": 0.564538775510204,
+          "train_raw_auc": 0.564538775510204,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.20751421170644027
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.1603116368571549
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.10732916778264741
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.0408934431365647
+            }
+          ]
+        },
+        "player_context_weighted_gaussian": {
+          "auc": 0.5694252077562327,
+          "raw_auc": 0.5694252077562327,
+          "train_auc": 0.6203755102040817,
+          "train_raw_auc": 0.6203755102040817,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "pfx_x",
+              "importance": 0.3486141351039161
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.21750369580158863
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.15665014701786098
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.09879907457418906
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_gaussian": {
+          "auc": 0.5460526315789473,
+          "raw_auc": 0.5460526315789473,
+          "train_auc": 0.5897469387755102,
+          "train_raw_auc": 0.5897469387755102,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 0.23834355539562405
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.21863737827823732
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.13179298068871934
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.03753758402699926
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_copula": {
+          "auc": 0.5625,
+          "raw_auc": 0.5625,
+          "train_auc": 0.582465306122449,
+          "train_raw_auc": 0.582465306122449,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 0.19308353610908863
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.16394851411558362
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.12719750485757209
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.06712890433785593
+            }
+          ]
+        }
+      },
+      "feature_count": 4
+    },
+    "trajectory_only": {
+      "best_model": "player_recent_empirical_bootstrap",
+      "best_auc": 0.5888157894736842,
+      "minimum_auc_model": "random_independent_noise",
+      "minimum_auc": 0.5770429362880887,
+      "model_results": {
+        "random_independent_noise": {
+          "auc": 0.5770429362880887,
+          "raw_auc": 0.5770429362880887,
+          "train_auc": 0.676865306122449,
+          "train_raw_auc": 0.676865306122449,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.5218668879658548
+            },
+            {
+              "feature": "ax",
+              "importance": 0.27914491644986533
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.19700686846577034
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.12425768679758156
+            },
+            {
+              "feature": "az",
+              "importance": 0.1022115779696372
+            }
+          ]
+        },
+        "league_same_pitch_empirical": {
+          "auc": 0.6291551246537396,
+          "raw_auc": 0.6291551246537396,
+          "train_auc": 0.6752326530612245,
+          "train_raw_auc": 0.6752326530612245,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.49325011197851176
+            },
+            {
+              "feature": "ax",
+              "importance": 0.3413310936568778
+            },
+            {
+              "feature": "az",
+              "importance": 0.30430287455689775
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.1658484935868869
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.09939862812156734
+            }
+          ]
+        },
+        "player_empirical_bootstrap": {
+          "auc": 0.6291551246537396,
+          "raw_auc": 0.6291551246537396,
+          "train_auc": 0.6752326530612245,
+          "train_raw_auc": 0.6752326530612245,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.49325011197851176
+            },
+            {
+              "feature": "ax",
+              "importance": 0.3413310936568778
+            },
+            {
+              "feature": "az",
+              "importance": 0.30430287455689775
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.1658484935868869
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.09939862812156734
+            }
+          ]
+        },
+        "player_multivariate_gaussian": {
+          "auc": 0.6281163434903048,
+          "raw_auc": 0.6281163434903048,
+          "train_auc": 0.6760163265306123,
+          "train_raw_auc": 0.6760163265306123,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.6037774011916782
+            },
+            {
+              "feature": "ax",
+              "importance": 0.30102113223002275
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.2145675805542301
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.1278266911375429
+            },
+            {
+              "feature": "az",
+              "importance": 0.04037935474071052
+            }
+          ]
+        },
+        "player_recent_empirical_bootstrap": {
+          "auc": 0.5888157894736842,
+          "raw_auc": 0.5888157894736842,
+          "train_auc": 0.6743836734693878,
+          "train_raw_auc": 0.6743836734693878,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "az",
+              "importance": 0.6929485518410742
+            },
+            {
+              "feature": "ay",
+              "importance": 0.43428366246914024
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.3054092452487092
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.24569667721619576
+            },
+            {
+              "feature": "ax",
+              "importance": 0.09039824744940615
+            }
+          ]
+        },
+        "player_recent_multivariate_gaussian": {
+          "auc": 0.6357340720221607,
+          "raw_auc": 0.6357340720221607,
+          "train_auc": 0.6209959183673469,
+          "train_raw_auc": 0.6209959183673469,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "az",
+              "importance": 0.4464614195145207
+            },
+            {
+              "feature": "ay",
+              "importance": 0.2969470554004334
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.23995050584499444
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.18407749314359428
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.005086463785359355
+            }
+          ]
+        },
+        "player_recent_game_window_empirical": {
+          "auc": 0.6381578947368421,
+          "raw_auc": 0.6381578947368421,
+          "train_auc": 0.6336979591836734,
+          "train_raw_auc": 0.6336979591836734,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "az",
+              "importance": 0.4158915196063298
+            },
+            {
+              "feature": "ay",
+              "importance": 0.37158231001962416
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.26190833759885157
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.25892593864952046
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.0933390032581248
+            }
+          ]
+        },
+        "player_context_weighted_gaussian": {
+          "auc": 0.6594529085872576,
+          "raw_auc": 0.6594529085872576,
+          "train_auc": 0.6401959183673469,
+          "train_raw_auc": 0.6401959183673469,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.35416114797285025
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.31843309493815247
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.27472532823094875
+            },
+            {
+              "feature": "ax",
+              "importance": 0.23930536358711785
+            },
+            {
+              "feature": "az",
+              "importance": 0.16504567382942217
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_gaussian": {
+          "auc": 0.6388504155124654,
+          "raw_auc": 0.6388504155124654,
+          "train_auc": 0.6571755102040816,
+          "train_raw_auc": 0.6571755102040816,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "az",
+              "importance": 0.5020502768040399
+            },
+            {
+              "feature": "ay",
+              "importance": 0.45781781628191387
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.37346109057590127
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.2865109760699932
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.17428418662112302
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_copula": {
+          "auc": 0.6504501385041551,
+          "raw_auc": 0.6504501385041551,
+          "train_auc": 0.6550204081632653,
+          "train_raw_auc": 0.6550204081632653,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.4765164831855775
+            },
+            {
+              "feature": "az",
+              "importance": 0.4702766134610587
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.4026071826898291
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.24940877558157556
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.21167644735728833
+            }
+          ]
+        }
+      },
+      "feature_count": 6
+    },
+    "shape_representation": {
+      "best_model": "player_recent_weighted_game_drift_copula",
+      "best_auc": 0.6681094182825484,
+      "minimum_auc_model": "player_recent_game_window_empirical",
+      "minimum_auc": 0.6253462603878116,
+      "model_results": {
+        "random_independent_noise": {
+          "auc": 0.7735457063711911,
+          "raw_auc": 0.7735457063711911,
+          "train_auc": 0.7609795918367347,
+          "train_raw_auc": 0.7609795918367347,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.6537765784796699
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.5137966084270043
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.2816666791760416
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.2712977133575532
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.23146317292476143
+            }
+          ]
+        },
+        "league_same_pitch_empirical": {
+          "auc": 0.7752770083102493,
+          "raw_auc": 0.7752770083102493,
+          "train_auc": 0.7481795918367347,
+          "train_raw_auc": 0.7481795918367347,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9807412693809467
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.6790199076080304
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.4173611979989039
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.4095705112480415
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.39667163198638616
+            }
+          ]
+        },
+        "player_empirical_bootstrap": {
+          "auc": 0.7752770083102493,
+          "raw_auc": 0.7752770083102493,
+          "train_auc": 0.7481795918367347,
+          "train_raw_auc": 0.7481795918367347,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9807412693809467
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.6790199076080304
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.4173611979989039
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.4095705112480415
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.39667163198638616
+            }
+          ]
+        },
+        "player_multivariate_gaussian": {
+          "auc": 0.7316481994459834,
+          "raw_auc": 0.7316481994459834,
+          "train_auc": 0.7546122448979592,
+          "train_raw_auc": 0.7546122448979592,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.7535085066630894
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.6067666053712168
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.37453964877659457
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.36838885542860494
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.3288296632655413
+            }
+          ]
+        },
+        "player_recent_empirical_bootstrap": {
+          "auc": 0.6367728531855956,
+          "raw_auc": 0.6367728531855956,
+          "train_auc": 0.7170938775510204,
+          "train_raw_auc": 0.7170938775510204,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_extension",
+              "importance": 0.6878849460639271
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.4948964585843731
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.47678947045360887
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.46851996260869433
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.28187745464675984
+            }
+          ]
+        },
+        "player_recent_multivariate_gaussian": {
+          "auc": 0.6843836565096952,
+          "raw_auc": 0.6843836565096952,
+          "train_auc": 0.6820244897959183,
+          "train_raw_auc": 0.6820244897959183,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.8320398922719363
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.6548465132893504
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.5087491561481733
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.41126302476567955
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.24232173686734484
+            }
+          ]
+        },
+        "player_recent_game_window_empirical": {
+          "auc": 0.6253462603878116,
+          "raw_auc": 0.6253462603878116,
+          "train_auc": 0.7264326530612245,
+          "train_raw_auc": 0.7264326530612245,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9167722588065788
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.800606820331407
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.5031962916152865
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.43577726375882214
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.3486429936386503
+            }
+          ]
+        },
+        "player_context_weighted_gaussian": {
+          "auc": 0.7261080332409973,
+          "raw_auc": 0.7261080332409973,
+          "train_auc": 0.7590530612244898,
+          "train_raw_auc": 0.7590530612244898,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9701471260982131
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.7017035833453968
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.4078867094756101
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.35267409989081566
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.3008352998025828
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_gaussian": {
+          "auc": 0.6559903047091413,
+          "raw_auc": 0.6559903047091413,
+          "train_auc": 0.6708897959183674,
+          "train_raw_auc": 0.6708897959183674,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9636858665916815
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.6288897951271013
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.45100900035478436
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.4411331725333263
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.34303336092966696
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_copula": {
+          "auc": 0.6681094182825484,
+          "raw_auc": 0.6681094182825484,
+          "train_auc": 0.684734693877551,
+          "train_raw_auc": 0.684734693877551,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 1.0599570459630292
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.6330625761594538
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.2912970177371555
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.2734568213481316
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.2687082785192365
+            }
+          ]
+        }
+      },
+      "feature_count": 12
+    },
+    "command_representation": {
+      "best_model": "player_recent_weighted_game_drift_copula",
+      "best_auc": 0.5334141274238227,
+      "minimum_auc_model": "player_recent_multivariate_gaussian",
+      "minimum_auc": 0.5015581717451524,
+      "model_results": {
+        "random_independent_noise": {
+          "auc": 0.5450138504155124,
+          "raw_auc": 0.4549861495844875,
+          "train_auc": 0.5302857142857142,
+          "train_raw_auc": 0.5302857142857142,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.07140858271956728
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.047706327973536196
+            }
+          ]
+        },
+        "league_same_pitch_empirical": {
+          "auc": 0.5664819944598338,
+          "raw_auc": 0.43351800554016623,
+          "train_auc": 0.5271183673469387,
+          "train_raw_auc": 0.5271183673469387,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.13182471522684291
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.028089674126574735
+            }
+          ]
+        },
+        "player_empirical_bootstrap": {
+          "auc": 0.5664819944598338,
+          "raw_auc": 0.43351800554016623,
+          "train_auc": 0.5271183673469387,
+          "train_raw_auc": 0.5271183673469387,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.13182471522684291
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.028089674126574735
+            }
+          ]
+        },
+        "player_multivariate_gaussian": {
+          "auc": 0.5050207756232687,
+          "raw_auc": 0.4949792243767313,
+          "train_auc": 0.5168979591836734,
+          "train_raw_auc": 0.5168979591836734,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.06976717106351028
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.04677646012749023
+            }
+          ]
+        },
+        "player_recent_empirical_bootstrap": {
+          "auc": 0.5154085872576177,
+          "raw_auc": 0.48459141274238227,
+          "train_auc": 0.5678367346938775,
+          "train_raw_auc": 0.5678367346938775,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.17015524389396372
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.15464864045199417
+            }
+          ]
+        },
+        "player_recent_multivariate_gaussian": {
+          "auc": 0.5015581717451524,
+          "raw_auc": 0.5015581717451524,
+          "train_auc": 0.5236244897959184,
+          "train_raw_auc": 0.5236244897959184,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.08806128550838214
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.05943193572919668
+            }
+          ]
+        },
+        "player_recent_game_window_empirical": {
+          "auc": 0.532202216066482,
+          "raw_auc": 0.467797783933518,
+          "train_auc": 0.5415183673469388,
+          "train_raw_auc": 0.5415183673469388,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.17131208754185975
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.04069242980012556
+            }
+          ]
+        },
+        "player_context_weighted_gaussian": {
+          "auc": 0.5351454293628809,
+          "raw_auc": 0.4648545706371191,
+          "train_auc": 0.5187591836734694,
+          "train_raw_auc": 0.5187591836734694,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.06120349575918538
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.015499930849126837
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_gaussian": {
+          "auc": 0.5408587257617729,
+          "raw_auc": 0.45914127423822715,
+          "train_auc": 0.5635918367346939,
+          "train_raw_auc": 0.5635918367346939,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.19186721329991843
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.07440050634260366
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_copula": {
+          "auc": 0.5334141274238227,
+          "raw_auc": 0.4665858725761773,
+          "train_auc": 0.563461224489796,
+          "train_raw_auc": 0.563461224489796,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.19782597334023153
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.08734025513149056
+            }
+          ]
+        }
+      },
+      "feature_count": 2
+    },
+    "physics_core": {
+      "best_model": "player_recent_weighted_game_drift_copula",
+      "best_auc": 0.6504501385041551,
+      "minimum_auc_model": "player_recent_weighted_game_drift_copula",
+      "minimum_auc": 0.6504501385041551,
+      "model_results": {
+        "random_independent_noise": {
+          "auc": 0.8009002770083102,
+          "raw_auc": 0.8009002770083102,
+          "train_auc": 0.785534693877551,
+          "train_raw_auc": 0.785534693877551,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.6545319931267726
+            },
+            {
+              "feature": "ay",
+              "importance": 0.4567168041571315
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.4448722494415429
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.3550177669100171
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.2872296650131927
+            }
+          ]
+        },
+        "league_same_pitch_empirical": {
+          "auc": 0.807825484764543,
+          "raw_auc": 0.807825484764543,
+          "train_auc": 0.7753795918367347,
+          "train_raw_auc": 0.7753795918367347,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9182729036634508
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.7366262373354379
+            },
+            {
+              "feature": "ay",
+              "importance": 0.5919893482638809
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.4236184165062987
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.3917437330805743
+            }
+          ]
+        },
+        "player_empirical_bootstrap": {
+          "auc": 0.807825484764543,
+          "raw_auc": 0.807825484764543,
+          "train_auc": 0.7753795918367347,
+          "train_raw_auc": 0.7753795918367347,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9182729036634508
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.7366262373354379
+            },
+            {
+              "feature": "ay",
+              "importance": 0.5919893482638809
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.4236184165062987
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.3917437330805743
+            }
+          ]
+        },
+        "player_multivariate_gaussian": {
+          "auc": 0.7697368421052632,
+          "raw_auc": 0.7697368421052632,
+          "train_auc": 0.7784489795918368,
+          "train_raw_auc": 0.7784489795918368,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9238760035283702
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.8361839746638459
+            },
+            {
+              "feature": "ay",
+              "importance": 0.43833994338807225
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.4304899102873763
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.32145690502352053
+            }
+          ]
+        },
+        "player_recent_empirical_bootstrap": {
+          "auc": 0.6537396121883656,
+          "raw_auc": 0.6537396121883656,
+          "train_auc": 0.736,
+          "train_raw_auc": 0.736,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_extension",
+              "importance": 0.6542398730412088
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.45013250207011146
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.44031742608081725
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.42869649066125803
+            },
+            {
+              "feature": "ay",
+              "importance": 0.4109999057668876
+            }
+          ]
+        },
+        "player_recent_multivariate_gaussian": {
+          "auc": 0.7209141274238227,
+          "raw_auc": 0.7209141274238227,
+          "train_auc": 0.7563102040816326,
+          "train_raw_auc": 0.7563102040816326,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 1.0337813863796201
+            },
+            {
+              "feature": "ay",
+              "importance": 0.488294097565253
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.4280115067180278
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.36359035905075027
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.23742303918942192
+            }
+          ]
+        },
+        "player_recent_game_window_empirical": {
+          "auc": 0.6630886426592798,
+          "raw_auc": 0.6630886426592798,
+          "train_auc": 0.7444897959183674,
+          "train_raw_auc": 0.7444897959183674,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9097660125566635
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.8090870782041201
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.5148026327298026
+            },
+            {
+              "feature": "ay",
+              "importance": 0.4048834631694683
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.39540528441963535
+            }
+          ]
+        },
+        "player_context_weighted_gaussian": {
+          "auc": 0.7448060941828255,
+          "raw_auc": 0.7448060941828255,
+          "train_auc": 0.7946122448979592,
+          "train_raw_auc": 0.7946122448979592,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.8391751979588363
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.7865639186749351
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.737148820320385
+            },
+            {
+              "feature": "ay",
+              "importance": 0.456868017125333
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.40635658220976295
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_gaussian": {
+          "auc": 0.6831717451523546,
+          "raw_auc": 0.6831717451523546,
+          "train_auc": 0.7162775510204081,
+          "train_raw_auc": 0.7162775510204081,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 1.1360898768347432
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.6959445460945377
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.6904930069734859
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.6248117860825989
+            },
+            {
+              "feature": "ay",
+              "importance": 0.42379572214268574
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_copula": {
+          "auc": 0.6504501385041551,
+          "raw_auc": 0.6504501385041551,
+          "train_auc": 0.6924081632653061,
+          "train_raw_auc": 0.6924081632653061,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9700864174267052
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.644855858574528
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.43952821588296775
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.4203394067867758
+            },
+            {
+              "feature": "ay",
+              "importance": 0.3539181707873379
+            }
+          ]
+        }
+      },
+      "feature_count": 18
+    },
+    "physics_count": {
+      "best_model": "player_recent_weighted_game_drift_copula",
+      "best_auc": 0.6542590027700831,
+      "minimum_auc_model": "player_recent_empirical_bootstrap",
+      "minimum_auc": 0.6502770083102493,
+      "model_results": {
+        "random_independent_noise": {
+          "auc": 0.7721606648199446,
+          "raw_auc": 0.7721606648199446,
+          "train_auc": 0.759869387755102,
+          "train_raw_auc": 0.759869387755102,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.5776940858641231
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.5374897810874553
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.30707184779419056
+            },
+            {
+              "feature": "ay",
+              "importance": 0.28100852983264635
+            },
+            {
+              "feature": "az",
+              "importance": 0.2211847191993355
+            }
+          ]
+        },
+        "league_same_pitch_empirical": {
+          "auc": 0.8170013850415513,
+          "raw_auc": 0.8170013850415513,
+          "train_auc": 0.7843591836734694,
+          "train_raw_auc": 0.7843591836734694,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9368520557950313
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.7710196319838811
+            },
+            {
+              "feature": "ay",
+              "importance": 0.589573459996336
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.4114615124160958
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.3772662886454411
+            }
+          ]
+        },
+        "player_empirical_bootstrap": {
+          "auc": 0.8170013850415513,
+          "raw_auc": 0.8170013850415513,
+          "train_auc": 0.7843591836734694,
+          "train_raw_auc": 0.7843591836734694,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9368520557950313
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.7710196319838811
+            },
+            {
+              "feature": "ay",
+              "importance": 0.589573459996336
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.4114615124160958
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.3772662886454411
+            }
+          ]
+        },
+        "player_multivariate_gaussian": {
+          "auc": 0.7342451523545707,
+          "raw_auc": 0.7342451523545707,
+          "train_auc": 0.7787102040816326,
+          "train_raw_auc": 0.7787102040816326,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.8072672089477853
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.5959663162965788
+            },
+            {
+              "feature": "ay",
+              "importance": 0.4795143562520143
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.2677642716294377
+            },
+            {
+              "feature": "strikes",
+              "importance": 0.24995264654763555
+            }
+          ]
+        },
+        "player_recent_empirical_bootstrap": {
+          "auc": 0.6502770083102493,
+          "raw_auc": 0.6502770083102493,
+          "train_auc": 0.7510857142857142,
+          "train_raw_auc": 0.7510857142857142,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_extension",
+              "importance": 0.6278664583284411
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.44973317684646236
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.3716790827191744
+            },
+            {
+              "feature": "ay",
+              "importance": 0.3712573249836025
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.3637906266002256
+            }
+          ]
+        },
+        "player_recent_multivariate_gaussian": {
+          "auc": 0.6916551246537396,
+          "raw_auc": 0.6916551246537396,
+          "train_auc": 0.7441959183673469,
+          "train_raw_auc": 0.7441959183673469,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9740362117293834
+            },
+            {
+              "feature": "count_bucket_code",
+              "importance": 0.47741834050134496
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.3778884024300497
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.30813749593692513
+            },
+            {
+              "feature": "ay",
+              "importance": 0.2863585825012374
+            }
+          ]
+        },
+        "player_recent_game_window_empirical": {
+          "auc": 0.6883656509695291,
+          "raw_auc": 0.6883656509695291,
+          "train_auc": 0.7593142857142857,
+          "train_raw_auc": 0.7593142857142857,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9024096864970914
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.8215125361699217
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.49794560103168434
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.45961837886725226
+            },
+            {
+              "feature": "ay",
+              "importance": 0.39485604057294216
+            }
+          ]
+        },
+        "player_context_weighted_gaussian": {
+          "auc": 0.7337257617728532,
+          "raw_auc": 0.7337257617728532,
+          "train_auc": 0.774595918367347,
+          "train_raw_auc": 0.774595918367347,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.799113852704847
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.7658103429875747
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.6025571974584016
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.5691704992851384
+            },
+            {
+              "feature": "count_bucket_code",
+              "importance": 0.3572979226490951
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_gaussian": {
+          "auc": 0.6914819944598338,
+          "raw_auc": 0.6914819944598338,
+          "train_auc": 0.7322122448979592,
+          "train_raw_auc": 0.7322122448979592,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 1.0357285027013503
+            },
+            {
+              "feature": "count_bucket_code",
+              "importance": 0.5613127348915917
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.5477382009686061
+            },
+            {
+              "feature": "ay",
+              "importance": 0.5154157961871795
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.43610489314785367
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_copula": {
+          "auc": 0.6542590027700831,
+          "raw_auc": 0.6542590027700831,
+          "train_auc": 0.7510530612244898,
+          "train_raw_auc": 0.7510530612244898,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.8928579339935847
+            },
+            {
+              "feature": "count_bucket_code",
+              "importance": 0.7158053555896448
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.5917807693318177
+            },
+            {
+              "feature": "ay",
+              "importance": 0.5174879573188971
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.43503499425599196
+            }
+          ]
+        }
+      },
+      "feature_count": 21
+    },
+    "physics_fatigue": {
+      "best_model": "player_context_weighted_gaussian",
+      "best_auc": 0.8159626038781164,
+      "minimum_auc_model": "league_same_pitch_empirical",
+      "minimum_auc": 0.7794321329639889,
+      "model_results": {
+        "random_independent_noise": {
+          "auc": 0.7889542936288089,
+          "raw_auc": 0.7889542936288089,
+          "train_auc": 0.8386938775510204,
+          "train_raw_auc": 0.8386938775510204,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.9606018068173013
+            },
+            {
+              "feature": "days_rest",
+              "importance": 0.6585879570121607
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.5911432117736058
+            },
+            {
+              "feature": "ay",
+              "importance": 0.5641506676682833
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.37370014585533023
+            }
+          ]
+        },
+        "league_same_pitch_empirical": {
+          "auc": 0.7794321329639889,
+          "raw_auc": 0.7794321329639889,
+          "train_auc": 0.832,
+          "train_raw_auc": 0.832,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 1.1551854868106044
+            },
+            {
+              "feature": "days_rest",
+              "importance": 0.7628214992805803
+            },
+            {
+              "feature": "ay",
+              "importance": 0.6426596477413462
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.347475862074769
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.30073238124154483
+            }
+          ]
+        },
+        "player_empirical_bootstrap": {
+          "auc": 0.7794321329639889,
+          "raw_auc": 0.7794321329639889,
+          "train_auc": 0.832,
+          "train_raw_auc": 0.832,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 1.1551854868106044
+            },
+            {
+              "feature": "days_rest",
+              "importance": 0.7628214992805803
+            },
+            {
+              "feature": "ay",
+              "importance": 0.6426596477413462
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.347475862074769
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.30073238124154483
+            }
+          ]
+        },
+        "player_multivariate_gaussian": {
+          "auc": 0.8168282548476454,
+          "raw_auc": 0.8168282548476454,
+          "train_auc": 0.8294204081632653,
+          "train_raw_auc": 0.8294204081632653,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "days_rest",
+              "importance": 0.8465392994301363
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.8283347877817552
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.8120123474726504
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.7991760827088029
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.617537935706921
+            }
+          ]
+        },
+        "player_recent_empirical_bootstrap": {
+          "auc": 0.8356994459833795,
+          "raw_auc": 0.8356994459833795,
+          "train_auc": 0.7882775510204082,
+          "train_raw_auc": 0.7882775510204082,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "days_rest",
+              "importance": 1.1976878534754443
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.8954746268324075
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.6060456368361169
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.47942528820930114
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.43493226702875487
+            }
+          ]
+        },
+        "player_recent_multivariate_gaussian": {
+          "auc": 0.7943213296398892,
+          "raw_auc": 0.7943213296398892,
+          "train_auc": 0.812669387755102,
+          "train_raw_auc": 0.812669387755102,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "days_rest",
+              "importance": 1.0440458561899182
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.8682905313142701
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.7917592693328693
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.5939077455759648
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.5265690864422201
+            }
+          ]
+        },
+        "player_recent_game_window_empirical": {
+          "auc": 0.818213296398892,
+          "raw_auc": 0.818213296398892,
+          "train_auc": 0.8204734693877551,
+          "train_raw_auc": 0.8204734693877551,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "days_rest",
+              "importance": 1.3212443885650307
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9966327874061175
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.619282447160945
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.46521537544080976
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.42598764028132985
+            }
+          ]
+        },
+        "player_context_weighted_gaussian": {
+          "auc": 0.8159626038781164,
+          "raw_auc": 0.8159626038781164,
+          "train_auc": 0.8364734693877551,
+          "train_raw_auc": 0.8364734693877551,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "days_rest",
+              "importance": 0.976254315503754
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.9305339175651255
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.9009070940986617
+            },
+            {
+              "feature": "inning",
+              "importance": 0.38870259754400627
+            },
+            {
+              "feature": "ay",
+              "importance": 0.30644675919724784
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_gaussian": {
+          "auc": 0.8578601108033241,
+          "raw_auc": 0.8578601108033241,
+          "train_auc": 0.8460734693877551,
+          "train_raw_auc": 0.8460734693877551,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "days_rest",
+              "importance": 1.363488677065582
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.923286117682345
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.8654647923183381
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.7395318936496185
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.30178066106655543
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_copula": {
+          "auc": 1.0,
+          "raw_auc": 1.0,
+          "train_auc": 1.0,
+          "train_raw_auc": 1.0,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "days_rest",
+              "importance": 5.075651571169833
+            },
+            {
+              "feature": "ay",
+              "importance": 0.301079764036558
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.2714412510300589
+            },
+            {
+              "feature": "az",
+              "importance": 0.18822501814274573
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.15344942516272803
+            }
+          ]
+        }
+      },
+      "feature_count": 22
+    },
+    "physics_batter_context": {
+      "best_model": "player_recent_weighted_game_drift_gaussian",
+      "best_auc": 0.6710526315789473,
+      "minimum_auc_model": "player_recent_empirical_bootstrap",
+      "minimum_auc": 0.6326177285318559,
+      "model_results": {
+        "random_independent_noise": {
+          "auc": 0.741516620498615,
+          "raw_auc": 0.741516620498615,
+          "train_auc": 0.8030693877551021,
+          "train_raw_auc": 0.8030693877551021,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.6661772710902152
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.46632648355772716
+            },
+            {
+              "feature": "ay",
+              "importance": 0.4281822023683649
+            },
+            {
+              "feature": "batter_stand_code",
+              "importance": 0.4035108621058734
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.33929387072352546
+            }
+          ]
+        },
+        "league_same_pitch_empirical": {
+          "auc": 0.8022853185595568,
+          "raw_auc": 0.8022853185595568,
+          "train_auc": 0.7818775510204081,
+          "train_raw_auc": 0.7818775510204081,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.8728933435111124
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.7250252797560298
+            },
+            {
+              "feature": "ay",
+              "importance": 0.5505389381274872
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.387203444323584
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.38552153907918746
+            }
+          ]
+        },
+        "player_empirical_bootstrap": {
+          "auc": 0.8022853185595568,
+          "raw_auc": 0.8022853185595568,
+          "train_auc": 0.7818775510204081,
+          "train_raw_auc": 0.7818775510204081,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.8728933435111124
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.7250252797560298
+            },
+            {
+              "feature": "ay",
+              "importance": 0.5505389381274872
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.387203444323584
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.38552153907918746
+            }
+          ]
+        },
+        "player_multivariate_gaussian": {
+          "auc": 0.7505193905817175,
+          "raw_auc": 0.7505193905817175,
+          "train_auc": 0.8019591836734694,
+          "train_raw_auc": 0.8019591836734694,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.771940079244079
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.7642695533193815
+            },
+            {
+              "feature": "ay",
+              "importance": 0.5319699021739008
+            },
+            {
+              "feature": "batter_stand_code",
+              "importance": 0.3220682535328636
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.2318415128130764
+            }
+          ]
+        },
+        "player_recent_empirical_bootstrap": {
+          "auc": 0.6326177285318559,
+          "raw_auc": 0.6326177285318559,
+          "train_auc": 0.7515428571428572,
+          "train_raw_auc": 0.7515428571428572,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_extension",
+              "importance": 0.6058353716077984
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.4396992839970612
+            },
+            {
+              "feature": "ay",
+              "importance": 0.4189041092397517
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.3676684715288246
+            },
+            {
+              "feature": "batter_stand_code",
+              "importance": 0.3675880211561395
+            }
+          ]
+        },
+        "player_recent_multivariate_gaussian": {
+          "auc": 0.6876731301939059,
+          "raw_auc": 0.6876731301939059,
+          "train_auc": 0.7230040816326531,
+          "train_raw_auc": 0.7230040816326531,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.923806340326163
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.3678601106584886
+            },
+            {
+              "feature": "ay",
+              "importance": 0.36620567792084835
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.35912025516543755
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.354629116004588
+            }
+          ]
+        },
+        "player_recent_game_window_empirical": {
+          "auc": 0.6648199445983379,
+          "raw_auc": 0.6648199445983379,
+          "train_auc": 0.7631346938775511,
+          "train_raw_auc": 0.7631346938775511,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_extension",
+              "importance": 0.829245114579572
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.801074455176296
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.5222457709049741
+            },
+            {
+              "feature": "batter_stand_code",
+              "importance": 0.4144964815668777
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.39377083276463615
+            }
+          ]
+        },
+        "player_context_weighted_gaussian": {
+          "auc": 0.7408240997229917,
+          "raw_auc": 0.7408240997229917,
+          "train_auc": 0.7809632653061225,
+          "train_raw_auc": 0.7809632653061225,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.7187001650642237
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.6167724087111298
+            },
+            {
+              "feature": "ay",
+              "importance": 0.3583769881739246
+            },
+            {
+              "feature": "batter_stand_code",
+              "importance": 0.3206862558351079
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.2414154919943769
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_gaussian": {
+          "auc": 0.6710526315789473,
+          "raw_auc": 0.6710526315789473,
+          "train_auc": 0.7435428571428572,
+          "train_raw_auc": 0.7435428571428572,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.6643084534343852
+            },
+            {
+              "feature": "ay",
+              "importance": 0.5172543864210214
+            },
+            {
+              "feature": "batter_stand_code",
+              "importance": 0.4758732198383161
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.36778307943560185
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.3142489622068427
+            }
+          ]
+        },
+        "player_recent_weighted_game_drift_copula": {
+          "auc": 0.7084487534626038,
+          "raw_auc": 0.7084487534626038,
+          "train_auc": 0.7175510204081633,
+          "train_raw_auc": 0.7175510204081633,
+          "n_real": 251,
+          "n_simulated": 251,
+          "classifier_split": {
+            "strategy": "stratified_holdout",
+            "train_rows": 350,
+            "test_rows": 152,
+            "test_fraction": 0.3,
+            "random_state": 42
+          },
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 1.0952528138802713
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.6359221355699657
+            },
+            {
+              "feature": "batter_stand_code",
+              "importance": 0.4110493398695861
+            },
+            {
+              "feature": "ay",
+              "importance": 0.350142245142371
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.25951838587402
+            }
+          ]
+        }
+      },
+      "feature_count": 20
+    }
+  },
+  "model_results": {
+    "random_independent_noise": {
+      "auc": 0.5450138504155124,
+      "raw_auc": 0.4549861495844875,
+      "train_auc": 0.5302857142857142,
+      "train_raw_auc": 0.5302857142857142,
+      "n_real": 251,
+      "n_simulated": 251,
+      "classifier_split": {
+        "strategy": "stratified_holdout",
+        "train_rows": 350,
+        "test_rows": 152,
+        "test_fraction": 0.3,
+        "random_state": 42
+      },
+      "top_leakage_features": [
+        {
+          "feature": "plate_x",
+          "importance": 0.07140858271956728
+        },
+        {
+          "feature": "plate_z",
+          "importance": 0.047706327973536196
+        }
+      ]
+    },
+    "league_same_pitch_empirical": {
+      "auc": 0.5664819944598338,
+      "raw_auc": 0.43351800554016623,
+      "train_auc": 0.5271183673469387,
+      "train_raw_auc": 0.5271183673469387,
+      "n_real": 251,
+      "n_simulated": 251,
+      "classifier_split": {
+        "strategy": "stratified_holdout",
+        "train_rows": 350,
+        "test_rows": 152,
+        "test_fraction": 0.3,
+        "random_state": 42
+      },
+      "top_leakage_features": [
+        {
+          "feature": "plate_x",
+          "importance": 0.13182471522684291
+        },
+        {
+          "feature": "plate_z",
+          "importance": 0.028089674126574735
+        }
+      ]
+    },
+    "player_empirical_bootstrap": {
+      "auc": 0.5664819944598338,
+      "raw_auc": 0.43351800554016623,
+      "train_auc": 0.5271183673469387,
+      "train_raw_auc": 0.5271183673469387,
+      "n_real": 251,
+      "n_simulated": 251,
+      "classifier_split": {
+        "strategy": "stratified_holdout",
+        "train_rows": 350,
+        "test_rows": 152,
+        "test_fraction": 0.3,
+        "random_state": 42
+      },
+      "top_leakage_features": [
+        {
+          "feature": "plate_x",
+          "importance": 0.13182471522684291
+        },
+        {
+          "feature": "plate_z",
+          "importance": 0.028089674126574735
+        }
+      ]
+    },
+    "player_multivariate_gaussian": {
+      "auc": 0.5050207756232687,
+      "raw_auc": 0.4949792243767313,
+      "train_auc": 0.5168979591836734,
+      "train_raw_auc": 0.5168979591836734,
+      "n_real": 251,
+      "n_simulated": 251,
+      "classifier_split": {
+        "strategy": "stratified_holdout",
+        "train_rows": 350,
+        "test_rows": 152,
+        "test_fraction": 0.3,
+        "random_state": 42
+      },
+      "top_leakage_features": [
+        {
+          "feature": "plate_x",
+          "importance": 0.06976717106351028
+        },
+        {
+          "feature": "plate_z",
+          "importance": 0.04677646012749023
+        }
+      ]
+    },
+    "player_recent_empirical_bootstrap": {
+      "auc": 0.5154085872576177,
+      "raw_auc": 0.48459141274238227,
+      "train_auc": 0.5678367346938775,
+      "train_raw_auc": 0.5678367346938775,
+      "n_real": 251,
+      "n_simulated": 251,
+      "classifier_split": {
+        "strategy": "stratified_holdout",
+        "train_rows": 350,
+        "test_rows": 152,
+        "test_fraction": 0.3,
+        "random_state": 42
+      },
+      "top_leakage_features": [
+        {
+          "feature": "plate_x",
+          "importance": 0.17015524389396372
+        },
+        {
+          "feature": "plate_z",
+          "importance": 0.15464864045199417
+        }
+      ]
+    },
+    "player_recent_multivariate_gaussian": {
+      "auc": 0.5015581717451524,
+      "raw_auc": 0.5015581717451524,
+      "train_auc": 0.5236244897959184,
+      "train_raw_auc": 0.5236244897959184,
+      "n_real": 251,
+      "n_simulated": 251,
+      "classifier_split": {
+        "strategy": "stratified_holdout",
+        "train_rows": 350,
+        "test_rows": 152,
+        "test_fraction": 0.3,
+        "random_state": 42
+      },
+      "top_leakage_features": [
+        {
+          "feature": "plate_x",
+          "importance": 0.08806128550838214
+        },
+        {
+          "feature": "plate_z",
+          "importance": 0.05943193572919668
+        }
+      ]
+    },
+    "player_recent_game_window_empirical": {
+      "auc": 0.532202216066482,
+      "raw_auc": 0.467797783933518,
+      "train_auc": 0.5415183673469388,
+      "train_raw_auc": 0.5415183673469388,
+      "n_real": 251,
+      "n_simulated": 251,
+      "classifier_split": {
+        "strategy": "stratified_holdout",
+        "train_rows": 350,
+        "test_rows": 152,
+        "test_fraction": 0.3,
+        "random_state": 42
+      },
+      "top_leakage_features": [
+        {
+          "feature": "plate_x",
+          "importance": 0.17131208754185975
+        },
+        {
+          "feature": "plate_z",
+          "importance": 0.04069242980012556
+        }
+      ]
+    },
+    "player_context_weighted_gaussian": {
+      "auc": 0.5351454293628809,
+      "raw_auc": 0.4648545706371191,
+      "train_auc": 0.5187591836734694,
+      "train_raw_auc": 0.5187591836734694,
+      "n_real": 251,
+      "n_simulated": 251,
+      "classifier_split": {
+        "strategy": "stratified_holdout",
+        "train_rows": 350,
+        "test_rows": 152,
+        "test_fraction": 0.3,
+        "random_state": 42
+      },
+      "top_leakage_features": [
+        {
+          "feature": "plate_x",
+          "importance": 0.06120349575918538
+        },
+        {
+          "feature": "plate_z",
+          "importance": 0.015499930849126837
+        }
+      ]
+    },
+    "player_recent_weighted_game_drift_gaussian": {
+      "auc": 0.5408587257617729,
+      "raw_auc": 0.45914127423822715,
+      "train_auc": 0.5635918367346939,
+      "train_raw_auc": 0.5635918367346939,
+      "n_real": 251,
+      "n_simulated": 251,
+      "classifier_split": {
+        "strategy": "stratified_holdout",
+        "train_rows": 350,
+        "test_rows": 152,
+        "test_fraction": 0.3,
+        "random_state": 42
+      },
+      "top_leakage_features": [
+        {
+          "feature": "plate_x",
+          "importance": 0.19186721329991843
+        },
+        {
+          "feature": "plate_z",
+          "importance": 0.07440050634260366
+        }
+      ]
+    },
+    "player_recent_weighted_game_drift_copula": {
+      "auc": 0.5334141274238227,
+      "raw_auc": 0.4665858725761773,
+      "train_auc": 0.563461224489796,
+      "train_raw_auc": 0.563461224489796,
+      "n_real": 251,
+      "n_simulated": 251,
+      "classifier_split": {
+        "strategy": "stratified_holdout",
+        "train_rows": 350,
+        "test_rows": 152,
+        "test_fraction": 0.3,
+        "random_state": 42
+      },
+      "top_leakage_features": [
+        {
+          "feature": "plate_x",
+          "importance": 0.19782597334023153
+        },
+        {
+          "feature": "plate_z",
+          "importance": 0.08734025513149056
+        }
+      ]
+    }
+  }
+}

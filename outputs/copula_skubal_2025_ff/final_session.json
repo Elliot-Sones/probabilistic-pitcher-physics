@@ -1,0 +1,937 @@
+{
+  "schema_version": "pitcher-twin.real.v1",
+  "generated_at": "2026-04-27T12:50:32.756513+00:00",
+  "pitcher": "Skubal, Tarik",
+  "pitch_type": "FF",
+  "metadata": {
+    "data_path": "data/processed/skubal_2025.csv",
+    "selected_model": "player_recent_weighted_game_drift_copula",
+    "selected_feature_group": "command_representation",
+    "artifact_status": "validated_component_layers_physics_diagnostic",
+    "validated_feature_groups": [
+      "command_representation",
+      "movement_only"
+    ],
+    "borderline_feature_groups": [
+      "trajectory_only"
+    ],
+    "diagnostic_feature_groups": [
+      "release_only",
+      "physics_core",
+      "physics_batter_context",
+      "physics_count",
+      "physics_fatigue",
+      "shape_representation"
+    ],
+    "physics_temporal_auc": 0.6504501385041551,
+    "source_rows": 2849,
+    "export_strategy": "validated_layer_over_physics_core",
+    "export_selected_feature_group": "command_representation",
+    "export_selected_model": "player_recent_weighted_game_drift_copula",
+    "export_physics_feature_group": "physics_core",
+    "export_physics_model": "player_recent_weighted_game_drift_copula",
+    "export_physics_auc": 0.6504501385041551
+  },
+  "pitches": [
+    {
+      "index": 1,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.4799528159317163,
+        "pos_y": 53.913393508476204,
+        "pos_z": 6.14801981532362,
+        "extension": 6.6099234641082685
+      },
+      "velocity": {
+        "release_speed": 95.19013273054058,
+        "vx0": -4.776778714640858,
+        "vy0": -138.42297361081333,
+        "vz0": -9.802530077945496
+      },
+      "spin": {
+        "rate": 2070.7082305876,
+        "axis_cos": -0.8613111384653127,
+        "axis_sin": 0.5093188911966361
+      },
+      "movement": {
+        "pfx_x": 0.287081102110115,
+        "pfx_z": 1.2501713508154284,
+        "ax": 4.7115495787859905,
+        "ay": 29.611556586940786,
+        "az": -14.178835552618466
+      },
+      "plate_target": {
+        "x": 0.297806404429134,
+        "z": 1.8621083305956918
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 2,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.7078368959544092,
+        "pos_y": 53.98987975534272,
+        "pos_z": 6.235321231675303,
+        "extension": 6.534657669588734
+      },
+      "velocity": {
+        "release_speed": 97.5108829308648,
+        "vx0": -6.198010070691575,
+        "vy0": -142.00419416884847,
+        "vz0": -4.584198758692915
+      },
+      "spin": {
+        "rate": 2325.045975750183,
+        "axis_cos": -0.9242867671705118,
+        "axis_sin": 0.39060836141101607
+      },
+      "movement": {
+        "pfx_x": 0.2880597952951088,
+        "pfx_z": 1.2751559741086502,
+        "ax": 5.570715019665494,
+        "ay": 32.87058926226748,
+        "az": -14.175381993876293
+      },
+      "plate_target": {
+        "x": -0.7191554359035168,
+        "z": 3.6357959731634297
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 3,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.387442375812458,
+        "pos_y": 53.89165889883181,
+        "pos_z": 6.15103621065337,
+        "extension": 6.593053119790816
+      },
+      "velocity": {
+        "release_speed": 98.52021335945985,
+        "vx0": -3.0031038984157865,
+        "vy0": -143.26338516747086,
+        "vz0": -8.154508397472563
+      },
+      "spin": {
+        "rate": 2342.5626756849697,
+        "axis_cos": -0.8934341096753972,
+        "axis_sin": 0.44666783331621973
+      },
+      "movement": {
+        "pfx_x": 0.07347538540760035,
+        "pfx_z": 1.2904672054070248,
+        "ax": 1.5829232787098184,
+        "ay": 31.78967169538975,
+        "az": -12.536264173987552
+      },
+      "plate_target": {
+        "x": 0.0434329955615828,
+        "z": 4.1641685109660305
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 4,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.636885220809622,
+        "pos_y": 54.03233284097737,
+        "pos_z": 6.18406236998321,
+        "extension": 6.464408802045321
+      },
+      "velocity": {
+        "release_speed": 97.12886588645144,
+        "vx0": -5.0935436247332255,
+        "vy0": -141.25008677769625,
+        "vz0": -5.470236925595174
+      },
+      "spin": {
+        "rate": 2369.8466232543615,
+        "axis_cos": -0.9017903868299605,
+        "axis_sin": 0.4323594477333383
+      },
+      "movement": {
+        "pfx_x": 0.4386554274230722,
+        "pfx_z": 1.368623757476066,
+        "ax": 7.183392933147035,
+        "ay": 34.718024154644795,
+        "az": -12.784792397318949
+      },
+      "plate_target": {
+        "x": 0.3738869028357135,
+        "z": 2.7772896741082778
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 5,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.6149212130802375,
+        "pos_y": 54.069609746770816,
+        "pos_z": 6.157789376786455,
+        "extension": 6.471884778500358
+      },
+      "velocity": {
+        "release_speed": 97.42608171345533,
+        "vx0": -7.971094484823873,
+        "vy0": -141.22761105451784,
+        "vz0": -7.93433765732372
+      },
+      "spin": {
+        "rate": 2472.916417447969,
+        "axis_cos": -0.877185081718654,
+        "axis_sin": 0.4820466621410592
+      },
+      "movement": {
+        "pfx_x": 0.12309676872144876,
+        "pfx_z": 1.6092277601659373,
+        "ax": 3.857864432708123,
+        "ay": 35.14312226042105,
+        "az": -8.847548662772265
+      },
+      "plate_target": {
+        "x": -0.021307798857816473,
+        "z": 3.7328196604434813
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 6,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.479052759796854,
+        "pos_y": 53.949161589185884,
+        "pos_z": 6.1244498505288005,
+        "extension": 6.536119076179205
+      },
+      "velocity": {
+        "release_speed": 95.69522816985402,
+        "vx0": -3.417959442875948,
+        "vy0": -138.97589694511578,
+        "vz0": -9.011940620692895
+      },
+      "spin": {
+        "rate": 2348.732876662402,
+        "axis_cos": -0.9023550168124568,
+        "axis_sin": 0.43137136880806065
+      },
+      "movement": {
+        "pfx_x": 0.16493724987262262,
+        "pfx_z": 1.4386238860530458,
+        "ax": 2.2899810208510067,
+        "ay": 32.15362621409147,
+        "az": -11.728029046846729
+      },
+      "plate_target": {
+        "x": -0.9818931058116178,
+        "z": 3.133334398398672
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 7,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.5492410961582501,
+        "pos_y": 54.02915599697315,
+        "pos_z": 6.10103172625327,
+        "extension": 6.458494394037052
+      },
+      "velocity": {
+        "release_speed": 98.61702084790348,
+        "vx0": -4.357835943283618,
+        "vy0": -143.47899294435314,
+        "vz0": -4.400135867552104
+      },
+      "spin": {
+        "rate": 2415.6482196589354,
+        "axis_cos": -0.9048957117177371,
+        "axis_sin": 0.4241055719882691
+      },
+      "movement": {
+        "pfx_x": 0.2759112862406817,
+        "pfx_z": 1.1629654042634647,
+        "ax": 4.819597771849678,
+        "ay": 33.49791990559962,
+        "az": -14.939907190570757
+      },
+      "plate_target": {
+        "x": -0.6990925302384543,
+        "z": 2.532204035874636
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 8,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.4399126609007902,
+        "pos_y": 53.87364346142588,
+        "pos_z": 6.124247166029662,
+        "extension": 6.674156043916151
+      },
+      "velocity": {
+        "release_speed": 97.232227257669,
+        "vx0": -7.4721128780699,
+        "vy0": -141.0589588197077,
+        "vz0": -8.771705550799988
+      },
+      "spin": {
+        "rate": 2389.930215570175,
+        "axis_cos": -0.9078549111508478,
+        "axis_sin": 0.4153766598311542
+      },
+      "movement": {
+        "pfx_x": 0.1525326639734425,
+        "pfx_z": 1.396883514790755,
+        "ax": 4.1086369510069085,
+        "ay": 33.50936136288308,
+        "az": -11.519562020948065
+      },
+      "plate_target": {
+        "x": -0.7012385839629744,
+        "z": 2.9313593288291204
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 9,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.5313845666947956,
+        "pos_y": 54.02987511550792,
+        "pos_z": 6.17532533903379,
+        "extension": 6.402539446020117
+      },
+      "velocity": {
+        "release_speed": 98.24675080711174,
+        "vx0": -5.750764486089324,
+        "vy0": -143.1137791361404,
+        "vz0": -3.347416815644628
+      },
+      "spin": {
+        "rate": 2388.982435777541,
+        "axis_cos": -0.8900990352761347,
+        "axis_sin": 0.4461710206890521
+      },
+      "movement": {
+        "pfx_x": 0.3465600923037562,
+        "pfx_z": 1.3492450541046046,
+        "ax": 5.995758827080857,
+        "ay": 30.577333234907,
+        "az": -12.876284165637234
+      },
+      "plate_target": {
+        "x": 0.3097881048434271,
+        "z": 3.1563993090216327
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 10,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.5015630106847653,
+        "pos_y": 54.02581687635553,
+        "pos_z": 6.197909886034108,
+        "extension": 6.528310144465038
+      },
+      "velocity": {
+        "release_speed": 97.6564589875476,
+        "vx0": -4.0086566166633,
+        "vy0": -142.19412145934692,
+        "vz0": -5.91010971090897
+      },
+      "spin": {
+        "rate": 2471.866935664692,
+        "axis_cos": -0.8990678802516442,
+        "axis_sin": 0.4422399903645089
+      },
+      "movement": {
+        "pfx_x": 0.33379861241740727,
+        "pfx_z": 1.5756097399698832,
+        "ax": 5.1904945422214235,
+        "ay": 33.912083796394604,
+        "az": -9.344222367306923
+      },
+      "plate_target": {
+        "x": -0.13347153295994585,
+        "z": 2.304521814305641
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 11,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.464336429344085,
+        "pos_y": 54.0205245493376,
+        "pos_z": 6.154234732987685,
+        "extension": 6.5048226144613155
+      },
+      "velocity": {
+        "release_speed": 98.11904468522874,
+        "vx0": -6.677406770024154,
+        "vy0": -142.57496082546587,
+        "vz0": -8.610265970258029
+      },
+      "spin": {
+        "rate": 2466.580527197346,
+        "axis_cos": -0.8910686463257239,
+        "axis_sin": 0.4649928657449497
+      },
+      "movement": {
+        "pfx_x": 0.42480802355949376,
+        "pfx_z": 1.3833810150469947,
+        "ax": 7.544893947905709,
+        "ay": 34.37567653873839,
+        "az": -11.395775703791385
+      },
+      "plate_target": {
+        "x": -0.19959658327241503,
+        "z": 2.1032841221887217
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 12,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.5476739681621332,
+        "pos_y": 53.91380975640876,
+        "pos_z": 6.133852453957318,
+        "extension": 6.577999146819864
+      },
+      "velocity": {
+        "release_speed": 97.69490099004145,
+        "vx0": -6.359751699333247,
+        "vy0": -141.7870387167995,
+        "vz0": -10.439193245695481
+      },
+      "spin": {
+        "rate": 2499.643427746579,
+        "axis_cos": -0.9250800688043235,
+        "axis_sin": 0.37740834055960293
+      },
+      "movement": {
+        "pfx_x": 0.3188675035519932,
+        "pfx_z": 1.4369542481654405,
+        "ax": 5.82705475649356,
+        "ay": 32.93390046885295,
+        "az": -10.459940328874728
+      },
+      "plate_target": {
+        "x": -0.6844009107509113,
+        "z": 2.3361019861432877
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 13,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.5886184342820415,
+        "pos_y": 53.88653595070918,
+        "pos_z": 6.155970278725193,
+        "extension": 6.589242829463154
+      },
+      "velocity": {
+        "release_speed": 96.84899747569365,
+        "vx0": -4.527007799249675,
+        "vy0": -140.950570322136,
+        "vz0": -7.190857251187941
+      },
+      "spin": {
+        "rate": 2375.0754651262446,
+        "axis_cos": -0.8883853302847406,
+        "axis_sin": 0.4627274119802473
+      },
+      "movement": {
+        "pfx_x": 0.6638955458317329,
+        "pfx_z": 1.3992261059197717,
+        "ax": 10.016276907478538,
+        "ay": 31.451741810804762,
+        "az": -12.005384448589213
+      },
+      "plate_target": {
+        "x": 0.4570669729529827,
+        "z": 1.6469016134028458
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 14,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.3563931253800887,
+        "pos_y": 53.974076877466615,
+        "pos_z": 6.155017897772811,
+        "extension": 6.516157943334788
+      },
+      "velocity": {
+        "release_speed": 97.60964094330649,
+        "vx0": -5.8761247525713,
+        "vy0": -141.82317885051887,
+        "vz0": -8.97393843683429
+      },
+      "spin": {
+        "rate": 2384.5635499030436,
+        "axis_cos": -0.9301254902822287,
+        "axis_sin": 0.3666686092387402
+      },
+      "movement": {
+        "pfx_x": 0.2299730379646181,
+        "pfx_z": 1.4241899009562047,
+        "ax": 4.423009127534591,
+        "ay": 33.65163476905153,
+        "az": -10.935341618670876
+      },
+      "plate_target": {
+        "x": -0.18339538546434397,
+        "z": 4.001885875353984
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 15,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.7106567158889427,
+        "pos_y": 53.93049480678986,
+        "pos_z": 6.131004429423517,
+        "extension": 6.604509946246909
+      },
+      "velocity": {
+        "release_speed": 95.12301029898448,
+        "vx0": -4.0876409937212745,
+        "vy0": -138.59802633332077,
+        "vz0": -5.299558059755791
+      },
+      "spin": {
+        "rate": 2367.11645549275,
+        "axis_cos": -0.8784949046563725,
+        "axis_sin": 0.4760775666687145
+      },
+      "movement": {
+        "pfx_x": 0.23056702205327032,
+        "pfx_z": 1.4899551379799096,
+        "ax": 3.7822910417252222,
+        "ay": 31.08579925818907,
+        "az": -12.065728134487445
+      },
+      "plate_target": {
+        "x": -0.0419588064954883,
+        "z": 2.5566145550119854
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 16,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.4487968696585882,
+        "pos_y": 53.900768787822926,
+        "pos_z": 6.2266709172990655,
+        "extension": 6.58694925988782
+      },
+      "velocity": {
+        "release_speed": 96.37602998406727,
+        "vx0": -5.499720158398891,
+        "vy0": -140.24033693742481,
+        "vz0": -5.191720700054342
+      },
+      "spin": {
+        "rate": 2362.75283589715,
+        "axis_cos": -0.9544620665837038,
+        "axis_sin": 0.3225186980999162
+      },
+      "movement": {
+        "pfx_x": 0.17963879778942776,
+        "pfx_z": 1.3932870694046782,
+        "ax": 3.355353143353248,
+        "ay": 32.07631001504065,
+        "az": -12.645012467247643
+      },
+      "plate_target": {
+        "x": -1.0170140512570045,
+        "z": 2.522276924721338
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 17,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.6589312160741918,
+        "pos_y": 53.97818036336892,
+        "pos_z": 6.192756232777511,
+        "extension": 6.508100976388374
+      },
+      "velocity": {
+        "release_speed": 98.0467852841172,
+        "vx0": -5.555325788600049,
+        "vy0": -142.60812263924979,
+        "vz0": -6.792808003889451
+      },
+      "spin": {
+        "rate": 2392.063287298448,
+        "axis_cos": -0.9155092303781365,
+        "axis_sin": 0.3967282898981159
+      },
+      "movement": {
+        "pfx_x": 0.1128078552617419,
+        "pfx_z": 1.320500235797814,
+        "ax": 3.1383182699774825,
+        "ay": 32.23188571503869,
+        "az": -12.492702065090581
+      },
+      "plate_target": {
+        "x": 0.05366383640431066,
+        "z": 2.3675730144817293
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 18,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.4300365735600045,
+        "pos_y": 54.02485799610502,
+        "pos_z": 6.178735747118966,
+        "extension": 6.490050560561313
+      },
+      "velocity": {
+        "release_speed": 94.95347113957249,
+        "vx0": -5.719542122137106,
+        "vy0": -138.21500412794074,
+        "vz0": -4.874699534982282
+      },
+      "spin": {
+        "rate": 2245.924053794784,
+        "axis_cos": -0.9093630404169996,
+        "axis_sin": 0.41497428166558376
+      },
+      "movement": {
+        "pfx_x": 0.40309857315180975,
+        "pfx_z": 1.2260198172494448,
+        "ax": 6.440502417184504,
+        "ay": 31.75604502222602,
+        "az": -15.85432927155147
+      },
+      "plate_target": {
+        "x": -1.1284466024330522,
+        "z": 2.0774459130853433
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 19,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.6478218724001672,
+        "pos_y": 54.024451083457,
+        "pos_z": 6.172942402883334,
+        "extension": 6.472826657897525
+      },
+      "velocity": {
+        "release_speed": 98.34617605144533,
+        "vx0": -3.7676436026835747,
+        "vy0": -143.02302198441856,
+        "vz0": -6.954612723615524
+      },
+      "spin": {
+        "rate": 2360.86671501692,
+        "axis_cos": -0.916869196632323,
+        "axis_sin": 0.3921489178190951
+      },
+      "movement": {
+        "pfx_x": 0.3905378441185607,
+        "pfx_z": 1.36280004095149,
+        "ax": 6.0508666253979175,
+        "ay": 32.90439252538436,
+        "az": -12.006959258962107
+      },
+      "plate_target": {
+        "x": 0.4429389023254586,
+        "z": 4.226021358721607
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 20,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.5450738503183916,
+        "pos_y": 53.74440752816444,
+        "pos_z": 6.226134985895817,
+        "extension": 6.711399447438321
+      },
+      "velocity": {
+        "release_speed": 95.9293362360158,
+        "vx0": -6.1808096443549685,
+        "vy0": -139.50339109284846,
+        "vz0": -8.774368187636519
+      },
+      "spin": {
+        "rate": 2268.95637228488,
+        "axis_cos": -0.8996296454177396,
+        "axis_sin": 0.4349611772714592
+      },
+      "movement": {
+        "pfx_x": 0.1766779688075783,
+        "pfx_z": 1.3929991256753058,
+        "ax": 3.624593832022184,
+        "ay": 28.938246826076284,
+        "az": -12.133123462403239
+      },
+      "plate_target": {
+        "x": -0.6132854952914457,
+        "z": 2.799485903800975
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 21,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.497547613436833,
+        "pos_y": 54.14089845187806,
+        "pos_z": 6.273473803849515,
+        "extension": 6.372826657897525
+      },
+      "velocity": {
+        "release_speed": 97.02933623601581,
+        "vx0": -2.9783885866429625,
+        "vy0": -141.31402503372237,
+        "vz0": -2.8233364325946306
+      },
+      "spin": {
+        "rate": 2243.257178484204,
+        "axis_cos": -0.9703616755385458,
+        "axis_sin": 0.2603930518297387
+      },
+      "movement": {
+        "pfx_x": 0.1530348506662205,
+        "pfx_z": 1.2408062593058629,
+        "ax": 3.0801439155492614,
+        "ay": 31.134212637054176,
+        "az": -15.035553137847948
+      },
+      "plate_target": {
+        "x": -0.39801793646629785,
+        "z": 3.856519849377805
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 22,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.5983461615312065,
+        "pos_y": 54.02244844248871,
+        "pos_z": 6.191090551031481,
+        "extension": 6.473099225732905
+      },
+      "velocity": {
+        "release_speed": 95.3527058523872,
+        "vx0": -6.485503643213073,
+        "vy0": -138.57841913607157,
+        "vz0": -6.706322067146125
+      },
+      "spin": {
+        "rate": 2233.103314611987,
+        "axis_cos": -0.9148757545388556,
+        "axis_sin": 0.39761290582893594
+      },
+      "movement": {
+        "pfx_x": 0.10581461452544785,
+        "pfx_z": 1.3794525329541618,
+        "ax": 2.5298581098475763,
+        "ay": 30.725666909571068,
+        "az": -12.89772962202118
+      },
+      "plate_target": {
+        "x": -0.11069084536352555,
+        "z": 3.922459231038075
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 23,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.6384032996489855,
+        "pos_y": 53.96130872558304,
+        "pos_z": 6.13307885911142,
+        "extension": 6.561734451312819
+      },
+      "velocity": {
+        "release_speed": 98.47005741550754,
+        "vx0": -4.956390902935326,
+        "vy0": -143.0077792578769,
+        "vz0": -7.353573591735429
+      },
+      "spin": {
+        "rate": 2434.747248205201,
+        "axis_cos": -0.9272727103245036,
+        "axis_sin": 0.37108716120696017
+      },
+      "movement": {
+        "pfx_x": 0.17592451707052092,
+        "pfx_z": 1.5232892865106546,
+        "ax": 3.6230647399422646,
+        "ay": 33.46387738123897,
+        "az": -9.821640666749186
+      },
+      "plate_target": {
+        "x": -1.2495710165841234,
+        "z": 3.626344504870887
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 24,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.582259775573114,
+        "pos_y": 54.2506773346092,
+        "pos_z": 6.308221682099136,
+        "extension": 6.225715599792752
+      },
+      "velocity": {
+        "release_speed": 98.55708123890979,
+        "vx0": -4.869459187412784,
+        "vy0": -143.58746234781705,
+        "vz0": -5.430381972206149
+      },
+      "spin": {
+        "rate": 2477.901082177349,
+        "axis_cos": -0.9117722245093743,
+        "axis_sin": 0.4071536399700706
+      },
+      "movement": {
+        "pfx_x": 0.28830435717179687,
+        "pfx_z": 1.4179371106158742,
+        "ax": 5.134226087139824,
+        "ay": 31.438589780365945,
+        "az": -11.703581564144622
+      },
+      "plate_target": {
+        "x": -0.5060567244667885,
+        "z": 3.492552611590712
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    },
+    {
+      "index": 25,
+      "source": "simulated_from_real_model",
+      "release": {
+        "pos_x": 1.483425946833656,
+        "pos_y": 53.982463199689725,
+        "pos_z": 6.204660950852413,
+        "extension": 6.489624614581083
+      },
+      "velocity": {
+        "release_speed": 96.90067387714531,
+        "vx0": -3.119573173435927,
+        "vy0": -140.90501425988043,
+        "vz0": -9.91469749246913
+      },
+      "spin": {
+        "rate": 2310.1600347147237,
+        "axis_cos": -0.8996551338660057,
+        "axis_sin": 0.4315630053846162
+      },
+      "movement": {
+        "pfx_x": 0.4391607560352644,
+        "pfx_z": 1.4522166328964075,
+        "ax": 6.40754461952611,
+        "ay": 30.283048796724664,
+        "az": -10.74350039847031
+      },
+      "plate_target": {
+        "x": -0.3555114758606298,
+        "z": 2.288546363218515
+      },
+      "model_metadata": {
+        "model_name": "player_recent_weighted_game_drift_copula_over_player_recent_weighted_game_drift_copula",
+        "feature_group": "command_representation_over_physics_core"
+      }
+    }
+  ]
+}
