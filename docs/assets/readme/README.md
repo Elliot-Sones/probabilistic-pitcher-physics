@@ -1,22 +1,21 @@
-# README Visual Assets
+# README Evidence Visual Assets
 
-Generated and deterministic assets used by the README.
+All displayed README visuals are generated from tracked project artifacts.
 
-## `hero-pitcher-twin.png`
+## Data Sources
 
-Built with the built-in image generation tool.
+- `site/data.json`: real holdout rows and generated app samples.
+- `outputs/validation_board_skubal_2025_top3/leaderboard.csv`: best validated result.
+- `outputs/model_tournament_skubal_2025_ff/model_tournament_report.json`: layer AUCs.
+- `outputs/rolling_validation_skubal_2025_ff/rolling_validation_board.json`: rolling fold AUCs.
 
-Prompt summary:
+## Displayed Assets
 
-> Cinematic README hero image for a baseball ML project that models pitcher variability as probability clouds, with a baseball in motion, translucent trajectory envelopes, subtle strike-zone/data overlays, charcoal/emerald/amber/red palette, no text, no logos, no real player likeness.
-
-## Deterministic Assets
-
-- `best-validated-result.gif`: results-first animation for the top of the README.
-- `pitch-cloud-generator.gif`: animated conditional generator explanation.
-- `factorized-physics-chain.gif`: animated model-structure explanation.
-- `c2st-validator.gif`: animated validation explanation.
-- `pipeline.png`: model/data flow overview used by README.
-- `pipeline.svg`: editable SVG source for the pipeline.
-- `rolling-window-validation.gif`: animated rolling-window validation explanation.
-- `pitcher-twin-architecture.excalidraw`: editable architecture source.
+- `best-result-summary.png`: top-line Skubal FF validation summary.
+- `real-vs-generated-cloud.gif`: real held-out Skubal FF vs generated samples.
+- `context-cloud-shift.gif`: actual pre-sampled app contexts from `site/data.json`.
+- `model-architecture.png`: factorized model structure.
+- `c2st-validation-workflow.png`: classifier two-sample validation flow.
+- `layer-results.png`: real repeated-seed tournament layer results.
+- `rolling-folds.gif`: real rolling future-window stress test.
+- `model-architecture.excalidraw`: editable architecture source.

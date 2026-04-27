@@ -1,35 +1,35 @@
 #!/usr/bin/env python3
-"""Build deterministic README visuals for the Pitcher Twin project."""
+"""Build README visuals from real Pitcher Twin artifacts."""
 
 from __future__ import annotations
 
-import json
 import hashlib
+import json
 import math
 from pathlib import Path
+from typing import Any
 
+import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSET_DIR = ROOT / "docs" / "assets" / "readme"
+SITE_DATA_PATH = ROOT / "site" / "data.json"
+TOURNAMENT_REPORT_PATH = ROOT / "outputs" / "model_tournament_skubal_2025_ff" / "model_tournament_report.json"
+LEADERBOARD_PATH = ROOT / "outputs" / "validation_board_skubal_2025_top3" / "leaderboard.csv"
+ROLLING_BOARD_PATH = ROOT / "outputs" / "rolling_validation_skubal_2025_ff" / "rolling_validation_board.json"
 
-ROLLING_AUCS = [0.593, 0.602, 0.929, 0.639, 0.608, 0.663, 0.725, 0.793, 0.765, 0.701]
-ROLLING_GOALS = {
-    "mean_auc": 0.620,
-    "target_hit_rate": 0.40,
-    "worst_fold": 0.800,
-}
-BEST_RESULT = {
-    "pitcher": "Tarik Skubal",
-    "pitch_type": "FF",
-    "season": "2025",
-    "pitches": 835,
-    "games": 31,
-    "holdout": 251,
-    "auc": 0.533,
-    "pass_rate": 1.00,
-}
+INK = (25, 24, 21)
+MUTED = (98, 91, 80)
+PAPER = (247, 244, 236)
+CARD = (255, 255, 255)
+CREAM = (255, 250, 240)
+LINE = (216, 205, 184)
+GREEN = (31, 122, 77)
+BLUE = (47, 111, 130)
+AMBER = (215, 165, 49)
+RED = (164, 61, 50)
 
 
 def _font(size: int, *, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
@@ -52,9 +52,8 @@ def _font(size: int, *, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFon
     return ImageFont.load_default()
 
 
-def _write(path: Path, content: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content, encoding="utf-8")
+def _load_json(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text())
 
 
 def _seed(value: str) -> int:
@@ -65,7 +64,7 @@ def _blend(a: tuple[int, int, int], b: tuple[int, int, int], amount: float) -> t
     return tuple(round(a[i] * amount + b[i] * (1 - amount)) for i in range(3))
 
 
-def _save_gif(path: Path, frames: list[Image.Image], *, duration: int = 95) -> None:
+def _save_gif(path: Path, frames: list[Image.Image], *, duration: int = 120) -> None:
     frames[0].save(
         path,
         save_all=True,
@@ -76,360 +75,239 @@ def _save_gif(path: Path, frames: list[Image.Image], *, duration: int = 95) -> N
     )
 
 
-def _draw_label_value(
-    draw: ImageDraw.ImageDraw,
-    xy: tuple[int, int],
-    label: str,
-    value: str,
-    *,
-    accent: tuple[int, int, int],
-) -> None:
-    x, y = xy
-    draw.text((x, y), label.upper(), font=_font(17, bold=True), fill=(98, 91, 80))
-    draw.text((x, y + 23), value, font=_font(36, bold=True), fill=accent)
-
-
-def build_best_results_gif() -> None:
-    width, height = 1400, 760
-    ink = (25, 24, 21)
-    cream = (247, 244, 236)
-    white = (255, 255, 255)
-    green = (31, 122, 77)
-    amber = (215, 165, 49)
-    red = (164, 61, 50)
-    frames: list[Image.Image] = []
-    title_font = _font(58, bold=True)
-    sub_font = _font(28)
-    metric_font = _font(62, bold=True)
-    small_font = _font(21)
-    hold_frames = 6
-
-    for step in range(30):
-        t = min(1.0, step / 20)
-        image = Image.new("RGB", (width, height), cream)
-        draw = ImageDraw.Draw(image)
-        draw.rounded_rectangle((42, 42, width - 42, height - 42), radius=30, fill=white)
-        draw.text((82, 82), "Best Validated Result", font=title_font, fill=ink)
-        draw.text(
-            (82, 152),
-            "Tarik Skubal 2025 FF: generated pitches vs later real Statcast holdout",
-            font=sub_font,
-            fill=(98, 91, 80),
-        )
-        draw.rounded_rectangle((82, 220, 1318, 610), radius=28, fill=(250, 242, 224))
-        draw.text((122, 260), "C2ST AUC", font=small_font, fill=(98, 91, 80))
-        draw.text((122, 294), f"{BEST_RESULT['auc']:.3f}", font=metric_font, fill=green)
-        draw.text((122, 372), "lower is better; 0.50 is ideal", font=small_font, fill=(98, 91, 80))
-        draw.text((122, 450), "Pass rate", font=small_font, fill=(98, 91, 80))
-        draw.text((122, 484), f"{BEST_RESULT['pass_rate']:.0%}", font=metric_font, fill=green)
-
-        scale_x0, scale_y = 500, 355
-        scale_w = 700
-        draw.line((scale_x0, scale_y, scale_x0 + scale_w, scale_y), fill=(216, 205, 184), width=12)
-        for value, color, label in [(0.50, green, "ideal"), (0.60, amber, "target"), (0.90, red, "easy to detect")]:
-            x = scale_x0 + int(((value - 0.50) / 0.45) * scale_w)
-            draw.line((x, scale_y - 28, x, scale_y + 28), fill=color, width=4)
-            draw.text((x - 34, scale_y + 42), label, font=_font(17, bold=True), fill=color)
-        current_auc = 0.90 + (BEST_RESULT["auc"] - 0.90) * t
-        x = scale_x0 + int(((current_auc - 0.50) / 0.45) * scale_w)
-        draw.ellipse((x - 20, scale_y - 20, x + 20, scale_y + 20), fill=green, outline=ink, width=3)
-        draw.text((x - 44, scale_y - 72), f"{current_auc:.3f}", font=_font(26, bold=True), fill=ink)
-
-        _draw_label_value(draw, (520, 460), "Real FF pitches", f"{BEST_RESULT['pitches']:,}", accent=ink)
-        _draw_label_value(draw, (755, 460), "Games", str(BEST_RESULT["games"]), accent=ink)
-        _draw_label_value(draw, (930, 460), "Holdout rows", str(BEST_RESULT["holdout"]), accent=ink)
-        _draw_label_value(draw, (1160, 460), "Pitch", str(BEST_RESULT["pitch_type"]), accent=ink)
-
-        draw.rounded_rectangle((82, 636, 1318, 694), radius=18, fill=(220, 239, 229))
-        draw.text(
-            (112, 654),
-            "Result first: the classifier barely separates generated Skubal fastballs from later real ones.",
-            font=_font(25, bold=True),
-            fill=green,
-        )
-        frames.extend([image] * (hold_frames if step in {0, 21, 29} else 1))
-    _save_gif(ASSET_DIR / "best-validated-result.gif", frames, duration=80)
-
-
-def build_pitch_cloud_generator_gif() -> None:
-    width, height = 1400, 760
-    ink = (25, 24, 21)
-    cream = (247, 244, 236)
-    green = (31, 122, 77)
-    amber = (215, 165, 49)
-    red = (164, 61, 50)
-    frames: list[Image.Image] = []
-    title_font = _font(54, bold=True)
-    sub_font = _font(26)
-    label_font = _font(22, bold=True)
-    small_font = _font(18)
-    controls = [
-        ("Pitcher", "Tarik Skubal"),
-        ("Pitch", "FF"),
-        ("Inning", "7"),
-        ("Pitch count", "88"),
-        ("Count", "2-2"),
-        ("Batter", "LHB"),
-    ]
-    points = []
-    for i in range(52):
-        angle = i * 0.63
-        radius = 1.0 + (i % 7) * 0.18
-        px = math.cos(angle) * radius * 52 + math.sin(i) * 16
-        pz = math.sin(angle * 0.8) * radius * 42 + math.cos(i * 0.4) * 14
-        velo = 94.7 + math.sin(i * 0.5) * 1.1
-        points.append((px, pz, velo))
-
-    for frame_index in range(36):
-        shown = min(len(points), 5 + frame_index * 2)
-        image = Image.new("RGB", (width, height), cream)
-        draw = ImageDraw.Draw(image)
-        draw.rounded_rectangle((42, 42, width - 42, height - 42), radius=30, fill=(255, 255, 255))
-        draw.text((82, 82), "Generate A Pitch Probability Cloud", font=title_font, fill=ink)
-        draw.text(
-            (82, 145),
-            "The output is a distribution of likely pitch characteristics, not one guessed pitch.",
-            font=sub_font,
-            fill=(98, 91, 80),
-        )
-        for index, (label, value) in enumerate(controls):
-            x = 82 + (index % 3) * 265
-            y = 220 + (index // 3) * 86
-            draw.rounded_rectangle((x, y, x + 228, y + 62), radius=16, fill=(250, 242, 224))
-            draw.text((x + 18, y + 12), label, font=small_font, fill=(98, 91, 80))
-            draw.text((x + 18, y + 34), value, font=label_font, fill=ink)
-
-        zone = (900, 252, 1240, 610)
-        draw.rounded_rectangle((845, 190, 1292, 654), radius=22, fill=(247, 244, 236), outline=(216, 205, 184), width=2)
-        draw.text((870, 212), "Generated plate-location samples", font=label_font, fill=ink)
-        draw.rectangle(zone, outline=ink, width=4)
-        for i in range(1, 3):
-            x = zone[0] + i * ((zone[2] - zone[0]) // 3)
-            y = zone[1] + i * ((zone[3] - zone[1]) // 3)
-            draw.line((x, zone[1], x, zone[3]), fill=(216, 205, 184), width=2)
-            draw.line((zone[0], y, zone[2], y), fill=(216, 205, 184), width=2)
-        for px, pz, velo in points[:shown]:
-            x = int((zone[0] + zone[2]) / 2 + px)
-            y = int((zone[1] + zone[3]) / 2 - pz)
-            color = green if velo >= 95.0 else amber
-            draw.ellipse((x - 7, y - 7, x + 7, y + 7), fill=color, outline=ink)
-        draw.rounded_rectangle((82, 520, 780, 640), radius=20, fill=(220, 239, 229))
-        draw.text((112, 544), "Expected FF envelope", font=label_font, fill=green)
-        draw.text((112, 582), "velocity 94-96 mph  |  command cloud  |  sampled session JSON", font=small_font, fill=ink)
-        if frame_index > 25:
-            draw.rounded_rectangle((112, 612, 430, 668), radius=18, fill=green)
-            draw.text((142, 628), "Export samples", font=_font(24, bold=True), fill=(255, 250, 240))
-        frames.append(image)
-    _save_gif(ASSET_DIR / "pitch-cloud-generator.gif", frames, duration=85)
-
-
-def build_factorized_chain_gif() -> None:
-    width, height = 1400, 760
-    ink = (25, 24, 21)
-    cream = (247, 244, 236)
-    colors = [(31, 122, 77), (47, 111, 130), (215, 165, 49), (164, 61, 50)]
-    layers = [
-        ("Release state", "velocity, spin, release point"),
-        ("Movement", "break around that release"),
-        ("Trajectory", "speed + acceleration consistency"),
-        ("Command", "plate-location cloud"),
-    ]
-    frames: list[Image.Image] = []
-    for frame_index in range(40):
-        active = min(3, frame_index // 9)
-        image = Image.new("RGB", (width, height), cream)
-        draw = ImageDraw.Draw(image)
-        draw.rounded_rectangle((42, 42, width - 42, height - 42), radius=30, fill=(255, 255, 255))
-        draw.text((82, 82), "How The Model Learns A Pitcher's Style", font=_font(54, bold=True), fill=ink)
-        draw.text(
-            (82, 145),
-            "It does not average every feature together; it samples physics in a chain.",
-            font=_font(26),
-            fill=(98, 91, 80),
-        )
-        start_x, y = 92, 330
-        for index, (title, subtitle) in enumerate(layers):
-            x = start_x + index * 318
-            color = colors[index]
-            fill = _blend(color, (255, 255, 255), 0.16 if index <= active else 0.05)
-            outline = color if index <= active else (216, 205, 184)
-            draw.rounded_rectangle((x, y, x + 260, y + 170), radius=26, fill=fill, outline=outline, width=4)
-            draw.ellipse((x + 24, y + 24, x + 72, y + 72), fill=color if index <= active else (216, 205, 184))
-            draw.text((x + 40, y + 34), str(index + 1), font=_font(24, bold=True), fill=(255, 250, 240))
-            draw.text((x + 24, y + 88), title, font=_font(24, bold=True), fill=ink)
-            draw.text((x + 24, y + 122), subtitle, font=_font(17), fill=(98, 91, 80))
-            if index < len(layers) - 1:
-                arrow_color = ink if index < active else (216, 205, 184)
-                _draw_arrow(draw, (x + 268, y + 86), (x + 308, y + 86), arrow_color)
-        draw.rounded_rectangle((82, 570, 1318, 652), radius=22, fill=(250, 242, 224))
-        message = [
-            "Start with the pitcher's release state.",
-            "Then sample movement that is plausible for that release.",
-            "Then preserve trajectory/acceleration consistency.",
-            "Finally produce a command cloud and exportable samples.",
-        ][active]
-        draw.text((116, 596), message, font=_font(28, bold=True), fill=colors[active])
-        frames.extend([image] * (5 if frame_index % 9 == 0 else 1))
-    _save_gif(ASSET_DIR / "factorized-physics-chain.gif", frames, duration=90)
-
-
-def build_c2st_validator_gif() -> None:
-    width, height = 1400, 760
-    ink = (25, 24, 21)
-    cream = (247, 244, 236)
-    green = (31, 122, 77)
-    amber = (215, 165, 49)
-    red = (164, 61, 50)
-    stages = [
-        ("Train", "early real pitches"),
-        ("Generate", "synthetic pitch samples"),
-        ("Hold out", "later real pitches"),
-        ("Classifier", "tries to spot fakes"),
-        ("Score", "AUC 0.533"),
-    ]
-    frames: list[Image.Image] = []
-    for frame_index in range(42):
-        active = min(4, frame_index // 8)
-        image = Image.new("RGB", (width, height), cream)
-        draw = ImageDraw.Draw(image)
-        draw.rounded_rectangle((42, 42, width - 42, height - 42), radius=30, fill=(255, 255, 255))
-        draw.text((82, 82), "How We Prove Realism", font=_font(56, bold=True), fill=ink)
-        draw.text(
-            (82, 148),
-            "A classifier two-sample test asks: can a model tell generated pitches from future real ones?",
-            font=_font(26),
-            fill=(98, 91, 80),
-        )
-        for index, (title, subtitle) in enumerate(stages):
-            x = 92 + index * 252
-            y = 300
-            color = green if index <= active else (216, 205, 184)
-            draw.rounded_rectangle((x, y, x + 205, y + 138), radius=22, fill=_blend(color, (255, 250, 240), 0.14), outline=color, width=4)
-            draw.text((x + 24, y + 34), title, font=_font(27, bold=True), fill=ink)
-            draw.text((x + 24, y + 76), subtitle, font=_font(18), fill=(98, 91, 80))
-            if index < len(stages) - 1:
-                _draw_arrow(draw, (x + 214, y + 69), (x + 244, y + 69), ink if index < active else (216, 205, 184))
-
-        draw.rounded_rectangle((220, 515, 1180, 630), radius=28, fill=(220, 239, 229))
-        if active < 4:
-            text = "The validator stays blind to the labels until the classifier test."
-            color = ink
-        else:
-            text = "Best result: 0.533 AUC, close to coin-flip separation."
-            color = green
-        draw.text((260, 552), text, font=_font(34, bold=True), fill=color)
-        draw.line((320, 654, 1080, 654), fill=(216, 205, 184), width=12)
-        current = 0.90 + (BEST_RESULT["auc"] - 0.90) * min(1, max(0, (frame_index - 31) / 8))
-        x = 320 + int(((current - 0.50) / 0.45) * 760)
-        draw.ellipse((x - 16, 638, x + 16, 670), fill=green if active >= 4 else amber, outline=ink, width=2)
-        draw.text((300, 676), "0.50 ideal", font=_font(16, bold=True), fill=green)
-        draw.text((1010, 676), "1.00 obvious fake", font=_font(16, bold=True), fill=red)
-        frames.extend([image] * (4 if frame_index % 8 == 0 else 1))
-    _save_gif(ASSET_DIR / "c2st-validator.gif", frames, duration=90)
-
-
-def build_pipeline_svg() -> None:
-    steps = [
-        ("Real Statcast", "public pitch rows"),
-        ("Feature layers", "release, spin, movement"),
-        ("Generator suite", "factorized + drift models"),
-        ("C2ST validator", "classifier realism test"),
-        ("Rolling board", "future-game reliability"),
-        ("Trajekt export", "sampled session JSON"),
-    ]
-    blocks = []
-    for index, (title, subtitle) in enumerate(steps):
-        x = 72 + (index % 3) * 330
-        y = 190 + (index // 3) * 170
-        color = ["#1f7a4d", "#2f6f82", "#d7a531", "#a43d32", "#b47f1a", "#1f7a4d"][index]
-        blocks.append(
-            f"""
-  <g transform="translate({x} {y})">
-    <rect width="250" height="120" rx="18" fill="#fffaf0" stroke="#211f1a" stroke-width="2"/>
-    <circle cx="34" cy="34" r="16" fill="{color}"/>
-    <text x="34" y="43" text-anchor="middle" class="number">{index + 1}</text>
-    <text x="128" y="58" text-anchor="middle" class="step-title">{title}</text>
-    <text x="128" y="86" text-anchor="middle" class="step-sub">{subtitle}</text>
-  </g>"""
-        )
-    arrows = [
-        (322, 250, 390, 250),
-        (652, 250, 720, 250),
-        (860, 310, 860, 360),
-        (720, 420, 652, 420),
-        (390, 420, 322, 420),
-    ]
-    for index, (x1, y1, x2, y2) in enumerate(arrows):
-        blocks.append(
-            f"""
-  <path d="M{x1} {y1} L{x2} {y2}" stroke="#211f1a" stroke-width="3" stroke-linecap="round" marker-end="url(#arrowhead)"/>"""
-        )
-    svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="560" viewBox="0 0 1100 560" role="img" aria-label="Pitcher Twin model pipeline">
-  <defs>
-    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,6 L8,3 z" fill="#211f1a"/>
-    </marker>
-    <style>
-      .title {{ font: 850 44px ui-sans-serif, system-ui, sans-serif; fill: #191815; }}
-      .subtitle {{ font: 500 21px ui-sans-serif, system-ui, sans-serif; fill: #625b50; }}
-      .number {{ font: 900 18px ui-sans-serif, system-ui, sans-serif; fill: #fffaf0; }}
-      .step-title {{ font: 800 19px ui-sans-serif, system-ui, sans-serif; fill: #191815; }}
-      .step-sub {{ font: 500 13px ui-sans-serif, system-ui, sans-serif; fill: #625b50; }}
-    </style>
-  </defs>
-  <rect width="1100" height="560" fill="#f7f4ec"/>
-  <rect x="28" y="28" width="1044" height="504" rx="26" fill="#ffffff" opacity="0.72" stroke="#d7cdb8"/>
-  <text x="54" y="88" class="title">From Real Pitches To A Validated Practice Envelope</text>
-  <text x="54" y="122" class="subtitle">Every generated pitch is tied back to a real-data split and a validation layer.</text>
-  {''.join(blocks)}
-</svg>
-"""
-    _write(ASSET_DIR / "pipeline.svg", svg)
-
-
-def build_pipeline_png() -> None:
-    width, height = 1400, 720
-    image = Image.new("RGB", (width, height), (247, 244, 236))
+def _base_canvas(width: int = 1400, height: int = 760) -> tuple[Image.Image, ImageDraw.ImageDraw]:
+    image = Image.new("RGB", (width, height), PAPER)
     draw = ImageDraw.Draw(image)
-    title_font = _font(48, bold=True)
-    subtitle_font = _font(26)
-    step_title_font = _font(28, bold=True)
-    step_sub_font = _font(20)
-    number_font = _font(25, bold=True)
-    ink = (25, 24, 21)
-    draw.rounded_rectangle((42, 42, width - 42, height - 42), radius=30, fill=(255, 255, 255), outline=(215, 205, 184), width=2)
-    draw.text((82, 82), "From Real Pitches To A Validated Practice Envelope", font=title_font, fill=ink)
+    draw.rounded_rectangle((42, 42, width - 42, height - 42), radius=30, fill=CARD)
+    return image, draw
+
+
+def _candidate(site_data: dict[str, Any], key: str = "skubal_ff") -> dict[str, Any]:
+    for candidate in site_data["candidates"]:
+        if candidate["key"] == key:
+            return candidate
+    raise KeyError(f"Missing candidate {key!r} in {SITE_DATA_PATH}")
+
+
+def _frame(records: list[dict[str, float]]) -> pd.DataFrame:
+    return pd.DataFrame.from_records(records).dropna(subset=["plate_x", "plate_z"])
+
+
+def _draw_plate(
+    draw: ImageDraw.ImageDraw,
+    box: tuple[int, int, int, int],
+    *,
+    title: str,
+    subtitle: str | None = None,
+) -> None:
+    x0, y0, x1, y1 = box
+    draw.rounded_rectangle((x0 - 26, y0 - 68, x1 + 26, y1 + 42), radius=22, fill=PAPER, outline=LINE, width=2)
+    draw.text((x0 - 6, y0 - 48), title, font=_font(25, bold=True), fill=INK)
+    if subtitle:
+        draw.text((x0 - 6, y0 - 18), subtitle, font=_font(18), fill=MUTED)
+    draw.rectangle(box, outline=INK, width=4)
+    for index in (1, 2):
+        x = x0 + index * ((x1 - x0) // 3)
+        y = y0 + index * ((y1 - y0) // 3)
+        draw.line((x, y0, x, y1), fill=LINE, width=2)
+        draw.line((x0, y, x1, y), fill=LINE, width=2)
+
+
+def _plate_xy(row: pd.Series | dict[str, float], box: tuple[int, int, int, int]) -> tuple[int, int]:
+    x0, y0, x1, y1 = box
+    plate_x = float(row["plate_x"])
+    plate_z = float(row["plate_z"])
+    x = x0 + (plate_x + 2.0) / 4.0 * (x1 - x0)
+    y = y1 - (plate_z - 0.5) / 4.7 * (y1 - y0)
+    return int(round(x)), int(round(y))
+
+
+def _draw_points(
+    draw: ImageDraw.ImageDraw,
+    frame: pd.DataFrame,
+    box: tuple[int, int, int, int],
+    *,
+    color: tuple[int, int, int],
+    outline: tuple[int, int, int] | None = None,
+    radius: int = 5,
+    limit: int | None = None,
+) -> None:
+    if limit is not None and len(frame) > limit:
+        frame = frame.sample(limit, random_state=7)
+    for _, row in frame.iterrows():
+        x, y = _plate_xy(row, box)
+        draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=color, outline=outline)
+
+
+def _zone_rate(frame: pd.DataFrame) -> float:
+    if frame.empty:
+        return 0.0
+    in_zone = (
+        frame["plate_x"].between(-0.83, 0.83)
+        & frame["plate_z"].between(1.5, 3.5)
+    )
+    return float(in_zone.mean())
+
+
+def build_best_result_summary() -> None:
+    leaderboard = pd.read_csv(LEADERBOARD_PATH)
+    row = leaderboard[(leaderboard["pitcher_name"] == "Skubal, Tarik") & (leaderboard["pitch_type"] == "FF")].iloc[0]
+    auc = float(row["physics_core_mean_auc"])
+    pass_rate = float(row["physics_core_pass_rate"])
+
+    image, draw = _base_canvas()
+    draw.text((82, 82), "Best Real-Data Result", font=_font(58, bold=True), fill=INK)
+    draw.text((82, 150), "Tarik Skubal 2025 FF, trained on earlier games and tested on later games.", font=_font(25), fill=MUTED)
+
+    metrics = [
+        ("Real FF pitches", f"{int(row['pitch_count']):,}", GREEN),
+        ("Games", str(int(row["game_count"])), BLUE),
+        ("Holdout pitches", str(int(row["holdout_count"])), AMBER),
+        ("Pass rate", f"{pass_rate:.0%}", GREEN),
+    ]
+    for index, (label, value, color) in enumerate(metrics):
+        x = 82 + index * 310
+        draw.rounded_rectangle((x, 238, x + 270, 370), radius=22, fill=CREAM, outline=color, width=3)
+        draw.text((x + 24, 262), label, font=_font(20, bold=True), fill=MUTED)
+        draw.text((x + 24, 300), value, font=_font(48, bold=True), fill=color)
+
+    draw.rounded_rectangle((120, 470, 1280, 600), radius=28, fill=_blend(GREEN, CARD, 0.13))
+    draw.text((170, 492), "C2ST AUC", font=_font(28, bold=True), fill=MUTED)
+    draw.text((170, 525), f"{auc:.3f}", font=_font(56, bold=True), fill=GREEN)
+    draw.text((420, 512), "0.50 is ideal", font=_font(28, bold=True), fill=INK)
+    draw.text((420, 548), "0.60 is the pass line; lower is better.", font=_font(24), fill=MUTED)
+
+    x0, x1, y = 170, 1230, 665
+    draw.line((x0, y, x1, y), fill=LINE, width=12)
+    for value, color, label in [(0.50, GREEN, "ideal"), (0.60, AMBER, "target"), (1.00, RED, "easy to detect")]:
+        x = x0 + int(((value - 0.50) / 0.50) * (x1 - x0))
+        draw.line((x, y - 28, x, y + 28), fill=color, width=5)
+        draw.text((x - 44, y + 42), label, font=_font(18, bold=True), fill=color)
+    x = x0 + int(((auc - 0.50) / 0.50) * (x1 - x0))
+    draw.ellipse((x - 22, y - 22, x + 22, y + 22), fill=GREEN, outline=INK, width=3)
+    draw.text((x - 42, y - 72), f"{auc:.3f}", font=_font(27, bold=True), fill=INK)
+    image.save(ASSET_DIR / "best-result-summary.png", optimize=True)
+
+
+def build_real_vs_generated_cloud(site_data: dict[str, Any]) -> None:
+    candidate = _candidate(site_data)
+    real = _frame(candidate["real_holdout"])
+    generated = _frame(candidate["samples"]["even_R"])
+    leaderboard = pd.read_csv(LEADERBOARD_PATH)
+    row = leaderboard[(leaderboard["pitcher_name"] == "Skubal, Tarik") & (leaderboard["pitch_type"] == "FF")].iloc[0]
+    auc = float(row["physics_core_mean_auc"])
+    pass_rate = float(row["physics_core_pass_rate"])
+    frames: list[Image.Image] = []
+    states = [
+        ("Later real holdout", real, None),
+        ("Generated samples", None, generated),
+        ("Overlay: real vs generated", real, generated),
+    ]
+
+    for title, real_frame, generated_frame in states:
+        image, draw = _base_canvas()
+        draw.text((82, 82), "Best Validated Result: Skubal 2025 FF", font=_font(55, bold=True), fill=INK)
+        draw.text((82, 148), "Holdout Statcast vs model samples.", font=_font(26), fill=MUTED)
+        draw.rounded_rectangle((82, 205, 468, 646), radius=26, fill=CREAM)
+        draw.text((118, 244), "Result", font=_font(22, bold=True), fill=MUTED)
+        draw.text((118, 284), f"{auc:.3f}", font=_font(76, bold=True), fill=GREEN)
+        draw.text((118, 360), "C2ST AUC", font=_font(27, bold=True), fill=INK)
+        draw.text((118, 410), f"{pass_rate:.0%} pass rate", font=_font(32, bold=True), fill=GREEN)
+        draw.text((118, 470), f"{int(row['pitch_count'])} real FF pitches", font=_font(24), fill=INK)
+        draw.text((118, 510), f"{int(row['game_count'])} games", font=_font(24), fill=INK)
+        draw.text((118, 550), f"{int(row['holdout_count'])} later holdout rows", font=_font(24), fill=INK)
+
+        box = (670, 235, 1160, 635)
+        subtitle = "green = real holdout, amber = generated"
+        _draw_plate(draw, box, title=title, subtitle=subtitle)
+        if real_frame is not None:
+            _draw_points(draw, real_frame, box, color=_blend(GREEN, CARD, 0.45), outline=GREEN, radius=4, limit=180)
+        if generated_frame is not None:
+            _draw_points(draw, generated_frame, box, color=_blend(AMBER, CARD, 0.55), outline=AMBER, radius=6)
+        draw.rounded_rectangle((670, 650, 1160, 690), radius=15, fill=_blend(GREEN, CARD, 0.14))
+        draw.text((696, 660), "Generated samples occupy the same plate-location cloud.", font=_font(18, bold=True), fill=GREEN)
+        frames.extend([image] * 10)
+    _save_gif(ASSET_DIR / "real-vs-generated-cloud.gif", frames, duration=150)
+
+
+def build_context_cloud_shift(site_data: dict[str, Any]) -> None:
+    candidate = _candidate(site_data)
+    contexts = [
+        ("0-0 vs RHB", "first_pitch_R"),
+        ("0-2 vs RHB", "ahead_R"),
+        ("1-1 vs RHB", "even_R"),
+        ("2-0 vs RHB", "behind_R"),
+        ("3-2 vs LHB", "full_L"),
+    ]
+    frames: list[Image.Image] = []
+    box = (820, 235, 1210, 635)
+
+    for label, key in contexts:
+        frame = _frame(candidate["samples"][key])
+        image, draw = _base_canvas()
+        draw.text((82, 82), "What The App Does", font=_font(56, bold=True), fill=INK)
+        draw.text((82, 148), "Move the context controls; the pitch envelope updates.", font=_font(26), fill=MUTED)
+        controls = [
+            ("Pitcher", "Tarik Skubal"),
+            ("Pitch", "FF"),
+            ("Context", label),
+            ("Samples", str(len(frame))),
+        ]
+        for index, (name, value) in enumerate(controls):
+            x = 82 + (index % 2) * 310
+            y = 240 + (index // 2) * 112
+            draw.rounded_rectangle((x, y, x + 270, y + 78), radius=18, fill=CREAM)
+            draw.text((x + 22, y + 14), name, font=_font(18), fill=MUTED)
+            draw.text((x + 22, y + 40), value, font=_font(26, bold=True), fill=INK)
+        draw.rounded_rectangle((82, 500, 670, 620), radius=22, fill=_blend(GREEN, CARD, 0.14))
+        draw.text((112, 528), "Real output from site/data.json", font=_font(26, bold=True), fill=GREEN)
+        draw.text(
+            (112, 568),
+            f"mean velo {frame['release_speed'].mean():.1f} mph  |  zone rate {_zone_rate(frame):.0%}",
+            font=_font(21),
+            fill=INK,
+        )
+        _draw_plate(draw, box, title=f"Generated cloud: {label}", subtitle="actual pre-sampled app payload")
+        _draw_points(draw, frame, box, color=_blend(GREEN, CARD, 0.55), outline=GREEN, radius=6)
+        frames.extend([image] * 12)
+    _save_gif(ASSET_DIR / "context-cloud-shift.gif", frames, duration=150)
+
+
+def build_model_architecture() -> None:
+    image, draw = _base_canvas()
+    draw.text((82, 82), "How The Model Learns A Pitcher's Style", font=_font(50, bold=True), fill=INK)
     draw.text(
         (82, 142),
-        "Every generated pitch is tied back to a real-data split and a validation layer.",
-        font=subtitle_font,
-        fill=(98, 91, 80),
+        "The generator samples pitch physics in layers instead of averaging every feature together.",
+        font=_font(25),
+        fill=MUTED,
     )
     steps = [
-        ("Real Statcast", "public pitch rows", (31, 122, 77)),
-        ("Feature layers", "release, spin, movement", (47, 111, 130)),
-        ("Generator suite", "factorized + drift models", (215, 165, 49)),
-        ("C2ST validator", "classifier realism test", (164, 61, 50)),
-        ("Rolling board", "future-game reliability", (180, 127, 26)),
-        ("Trajekt export", "sampled session JSON", (31, 122, 77)),
+        ("Real Statcast", "plate, release, spin, movement", GREEN),
+        ("Release state", "velocity + spin + geometry", BLUE),
+        ("Movement residual", "break around release", AMBER),
+        ("Trajectory residual", "vx/vy/vz + acceleration", RED),
+        ("Command cloud", "plate_x / plate_z", GREEN),
+        ("Trajekt JSON", "sampled session export", BLUE),
     ]
-    positions = [(88, 230), (520, 230), (952, 230), (88, 470), (520, 470), (952, 470)]
+    positions = [(78, 250), (500, 250), (922, 250), (922, 500), (500, 500), (78, 500)]
     for index, ((title, subtitle, color), (x, y)) in enumerate(zip(steps, positions, strict=True)):
-        draw.rounded_rectangle((x, y, x + 360, y + 142), radius=22, fill=(255, 250, 240), outline=ink, width=3)
-        draw.ellipse((x + 30, y + 30, x + 78, y + 78), fill=color)
-        draw.text((x + 45, y + 39), str(index + 1), font=number_font, fill=(255, 250, 240))
-        draw.text((x + 108, y + 42), title, font=step_title_font, fill=ink)
-        draw.text((x + 108, y + 86), subtitle, font=step_sub_font, fill=(98, 91, 80))
+        draw.rounded_rectangle((x, y, x + 310, y + 118), radius=22, fill=CREAM, outline=color, width=4)
+        draw.ellipse((x + 22, y + 22, x + 66, y + 66), fill=color)
+        draw.text((x + 36, y + 31), str(index + 1), font=_font(22, bold=True), fill=CREAM)
+        draw.text((x + 88, y + 30), title, font=_font(27, bold=True), fill=INK)
+        draw.text((x + 88, y + 70), subtitle, font=_font(18), fill=MUTED)
     arrows = [
-        ((452, 301), (512, 301)),
-        ((884, 301), (944, 301)),
-        ((1132, 376), (1132, 462)),
-        ((952, 541), (888, 541)),
-        ((520, 541), (456, 541)),
+        ((390, 309), (490, 309)),
+        ((812, 309), (912, 309)),
+        ((1077, 372), (1077, 488)),
+        ((922, 559), (820, 559)),
+        ((500, 559), (398, 559)),
     ]
     for start, end in arrows:
-        _draw_arrow(draw, start, end, ink)
-    image.save(ASSET_DIR / "pipeline.png", optimize=True)
+        _draw_arrow(draw, start, end, INK)
+    image.save(ASSET_DIR / "model-architecture.png", optimize=True)
+    build_excalidraw_architecture()
 
 
 def _draw_arrow(
@@ -455,97 +333,151 @@ def _draw_arrow(
     draw.polygon(points, fill=color)
 
 
-def build_rolling_gif() -> None:
-    width, height = 1120, 520
-    background = (247, 244, 236)
-    ink = (25, 24, 21)
-    green = (31, 122, 77)
-    amber = (180, 127, 26)
-    red = (164, 61, 50)
-    cream = (255, 250, 240)
-    title_font = _font(34, bold=True)
-    label_font = _font(18)
-    small_font = _font(15)
-    metric_font = _font(24, bold=True)
+def build_c2st_workflow() -> None:
+    image, draw = _base_canvas()
+    draw.text((82, 82), "How We Prove Realism", font=_font(56, bold=True), fill=INK)
+    draw.text(
+        (82, 148),
+        "A classifier two-sample test asks whether generated pitches are detectable.",
+        font=_font(26),
+        fill=MUTED,
+    )
+    steps = [
+        ("1", "Train", "early real pitches", GREEN),
+        ("2", "Generate", "synthetic samples", BLUE),
+        ("3", "Hold out", "later real pitches", AMBER),
+        ("4", "Classifier", "tries to spot fakes", RED),
+        ("5", "AUC", "0.533 best result", GREEN),
+    ]
+    for index, (number, title, subtitle, color) in enumerate(steps):
+        x = 82 + index * 255
+        y = 305
+        draw.rounded_rectangle((x, y, x + 210, y + 140), radius=22, fill=CREAM, outline=color, width=4)
+        draw.ellipse((x + 22, y + 24, x + 66, y + 68), fill=color)
+        draw.text((x + 37, y + 33), number, font=_font(22, bold=True), fill=CREAM)
+        draw.text((x + 24, y + 82), title, font=_font(28, bold=True), fill=INK)
+        draw.text((x + 24, y + 116), subtitle, font=_font(18), fill=MUTED)
+        if index < len(steps) - 1:
+            _draw_arrow(draw, (x + 220, y + 70), (x + 248, y + 70), INK)
+    draw.line((320, 575, 1080, 575), fill=LINE, width=12)
+    for value, color, label in [(0.50, GREEN, "ideal 0.50"), (0.60, AMBER, "target 0.60"), (1.00, RED, "obvious fake")]:
+        x = 320 + int(((value - 0.50) / 0.50) * 760)
+        draw.line((x, 550, x, 600), fill=color, width=5)
+        draw.text((x - 50, 614), label, font=_font(17, bold=True), fill=color)
+    auc = 0.533
+    x = 320 + int(((auc - 0.50) / 0.50) * 760)
+    draw.ellipse((x - 19, 556, x + 19, 594), fill=GREEN, outline=INK, width=3)
+    draw.text((x - 42, 512), f"{auc:.3f}", font=_font(28, bold=True), fill=INK)
+    image.save(ASSET_DIR / "c2st-validation-workflow.png", optimize=True)
+
+
+def build_layer_results() -> None:
+    report = _load_json(TOURNAMENT_REPORT_PATH)
+    order = [
+        ("command_representation", "command"),
+        ("movement_only", "movement"),
+        ("trajectory_only", "trajectory"),
+        ("release_only", "release"),
+        ("physics_core", "physics core"),
+    ]
+    rows = []
+    for layer, label in order:
+        model_name = report["best_by_layer"][layer]
+        result = report["layer_results"][layer][model_name]
+        rows.append((label, float(result["mean_auc"]), float(result["pass_rate"]), model_name))
+
+    image, draw = _base_canvas()
+    draw.text((82, 82), "Layer Validation Results", font=_font(56, bold=True), fill=INK)
+    draw.text(
+        (82, 148),
+        "Repeated-seed tournament on Skubal 2025 FF; lower C2ST AUC is better.",
+        font=_font(26),
+        fill=MUTED,
+    )
+    chart = (330, 245, 1160, 620)
+    x0, y0, x1, y1 = chart
+    draw.line((x0, y1, x1, y1), fill=INK, width=3)
+    draw.line((x0, y0, x0, y1), fill=INK, width=3)
+    for value, color, label in [(0.50, GREEN, "ideal"), (0.60, AMBER, "target")]:
+        x = x0 + int(((value - 0.48) / 0.22) * (x1 - x0))
+        draw.line((x, y0, x, y1), fill=color, width=3)
+        draw.text((x - 28, y0 - 32), label, font=_font(16, bold=True), fill=color)
+    bar_h = 48
+    for index, (label, auc, pass_rate, model_name) in enumerate(rows):
+        y = y0 + 35 + index * 68
+        draw.text((82, y + 9), label, font=_font(25, bold=True), fill=INK)
+        bar_x = x0
+        bar_w = int(((auc - 0.48) / 0.22) * (x1 - x0))
+        color = GREEN if auc <= 0.60 else AMBER
+        draw.rounded_rectangle((bar_x, y, bar_x + bar_w, y + bar_h), radius=12, fill=_blend(color, CARD, 0.22))
+        draw.text((bar_x + bar_w + 16, y + 9), f"{auc:.3f}", font=_font(24, bold=True), fill=INK)
+        draw.text((1168, y + 11), f"{pass_rate:.0%}", font=_font(21, bold=True), fill=color)
+    draw.text((1160, y0 - 32), "pass", font=_font(16, bold=True), fill=MUTED)
+    draw.rounded_rectangle((82, 650, 1318, 700), radius=18, fill=_blend(GREEN, CARD, 0.12))
+    draw.text(
+        (112, 662),
+        "This is the model evidence: command, movement, trajectory, release, and full physics are scored separately.",
+        font=_font(22, bold=True),
+        fill=GREEN,
+    )
+    image.save(ASSET_DIR / "layer-results.png", optimize=True)
+
+
+def build_rolling_folds() -> None:
+    board = _load_json(ROLLING_BOARD_PATH)
+    folds = board["folds"]
+    aucs = [float(fold["physics_core_mean_auc"]) for fold in folds]
     frames: list[Image.Image] = []
-    plot_left, plot_top, plot_right, plot_bottom = 80, 205, 1040, 405
+    width, height = 1400, 760
+    plot_left, plot_top, plot_right, plot_bottom = 110, 260, 1260, 585
     min_auc, max_auc = 0.55, 0.95
 
-    def xy(index: int, auc: float) -> tuple[float, float]:
-        x = plot_left + index * ((plot_right - plot_left) / (len(ROLLING_AUCS) - 1))
-        y = plot_bottom - ((auc - min_auc) / (max_auc - min_auc)) * (plot_bottom - plot_top)
+    def xy(index: int, auc: float) -> tuple[int, int]:
+        x = plot_left + int(index * ((plot_right - plot_left) / (len(aucs) - 1)))
+        y = plot_bottom - int(((auc - min_auc) / (max_auc - min_auc)) * (plot_bottom - plot_top))
         return x, y
 
-    for active in range(len(ROLLING_AUCS)):
-        image = Image.new("RGB", (width, height), background)
-        draw = ImageDraw.Draw(image)
-        draw.rounded_rectangle((28, 24, width - 28, height - 28), radius=24, fill=(255, 255, 255))
-        draw.text((58, 54), "Rolling Temporal Validation", font=title_font, fill=ink)
+    for active in range(len(folds)):
+        image, draw = _base_canvas(width, height)
+        draw.text((82, 82), "Future-Window Stress Test", font=_font(56, bold=True), fill=INK)
         draw.text(
-            (58, 98),
-            "Train on past games, test on the next future window. Lower AUC is better.",
-            font=label_font,
-            fill=(98, 91, 80),
+            (82, 148),
+            "Train on past games, then test the next unseen game window.",
+            font=_font(26),
+            fill=MUTED,
         )
-        draw.rounded_rectangle((820, 50, 1030, 116), radius=14, fill=(250, 242, 224))
-        draw.text((844, 67), f"Fold {active + 1}/10", font=metric_font, fill=ink)
-        draw.text((844, 96), f"AUC {ROLLING_AUCS[active]:.3f}", font=label_font, fill=red if ROLLING_AUCS[active] > 0.8 else amber)
-
-        for i in range(31):
-            x = 66 + i * 31
-            color = (216, 205, 184)
-            if i < 10 + active * 2:
-                color = green
-            if 10 + active * 2 <= i < 12 + active * 2:
-                color = amber
-            draw.rounded_rectangle((x, 138, x + 22, 158), radius=5, fill=color)
+        fold = folds[active]
+        draw.rounded_rectangle((935, 82, 1285, 170), radius=20, fill=CREAM)
+        draw.text((965, 104), f"Fold {fold['fold_index']}/10", font=_font(28, bold=True), fill=INK)
+        draw.text((965, 138), f"AUC {float(fold['physics_core_mean_auc']):.3f}", font=_font(24, bold=True), fill=AMBER)
+        draw.line((plot_left, plot_bottom, plot_right, plot_bottom), fill=INK, width=3)
+        draw.line((plot_left, plot_top, plot_left, plot_bottom), fill=INK, width=3)
+        for value, label, color in [(0.60, "fold target 0.60", GREEN), (0.80, "worst-fold ceiling 0.80", RED)]:
+            _, y = xy(0, value)
+            draw.line((plot_left, y, plot_right, y), fill=color, width=3)
+            draw.text((plot_right - 220, y - 28), label, font=_font(18, bold=True), fill=color)
+        points = [xy(i, auc) for i, auc in enumerate(aucs)]
+        for index in range(active):
+            draw.line((points[index], points[index + 1]), fill=INK, width=5)
+        for index, (x, y) in enumerate(points[: active + 1]):
+            auc = aucs[index]
+            color = GREEN if auc <= 0.60 else AMBER if auc < 0.80 else RED
+            radius = 10 if index != active else 16
+            draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=color, outline=INK, width=2)
+            draw.text((x - 10, plot_bottom + 18), str(index + 1), font=_font(16, bold=True), fill=MUTED)
+        draw.rounded_rectangle((110, 625, 1260, 690), radius=18, fill=CREAM)
         draw.text(
-            (66, 164),
-            "games 1-30: green=train, amber=test window",
-            font=small_font,
-            fill=(98, 91, 80),
+            (140, 645),
+            "Use this as the reliability frontier, not the headline result.",
+            font=_font(26, bold=True),
+            fill=INK,
         )
-
-        draw.line((plot_left, plot_bottom, plot_right, plot_bottom), fill=(45, 43, 38), width=2)
-        draw.line((plot_left, plot_top, plot_left, plot_bottom), fill=(45, 43, 38), width=2)
-        for value, label, color in [(0.60, "fold target 0.60", green), (0.80, "worst-fold ceiling 0.80", red)]:
-            y = xy(0, value)[1]
-            draw.line((plot_left, y, plot_right, y), fill=color, width=2)
-            draw.text((plot_right - 170, y - 24), label, font=small_font, fill=color)
-
-        points = [xy(i, auc) for i, auc in enumerate(ROLLING_AUCS)]
-        for i in range(active):
-            draw.line((points[i], points[i + 1]), fill=ink, width=4)
-        for i, (x, y) in enumerate(points[: active + 1]):
-            auc = ROLLING_AUCS[i]
-            color = green if auc <= 0.60 else amber if auc < 0.80 else red
-            radius = 8 if i != active else 13
-            draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=color, outline=ink, width=2)
-            draw.text((x - 12, plot_bottom + 14), str(i + 1), font=small_font, fill=(98, 91, 80))
-        draw.text((plot_left - 4, plot_top - 28), "C2ST AUC", font=label_font, fill=ink)
-        draw.text((plot_right - 70, plot_bottom + 44), "fold", font=label_font, fill=ink)
-
-        status = "passes fold target" if ROLLING_AUCS[active] <= 0.60 else "diagnostic fold"
-        draw.rounded_rectangle((58, 430, 1060, 474), radius=14, fill=cream, outline=(216, 205, 184))
-        draw.text(
-            (80, 442),
-            f"Status: rolling_diagnostic. Fold {active + 1} {status}; reliability means many future windows, not one lucky fold.",
-            font=label_font,
-            fill=ink,
-        )
-        frames.extend([image] * 7)
-    frames[0].save(
-        ASSET_DIR / "rolling-window-validation.gif",
-        save_all=True,
-        append_images=frames[1:],
-        duration=95,
-        loop=0,
-        optimize=True,
-    )
+        frames.extend([image] * 8)
+    _save_gif(ASSET_DIR / "rolling-folds.gif", frames, duration=120)
 
 
-def build_excalidraw() -> None:
-    def rect(element_id: str, x: int, y: int, w: int, h: int, text: str, color: str) -> list[dict]:
+def build_excalidraw_architecture() -> None:
+    def rect(element_id: str, x: int, y: int, w: int, h: int, text: str, color: str) -> list[dict[str, Any]]:
         box = {
             "id": element_id,
             "type": "rectangle",
@@ -610,150 +542,65 @@ def build_excalidraw() -> None:
         }
         return [box, label]
 
-    elements: list[dict] = []
+    elements: list[dict[str, Any]] = []
     cards = [
         ("statcast", 80, 120, "Real Statcast\npitch rows", "#dcefe5"),
-        ("features", 330, 120, "Layered\nfeatures", "#e5edf0"),
-        ("generator", 580, 120, "Factorized\nphysics generator", "#f4e6bd"),
-        ("validator", 830, 120, "C2ST\nvalidator", "#f0d3cd"),
-        ("rolling", 1080, 120, "Rolling\nstress test", "#f3dfbd"),
+        ("release", 330, 120, "Release state\nvelocity + spin", "#e5edf0"),
+        ("movement", 580, 120, "Movement\nresidual", "#f4e6bd"),
+        ("trajectory", 830, 120, "Trajectory\nresidual", "#f0d3cd"),
+        ("command", 1080, 120, "Command\ncloud", "#dcefe5"),
+        ("export", 580, 310, "Trajekt-shaped\nsession JSON", "#e5edf0"),
     ]
     for card in cards:
         elements.extend(rect(card[0], card[1], card[2], 180, 96, card[3], card[4]))
-    elements.extend(rect("export", 580, 310, 180, 96, "Trajekt-shaped\nsession JSON", "#dcefe5"))
-
-    for index in range(len(cards) - 1):
-        x1 = cards[index][1] + 184
-        x2 = cards[index + 1][1] - 12
-        y = 168
-        elements.append(
-            {
-                "id": f"arrow_{index}",
-                "type": "arrow",
-                "x": x1,
-                "y": y,
-                "width": x2 - x1,
-                "height": 0,
-                "angle": 0,
-                "strokeColor": "#191815",
-                "backgroundColor": "transparent",
-                "fillStyle": "solid",
-                "strokeWidth": 2,
-                "strokeStyle": "solid",
-                "roughness": 1,
-                "opacity": 100,
-                "groupIds": [],
-                "frameId": None,
-                "roundness": {"type": 2},
-                "seed": 1010 + index,
-                "version": 1,
-                "versionNonce": 2020 + index,
-                "isDeleted": False,
-                "boundElements": None,
-                "updated": 1,
-                "link": None,
-                "locked": False,
-                "points": [[0, 0], [x2 - x1, 0]],
-                "lastCommittedPoint": None,
-                "startBinding": None,
-                "endBinding": None,
-                "startArrowhead": None,
-                "endArrowhead": "arrow",
-            }
-        )
-    elements.append(
-        {
-            "id": "arrow_export",
-            "type": "arrow",
-            "x": 670,
-            "y": 220,
-            "width": 0,
-            "height": 88,
-            "angle": 0,
-            "strokeColor": "#191815",
-            "backgroundColor": "transparent",
-            "fillStyle": "solid",
-            "strokeWidth": 2,
-            "strokeStyle": "solid",
-            "roughness": 1,
-            "opacity": 100,
-            "groupIds": [],
-            "frameId": None,
-            "roundness": {"type": 2},
-            "seed": 4040,
-            "version": 1,
-            "versionNonce": 5050,
-            "isDeleted": False,
-            "boundElements": None,
-            "updated": 1,
-            "link": None,
-            "locked": False,
-            "points": [[0, 0], [0, 88]],
-            "lastCommittedPoint": None,
-            "startBinding": None,
-            "endBinding": None,
-            "startArrowhead": None,
-            "endArrowhead": "arrow",
-        }
-    )
-    elements.extend(rect("note", 80, 310, 370, 96, "The point is reliability:\nrolling validation is the truth test.", "#fffaf0"))
-
     payload = {
         "type": "excalidraw",
         "version": 2,
         "source": "https://excalidraw.com",
         "elements": elements,
-        "appState": {
-            "gridSize": None,
-            "viewBackgroundColor": "#f7f4ec",
-            "currentItemFontFamily": 1,
-        },
+        "appState": {"gridSize": None, "viewBackgroundColor": "#f7f4ec", "currentItemFontFamily": 1},
         "files": {},
     }
-    (ASSET_DIR / "pitcher-twin-architecture.excalidraw").write_text(
-        json.dumps(payload, indent=2),
-        encoding="utf-8",
-    )
+    (ASSET_DIR / "model-architecture.excalidraw").write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
-def build_prompt_note() -> None:
-    note = """# README Visual Assets
+def build_asset_readme() -> None:
+    note = """# README Evidence Visual Assets
 
-Generated and deterministic assets used by the README.
+All displayed README visuals are generated from tracked project artifacts.
 
-## `hero-pitcher-twin.png`
+## Data Sources
 
-Built with the built-in image generation tool.
+- `site/data.json`: real holdout rows and generated app samples.
+- `outputs/validation_board_skubal_2025_top3/leaderboard.csv`: best validated result.
+- `outputs/model_tournament_skubal_2025_ff/model_tournament_report.json`: layer AUCs.
+- `outputs/rolling_validation_skubal_2025_ff/rolling_validation_board.json`: rolling fold AUCs.
 
-Prompt summary:
+## Displayed Assets
 
-> Cinematic README hero image for a baseball ML project that models pitcher variability as probability clouds, with a baseball in motion, translucent trajectory envelopes, subtle strike-zone/data overlays, charcoal/emerald/amber/red palette, no text, no logos, no real player likeness.
-
-## Deterministic Assets
-
-- `best-validated-result.gif`: results-first animation for the top of the README.
-- `pitch-cloud-generator.gif`: animated conditional generator explanation.
-- `factorized-physics-chain.gif`: animated model-structure explanation.
-- `c2st-validator.gif`: animated validation explanation.
-- `pipeline.png`: model/data flow overview used by README.
-- `pipeline.svg`: editable SVG source for the pipeline.
-- `rolling-window-validation.gif`: animated rolling-window validation explanation.
-- `pitcher-twin-architecture.excalidraw`: editable architecture source.
+- `best-result-summary.png`: top-line Skubal FF validation summary.
+- `real-vs-generated-cloud.gif`: real held-out Skubal FF vs generated samples.
+- `context-cloud-shift.gif`: actual pre-sampled app contexts from `site/data.json`.
+- `model-architecture.png`: factorized model structure.
+- `c2st-validation-workflow.png`: classifier two-sample validation flow.
+- `layer-results.png`: real repeated-seed tournament layer results.
+- `rolling-folds.gif`: real rolling future-window stress test.
+- `model-architecture.excalidraw`: editable architecture source.
 """
-    _write(ASSET_DIR / "README.md", note)
+    (ASSET_DIR / "README.md").write_text(note, encoding="utf-8")
 
 
 def main() -> int:
     ASSET_DIR.mkdir(parents=True, exist_ok=True)
-    build_best_results_gif()
-    build_pitch_cloud_generator_gif()
-    build_factorized_chain_gif()
-    build_c2st_validator_gif()
-    build_pipeline_svg()
-    build_pipeline_png()
-    build_rolling_gif()
-    build_excalidraw()
-    build_prompt_note()
+    site_data = _load_json(SITE_DATA_PATH)
+    build_best_result_summary()
+    build_real_vs_generated_cloud(site_data)
+    build_context_cloud_shift(site_data)
+    build_model_architecture()
+    build_c2st_workflow()
+    build_layer_results()
+    build_rolling_folds()
+    build_asset_readme()
     return 0
 
 
