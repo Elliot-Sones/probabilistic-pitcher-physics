@@ -2,7 +2,7 @@
 
 **A real pitcher doesn't throw one fastball — they throw a cloud of them, shaped by count, inning, batter, fatigue, score, and the simple fact that no human releases the ball the same way twice.** Pitcher Twin learns that cloud from public Statcast and generates pitches a classifier struggles to tell apart from real held-out ones.
 
-> **Live demo:** _link goes here once Streamlit Cloud deploy is wired up_ &nbsp;·&nbsp; **Local run:** `streamlit run app/streamlit_app.py`
+> **🔗 Live demo:** **[pitcher-twin.vercel.app](https://pitcher-twin.vercel.app)** &nbsp;·&nbsp; **Interactive Streamlit:** `streamlit run app/streamlit_app.py`
 
 ---
 
