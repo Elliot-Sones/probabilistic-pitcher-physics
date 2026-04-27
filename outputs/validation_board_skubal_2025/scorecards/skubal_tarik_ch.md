@@ -1,0 +1,46 @@
+# Pitcher Twin Scorecard: Skubal, Tarik CH
+
+## Verdict
+
+- Artifact status: `physics_core_diagnostic`
+- Best physics-core model: `factorized_trend_state_anchored`
+- Physics-core C2ST AUC: `0.680`
+- Physics-core pass rate: `0.00`
+- Target: C2ST AUC <= `0.600` and pass rate >= `0.80`
+
+C2ST AUC is the held-out classifier two-sample score. Lower is better; `0.50` means the classifier cannot reliably distinguish real held-out pitches from generated pitches.
+
+## Data
+
+- Pitcher id: `669373`
+- Pitch count: `895`
+- Games: `31`
+- Temporal train rows: `626`
+- Temporal holdout rows: `269`
+- Repeats: `3`
+
+## Layer Results
+
+| Layer | Status | Best model | Mean AUC | Pass rate |
+|---|---|---|---:|---:|
+| command_representation | validated | factorized_release_state_anchored | 0.518 | 1.00 |
+| movement_only | validated | factorized_trend_state_anchored | 0.506 | 1.00 |
+| release_only | diagnostic | factorized_trend_state_anchored | 0.668 | 0.00 |
+| trajectory_only | validated | factorized_release_state_anchored | 0.541 | 1.00 |
+| physics_core | diagnostic | factorized_trend_state_anchored | 0.680 | 0.00 |
+
+## Main Classifier Clues
+
+- `spin_axis_sin` importance `0.682`
+- `release_pos_y` importance `0.423`
+- `spin_axis_cos` importance `0.400`
+- `release_extension` importance `0.250`
+- `release_pos_x` importance `0.195`
+
+## Rolling Temporal Windows
+
+| Window | Train games | Holdout games | Best model | Physics AUC | Pass rate | Status |
+|---:|---:|---:|---|---:|---:|---|
+| 1 | 4 | 2 | factorized_trend_state_anchored | 0.645 | 0.00 | physics_core_diagnostic |
+| 2 | 5 | 2 | factorized_short_memory_wide_residual | 0.581 | 1.00 | validated_temporal_success |
+| 3 | 6 | 2 | pca_latent_residual | 0.616 | 0.00 | physics_core_diagnostic |

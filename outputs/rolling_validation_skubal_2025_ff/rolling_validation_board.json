@@ -1,0 +1,1269 @@
+{
+  "model_name": "rolling_temporal_validation_board",
+  "pitcher_name": "Skubal, Tarik",
+  "pitch_type": "FF",
+  "initial_train_games": 10,
+  "test_games": 2,
+  "step_games": 2,
+  "repeat_count": 4,
+  "target_auc": 0.6,
+  "target_pass_rate": 0.8,
+  "fold_count": 10,
+  "folds": [
+    {
+      "fold_index": 1,
+      "train_game_range": "1-10",
+      "test_game_range": "11-12",
+      "train_game_pks": [
+        778546,
+        778469,
+        778403,
+        778323,
+        778246,
+        778155,
+        778085,
+        777996,
+        777927,
+        777840
+      ],
+      "test_game_pks": [
+        777780,
+        777694
+      ],
+      "train_rows": 259,
+      "holdout_rows": 47,
+      "best_physics_core_model": "factorized_release_state_anchored",
+      "physics_core_mean_auc": 0.5933333333333333,
+      "physics_core_pass_rate": 0.5,
+      "candidate_default": false,
+      "layer_scoreboard": [
+        {
+          "layer": "command_representation",
+          "best_model": "factorized_pitch_family_release_spin",
+          "mean_auc": 0.5744444444444444,
+          "pass_rate": 0.75,
+          "std_auc": 0.055898938791579
+        },
+        {
+          "layer": "movement_only",
+          "best_model": "factorized_recent_state_anchored",
+          "mean_auc": 0.5322222222222223,
+          "pass_rate": 1.0,
+          "std_auc": 0.03749897117930269
+        },
+        {
+          "layer": "release_only",
+          "best_model": "factorized_trend_state_anchored",
+          "mean_auc": 0.6311111111111111,
+          "pass_rate": 0.5,
+          "std_auc": 0.048074017006186534
+        },
+        {
+          "layer": "trajectory_only",
+          "best_model": "factorized_release_state_anchored",
+          "mean_auc": 0.5266666666666666,
+          "pass_rate": 1.0,
+          "std_auc": 0.020245407953654038
+        },
+        {
+          "layer": "physics_core",
+          "best_model": "factorized_release_state_anchored",
+          "mean_auc": 0.5933333333333333,
+          "pass_rate": 0.5,
+          "std_auc": 0.04954110402135103
+        }
+      ],
+      "failure_count": 3
+    },
+    {
+      "fold_index": 2,
+      "train_game_range": "1-12",
+      "test_game_range": "13-14",
+      "train_game_pks": [
+        778546,
+        778469,
+        778403,
+        778323,
+        778246,
+        778155,
+        778085,
+        777996,
+        777927,
+        777840,
+        777780,
+        777694
+      ],
+      "test_game_pks": [
+        777626,
+        777540
+      ],
+      "train_rows": 306,
+      "holdout_rows": 43,
+      "best_physics_core_model": "factorized_short_memory_more_uncertain",
+      "physics_core_mean_auc": 0.6020710059171598,
+      "physics_core_pass_rate": 0.5,
+      "candidate_default": false,
+      "layer_scoreboard": [
+        {
+          "layer": "command_representation",
+          "best_model": "factorized_release_game_drift_gaussian",
+          "mean_auc": 0.569526627218935,
+          "pass_rate": 0.5,
+          "std_auc": 0.049218357276964865
+        },
+        {
+          "layer": "movement_only",
+          "best_model": "factorized_short_memory_more_uncertain",
+          "mean_auc": 0.5355029585798816,
+          "pass_rate": 1.0,
+          "std_auc": 0.018944154548617902
+        },
+        {
+          "layer": "release_only",
+          "best_model": "factorized_physics_constrained_state",
+          "mean_auc": 0.5576923076923077,
+          "pass_rate": 0.75,
+          "std_auc": 0.037974845127199494
+        },
+        {
+          "layer": "trajectory_only",
+          "best_model": "factorized_short_memory_more_uncertain",
+          "mean_auc": 0.5710059171597633,
+          "pass_rate": 0.75,
+          "std_auc": 0.04834359360463959
+        },
+        {
+          "layer": "physics_core",
+          "best_model": "factorized_short_memory_more_uncertain",
+          "mean_auc": 0.6020710059171598,
+          "pass_rate": 0.5,
+          "std_auc": 0.09141724589041646
+        }
+      ],
+      "failure_count": 4
+    },
+    {
+      "fold_index": 3,
+      "train_game_range": "1-14",
+      "test_game_range": "15-16",
+      "train_game_pks": [
+        778546,
+        778469,
+        778403,
+        778323,
+        778246,
+        778155,
+        778085,
+        777996,
+        777927,
+        777840,
+        777780,
+        777694,
+        777626,
+        777540
+      ],
+      "test_game_pks": [
+        777451,
+        777386
+      ],
+      "train_rows": 349,
+      "holdout_rows": 44,
+      "best_physics_core_model": "factorized_release_state_anchored",
+      "physics_core_mean_auc": 0.9285714285714286,
+      "physics_core_pass_rate": 0.0,
+      "candidate_default": false,
+      "layer_scoreboard": [
+        {
+          "layer": "command_representation",
+          "best_model": "factorized_pitch_family_release_spin",
+          "mean_auc": 0.5369897959183674,
+          "pass_rate": 0.75,
+          "std_auc": 0.03875116717082478
+        },
+        {
+          "layer": "movement_only",
+          "best_model": "factorized_short_memory_more_uncertain",
+          "mean_auc": 0.5548469387755103,
+          "pass_rate": 1.0,
+          "std_auc": 0.03720906159646638
+        },
+        {
+          "layer": "release_only",
+          "best_model": "derived_joint_gaussian",
+          "mean_auc": 0.9349489795918368,
+          "pass_rate": 0.0,
+          "std_auc": 0.08949501706780483
+        },
+        {
+          "layer": "trajectory_only",
+          "best_model": "factorized_release_state_anchored",
+          "mean_auc": 0.5408163265306122,
+          "pass_rate": 1.0,
+          "std_auc": 0.03589603897824049
+        },
+        {
+          "layer": "physics_core",
+          "best_model": "factorized_release_state_anchored",
+          "mean_auc": 0.9285714285714286,
+          "pass_rate": 0.0,
+          "std_auc": 0.05623828491083825
+        }
+      ],
+      "failure_count": 3
+    },
+    {
+      "fold_index": 4,
+      "train_game_range": "1-16",
+      "test_game_range": "17-18",
+      "train_game_pks": [
+        778546,
+        778469,
+        778403,
+        778323,
+        778246,
+        778155,
+        778085,
+        777996,
+        777927,
+        777840,
+        777780,
+        777694,
+        777626,
+        777540,
+        777451,
+        777386
+      ],
+      "test_game_pks": [
+        777314,
+        777226
+      ],
+      "train_rows": 393,
+      "holdout_rows": 48,
+      "best_physics_core_model": "factorized_trend_state_anchored",
+      "physics_core_mean_auc": 0.638888888888889,
+      "physics_core_pass_rate": 0.5,
+      "candidate_default": false,
+      "layer_scoreboard": [
+        {
+          "layer": "command_representation",
+          "best_model": "factorized_trend_state_anchored",
+          "mean_auc": 0.53,
+          "pass_rate": 1.0,
+          "std_auc": 0.015194215923530386
+        },
+        {
+          "layer": "movement_only",
+          "best_model": "factorized_physics_constrained_state",
+          "mean_auc": 0.5288888888888889,
+          "pass_rate": 1.0,
+          "std_auc": 0.0261052002766016
+        },
+        {
+          "layer": "release_only",
+          "best_model": "factorized_release_recent_gaussian",
+          "mean_auc": 0.5833333333333333,
+          "pass_rate": 0.5,
+          "std_auc": 0.04717971943458258
+        },
+        {
+          "layer": "trajectory_only",
+          "best_model": "factorized_physics_constrained_state",
+          "mean_auc": 0.538888888888889,
+          "pass_rate": 1.0,
+          "std_auc": 0.0214015114269536
+        },
+        {
+          "layer": "physics_core",
+          "best_model": "factorized_trend_state_anchored",
+          "mean_auc": 0.638888888888889,
+          "pass_rate": 0.5,
+          "std_auc": 0.052716338507895366
+        }
+      ],
+      "failure_count": 2
+    },
+    {
+      "fold_index": 5,
+      "train_game_range": "1-18",
+      "test_game_range": "19-20",
+      "train_game_pks": [
+        778546,
+        778469,
+        778403,
+        778323,
+        778246,
+        778155,
+        778085,
+        777996,
+        777927,
+        777840,
+        777780,
+        777694,
+        777626,
+        777540,
+        777451,
+        777386,
+        777314,
+        777226
+      ],
+      "test_game_pks": [
+        777161,
+        777073
+      ],
+      "train_rows": 441,
+      "holdout_rows": 57,
+      "best_physics_core_model": "factorized_trend_state_anchored",
+      "physics_core_mean_auc": 0.6080246913580247,
+      "physics_core_pass_rate": 0.5,
+      "candidate_default": false,
+      "layer_scoreboard": [
+        {
+          "layer": "command_representation",
+          "best_model": "factorized_release_game_drift_copula",
+          "mean_auc": 0.5416666666666667,
+          "pass_rate": 1.0,
+          "std_auc": 0.03783225516089894
+        },
+        {
+          "layer": "movement_only",
+          "best_model": "factorized_release_state_anchored",
+          "mean_auc": 0.5416666666666666,
+          "pass_rate": 1.0,
+          "std_auc": 0.013364589564574689
+        },
+        {
+          "layer": "release_only",
+          "best_model": "factorized_trend_state_anchored",
+          "mean_auc": 0.6080246913580247,
+          "pass_rate": 0.25,
+          "std_auc": 0.022993309298998964
+        },
+        {
+          "layer": "trajectory_only",
+          "best_model": "factorized_trend_state_anchored",
+          "mean_auc": 0.5324074074074074,
+          "pass_rate": 1.0,
+          "std_auc": 0.03858024691358024
+        },
+        {
+          "layer": "physics_core",
+          "best_model": "factorized_trend_state_anchored",
+          "mean_auc": 0.6080246913580247,
+          "pass_rate": 0.5,
+          "std_auc": 0.06485154749830459
+        }
+      ],
+      "failure_count": 2
+    },
+    {
+      "fold_index": 6,
+      "train_game_range": "1-20",
+      "test_game_range": "21-22",
+      "train_game_pks": [
+        778546,
+        778469,
+        778403,
+        778323,
+        778246,
+        778155,
+        778085,
+        777996,
+        777927,
+        777840,
+        777780,
+        777694,
+        777626,
+        777540,
+        777451,
+        777386,
+        777314,
+        777226,
+        777161,
+        777073
+      ],
+      "test_game_pks": [
+        777003,
+        776912
+      ],
+      "train_rows": 498,
+      "holdout_rows": 59,
+      "best_physics_core_model": "context_neighbor_residual",
+      "physics_core_mean_auc": 0.6628086419753086,
+      "physics_core_pass_rate": 0.25,
+      "candidate_default": false,
+      "layer_scoreboard": [
+        {
+          "layer": "command_representation",
+          "best_model": "pca_latent_residual",
+          "mean_auc": 0.5424382716049383,
+          "pass_rate": 1.0,
+          "std_auc": 0.009355212695202276
+        },
+        {
+          "layer": "movement_only",
+          "best_model": "context_neighbor_residual",
+          "mean_auc": 0.533179012345679,
+          "pass_rate": 1.0,
+          "std_auc": 0.010993678124054797
+        },
+        {
+          "layer": "release_only",
+          "best_model": "context_neighbor_residual",
+          "mean_auc": 0.6929012345679013,
+          "pass_rate": 0.0,
+          "std_auc": 0.09180477603540649
+        },
+        {
+          "layer": "trajectory_only",
+          "best_model": "factorized_short_memory_wide_residual",
+          "mean_auc": 0.5648148148148148,
+          "pass_rate": 0.75,
+          "std_auc": 0.05753503667378778
+        },
+        {
+          "layer": "physics_core",
+          "best_model": "context_neighbor_residual",
+          "mean_auc": 0.6628086419753086,
+          "pass_rate": 0.25,
+          "std_auc": 0.09488858590848014
+        }
+      ],
+      "failure_count": 3
+    },
+    {
+      "fold_index": 7,
+      "train_game_range": "1-22",
+      "test_game_range": "23-24",
+      "train_game_pks": [
+        778546,
+        778469,
+        778403,
+        778323,
+        778246,
+        778155,
+        778085,
+        777996,
+        777927,
+        777840,
+        777780,
+        777694,
+        777626,
+        777540,
+        777451,
+        777386,
+        777314,
+        777226,
+        777161,
+        777073,
+        777003,
+        776912
+      ],
+      "test_game_pks": [
+        776832,
+        776744
+      ],
+      "train_rows": 557,
+      "holdout_rows": 73,
+      "best_physics_core_model": "factorized_trend_state_anchored",
+      "physics_core_mean_auc": 0.7252066115702479,
+      "physics_core_pass_rate": 0.0,
+      "candidate_default": false,
+      "layer_scoreboard": [
+        {
+          "layer": "command_representation",
+          "best_model": "factorized_release_state_anchored",
+          "mean_auc": 0.5216942148760331,
+          "pass_rate": 1.0,
+          "std_auc": 0.009411604937132523
+        },
+        {
+          "layer": "movement_only",
+          "best_model": "factorized_trend_state_anchored",
+          "mean_auc": 0.5118801652892563,
+          "pass_rate": 1.0,
+          "std_auc": 0.007782292961425308
+        },
+        {
+          "layer": "release_only",
+          "best_model": "factorized_release_recent_gaussian",
+          "mean_auc": 0.6601239669421488,
+          "pass_rate": 0.0,
+          "std_auc": 0.05083022562042373
+        },
+        {
+          "layer": "trajectory_only",
+          "best_model": "factorized_trend_state_anchored",
+          "mean_auc": 0.5361570247933884,
+          "pass_rate": 1.0,
+          "std_auc": 0.015564585922850573
+        },
+        {
+          "layer": "physics_core",
+          "best_model": "factorized_trend_state_anchored",
+          "mean_auc": 0.7252066115702479,
+          "pass_rate": 0.0,
+          "std_auc": 0.06687005096149694
+        }
+      ],
+      "failure_count": 2
+    },
+    {
+      "fold_index": 8,
+      "train_game_range": "1-24",
+      "test_game_range": "25-26",
+      "train_game_pks": [
+        778546,
+        778469,
+        778403,
+        778323,
+        778246,
+        778155,
+        778085,
+        777996,
+        777927,
+        777840,
+        777780,
+        777694,
+        777626,
+        777540,
+        777451,
+        777386,
+        777314,
+        777226,
+        777161,
+        777073,
+        777003,
+        776912,
+        776832,
+        776744
+      ],
+      "test_game_pks": [
+        776685,
+        776590
+      ],
+      "train_rows": 630,
+      "holdout_rows": 63,
+      "best_physics_core_model": "conditional_state_mixture_residual",
+      "physics_core_mean_auc": 0.7929362880886428,
+      "physics_core_pass_rate": 0.0,
+      "candidate_default": false,
+      "layer_scoreboard": [
+        {
+          "layer": "command_representation",
+          "best_model": "factorized_recent_state_anchored",
+          "mean_auc": 0.5373961218836565,
+          "pass_rate": 1.0,
+          "std_auc": 0.03248210359988521
+        },
+        {
+          "layer": "movement_only",
+          "best_model": "factorized_physics_constrained_state",
+          "mean_auc": 0.5491689750692521,
+          "pass_rate": 0.75,
+          "std_auc": 0.04791423079936264
+        },
+        {
+          "layer": "release_only",
+          "best_model": "context_neighbor_residual",
+          "mean_auc": 0.7222991689750693,
+          "pass_rate": 0.0,
+          "std_auc": 0.041798663194799385
+        },
+        {
+          "layer": "trajectory_only",
+          "best_model": "pca_latent_residual",
+          "mean_auc": 0.5408587257617729,
+          "pass_rate": 1.0,
+          "std_auc": 0.02786481930572122
+        },
+        {
+          "layer": "physics_core",
+          "best_model": "conditional_state_mixture_residual",
+          "mean_auc": 0.7929362880886428,
+          "pass_rate": 0.0,
+          "std_auc": 0.03467448134936299
+        }
+      ],
+      "failure_count": 3
+    },
+    {
+      "fold_index": 9,
+      "train_game_range": "1-26",
+      "test_game_range": "27-28",
+      "train_game_pks": [
+        778546,
+        778469,
+        778403,
+        778323,
+        778246,
+        778155,
+        778085,
+        777996,
+        777927,
+        777840,
+        777780,
+        777694,
+        777626,
+        777540,
+        777451,
+        777386,
+        777314,
+        777226,
+        777161,
+        777073,
+        777003,
+        776912,
+        776832,
+        776744,
+        776685,
+        776590
+      ],
+      "test_game_pks": [
+        776512,
+        776435
+      ],
+      "train_rows": 693,
+      "holdout_rows": 73,
+      "best_physics_core_model": "factorized_trend_state_anchored",
+      "physics_core_mean_auc": 0.765495867768595,
+      "physics_core_pass_rate": 0.0,
+      "candidate_default": false,
+      "layer_scoreboard": [
+        {
+          "layer": "command_representation",
+          "best_model": "context_neighbor_residual",
+          "mean_auc": 0.5237603305785123,
+          "pass_rate": 1.0,
+          "std_auc": 0.008581222998882337
+        },
+        {
+          "layer": "movement_only",
+          "best_model": "factorized_short_memory_more_uncertain",
+          "mean_auc": 0.5449380165289257,
+          "pass_rate": 1.0,
+          "std_auc": 0.007503016036329553
+        },
+        {
+          "layer": "release_only",
+          "best_model": "context_neighbor_residual",
+          "mean_auc": 0.78099173553719,
+          "pass_rate": 0.0,
+          "std_auc": 0.06071357543353354
+        },
+        {
+          "layer": "trajectory_only",
+          "best_model": "factorized_pitch_family_release_spin",
+          "mean_auc": 0.5898760330578512,
+          "pass_rate": 0.5,
+          "std_auc": 0.051476973154136345
+        },
+        {
+          "layer": "physics_core",
+          "best_model": "factorized_trend_state_anchored",
+          "mean_auc": 0.765495867768595,
+          "pass_rate": 0.0,
+          "std_auc": 0.02711653873637744
+        }
+      ],
+      "failure_count": 3
+    },
+    {
+      "fold_index": 10,
+      "train_game_range": "1-28",
+      "test_game_range": "29-30",
+      "train_game_pks": [
+        778546,
+        778469,
+        778403,
+        778323,
+        778246,
+        778155,
+        778085,
+        777996,
+        777927,
+        777840,
+        777780,
+        777694,
+        777626,
+        777540,
+        777451,
+        777386,
+        777314,
+        777226,
+        777161,
+        777073,
+        777003,
+        776912,
+        776832,
+        776744,
+        776685,
+        776590,
+        776512,
+        776435
+      ],
+      "test_game_pks": [
+        776366,
+        776275
+      ],
+      "train_rows": 766,
+      "holdout_rows": 39,
+      "best_physics_core_model": "factorized_pitch_family_release_spin",
+      "physics_core_mean_auc": 0.701388888888889,
+      "physics_core_pass_rate": 0.0,
+      "candidate_default": false,
+      "layer_scoreboard": [
+        {
+          "layer": "command_representation",
+          "best_model": "factorized_short_memory_wide_residual",
+          "mean_auc": 0.5434027777777778,
+          "pass_rate": 1.0,
+          "std_auc": 0.028790145749612864
+        },
+        {
+          "layer": "movement_only",
+          "best_model": "factorized_short_memory_more_uncertain",
+          "mean_auc": 0.5572916666666666,
+          "pass_rate": 0.75,
+          "std_auc": 0.07923592852252796
+        },
+        {
+          "layer": "release_only",
+          "best_model": "factorized_recent_state_anchored",
+          "mean_auc": 0.7743055555555556,
+          "pass_rate": 0.0,
+          "std_auc": 0.06741836055190135
+        },
+        {
+          "layer": "trajectory_only",
+          "best_model": "factorized_trend_state_anchored",
+          "mean_auc": 0.6423611111111112,
+          "pass_rate": 0.25,
+          "std_auc": 0.10306126444205436
+        },
+        {
+          "layer": "physics_core",
+          "best_model": "factorized_pitch_family_release_spin",
+          "mean_auc": 0.701388888888889,
+          "pass_rate": 0.0,
+          "std_auc": 0.09094306148408886
+        }
+      ],
+      "failure_count": 4
+    }
+  ],
+  "failure_explanations": [
+    {
+      "fold_index": 1,
+      "pitch_type": "FF",
+      "layer": "command_representation",
+      "model": "factorized_pitch_family_release_spin",
+      "mean_auc": 0.5744444444444444,
+      "pass_rate": 0.75,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "plate_z + plate_x",
+      "primary_mode": "command/location",
+      "categories": [
+        "command/location"
+      ]
+    },
+    {
+      "fold_index": 1,
+      "pitch_type": "FF",
+      "layer": "release_only",
+      "model": "factorized_trend_state_anchored",
+      "mean_auc": 0.6311111111111111,
+      "pass_rate": 0.5,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_spin_rate + release_speed + release_pos_z + spin_axis_cos + release_pos_x",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature"
+      ]
+    },
+    {
+      "fold_index": 1,
+      "pitch_type": "FF",
+      "layer": "physics_core",
+      "model": "factorized_release_state_anchored",
+      "mean_auc": 0.5933333333333333,
+      "pass_rate": 0.5,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_pos_z + release_pos_x + spin_axis_sin + release_extension + az",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature",
+        "trajectory/acceleration"
+      ]
+    },
+    {
+      "fold_index": 2,
+      "pitch_type": "FF",
+      "layer": "command_representation",
+      "model": "factorized_release_game_drift_gaussian",
+      "mean_auc": 0.569526627218935,
+      "pass_rate": 0.5,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "plate_z + plate_x",
+      "primary_mode": "command/location",
+      "categories": [
+        "command/location"
+      ]
+    },
+    {
+      "fold_index": 2,
+      "pitch_type": "FF",
+      "layer": "release_only",
+      "model": "factorized_physics_constrained_state",
+      "mean_auc": 0.5576923076923077,
+      "pass_rate": 0.75,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_extension + release_pos_x + release_pos_z + spin_axis_cos + release_spin_rate",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature"
+      ]
+    },
+    {
+      "fold_index": 2,
+      "pitch_type": "FF",
+      "layer": "trajectory_only",
+      "model": "factorized_short_memory_more_uncertain",
+      "mean_auc": 0.5710059171597633,
+      "pass_rate": 0.75,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "vz0 + ay + az + ax + vx0",
+      "primary_mode": "trajectory/acceleration",
+      "categories": [
+        "trajectory/acceleration"
+      ]
+    },
+    {
+      "fold_index": 2,
+      "pitch_type": "FF",
+      "layer": "physics_core",
+      "model": "factorized_short_memory_more_uncertain",
+      "mean_auc": 0.6020710059171598,
+      "pass_rate": 0.5,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_spin_rate + release_extension + release_pos_x + vy0 + ay",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature",
+        "trajectory/acceleration"
+      ]
+    },
+    {
+      "fold_index": 3,
+      "pitch_type": "FF",
+      "layer": "command_representation",
+      "model": "factorized_pitch_family_release_spin",
+      "mean_auc": 0.5369897959183674,
+      "pass_rate": 0.75,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "plate_z + plate_x",
+      "primary_mode": "command/location",
+      "categories": [
+        "command/location"
+      ]
+    },
+    {
+      "fold_index": 3,
+      "pitch_type": "FF",
+      "layer": "release_only",
+      "model": "derived_joint_gaussian",
+      "mean_auc": 0.9349489795918368,
+      "pass_rate": 0.0,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_pos_z + release_speed + release_pos_x + release_spin_rate + release_pos_y",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature"
+      ]
+    },
+    {
+      "fold_index": 3,
+      "pitch_type": "FF",
+      "layer": "physics_core",
+      "model": "factorized_release_state_anchored",
+      "mean_auc": 0.9285714285714286,
+      "pass_rate": 0.0,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_pos_z + release_pos_y + ay + release_extension + release_pos_x",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature",
+        "trajectory/acceleration"
+      ]
+    },
+    {
+      "fold_index": 4,
+      "pitch_type": "FF",
+      "layer": "release_only",
+      "model": "factorized_release_recent_gaussian",
+      "mean_auc": 0.5833333333333333,
+      "pass_rate": 0.5,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "spin_axis_cos + release_pos_z + release_extension + release_spin_rate + release_speed",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature"
+      ]
+    },
+    {
+      "fold_index": 4,
+      "pitch_type": "FF",
+      "layer": "physics_core",
+      "model": "factorized_trend_state_anchored",
+      "mean_auc": 0.638888888888889,
+      "pass_rate": 0.5,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_pos_z + release_spin_rate + release_pos_x + release_pos_y + vy0",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature",
+        "trajectory/acceleration"
+      ]
+    },
+    {
+      "fold_index": 5,
+      "pitch_type": "FF",
+      "layer": "release_only",
+      "model": "factorized_trend_state_anchored",
+      "mean_auc": 0.6080246913580247,
+      "pass_rate": 0.25,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_pos_z + release_speed + spin_axis_cos + spin_axis_sin + release_pos_x",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature"
+      ]
+    },
+    {
+      "fold_index": 5,
+      "pitch_type": "FF",
+      "layer": "physics_core",
+      "model": "factorized_trend_state_anchored",
+      "mean_auc": 0.6080246913580247,
+      "pass_rate": 0.5,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_pos_z + vy0 + release_speed + release_extension + pfx_z",
+      "primary_mode": "acceleration/movement consistency",
+      "categories": [
+        "release/spin signature",
+        "trajectory/acceleration",
+        "movement"
+      ]
+    },
+    {
+      "fold_index": 6,
+      "pitch_type": "FF",
+      "layer": "release_only",
+      "model": "context_neighbor_residual",
+      "mean_auc": 0.6929012345679013,
+      "pass_rate": 0.0,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_pos_z + release_pos_x + release_spin_rate + release_speed + release_pos_y",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature"
+      ]
+    },
+    {
+      "fold_index": 6,
+      "pitch_type": "FF",
+      "layer": "trajectory_only",
+      "model": "factorized_short_memory_wide_residual",
+      "mean_auc": 0.5648148148148148,
+      "pass_rate": 0.75,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "vx0 + ax + vy0 + ay + az",
+      "primary_mode": "trajectory/acceleration",
+      "categories": [
+        "trajectory/acceleration"
+      ]
+    },
+    {
+      "fold_index": 6,
+      "pitch_type": "FF",
+      "layer": "physics_core",
+      "model": "context_neighbor_residual",
+      "mean_auc": 0.6628086419753086,
+      "pass_rate": 0.25,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_pos_x + release_pos_z + release_spin_rate + az + pfx_z",
+      "primary_mode": "acceleration/movement consistency",
+      "categories": [
+        "release/spin signature",
+        "trajectory/acceleration",
+        "movement"
+      ]
+    },
+    {
+      "fold_index": 7,
+      "pitch_type": "FF",
+      "layer": "release_only",
+      "model": "factorized_release_recent_gaussian",
+      "mean_auc": 0.6601239669421488,
+      "pass_rate": 0.0,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "spin_axis_cos + release_speed + release_pos_z + release_pos_y + release_pos_x",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature"
+      ]
+    },
+    {
+      "fold_index": 7,
+      "pitch_type": "FF",
+      "layer": "physics_core",
+      "model": "factorized_trend_state_anchored",
+      "mean_auc": 0.7252066115702479,
+      "pass_rate": 0.0,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_pos_z + az + ay + ax + release_spin_rate",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature",
+        "trajectory/acceleration"
+      ]
+    },
+    {
+      "fold_index": 8,
+      "pitch_type": "FF",
+      "layer": "movement_only",
+      "model": "factorized_physics_constrained_state",
+      "mean_auc": 0.5491689750692521,
+      "pass_rate": 0.75,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "pfx_x + pfx_z + plate_x + plate_z",
+      "primary_mode": "movement",
+      "categories": [
+        "movement",
+        "command/location"
+      ]
+    },
+    {
+      "fold_index": 8,
+      "pitch_type": "FF",
+      "layer": "release_only",
+      "model": "context_neighbor_residual",
+      "mean_auc": 0.7222991689750693,
+      "pass_rate": 0.0,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_extension + release_pos_y + spin_axis_cos + release_pos_x + release_spin_rate",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature"
+      ]
+    },
+    {
+      "fold_index": 8,
+      "pitch_type": "FF",
+      "layer": "physics_core",
+      "model": "conditional_state_mixture_residual",
+      "mean_auc": 0.7929362880886428,
+      "pass_rate": 0.0,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_spin_rate + release_extension + release_pos_y + plate_z + pfx_z",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature",
+        "movement",
+        "command/location"
+      ]
+    },
+    {
+      "fold_index": 9,
+      "pitch_type": "FF",
+      "layer": "release_only",
+      "model": "context_neighbor_residual",
+      "mean_auc": 0.78099173553719,
+      "pass_rate": 0.0,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_pos_z + release_pos_x + spin_axis_sin + release_speed + release_spin_rate",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature"
+      ]
+    },
+    {
+      "fold_index": 9,
+      "pitch_type": "FF",
+      "layer": "trajectory_only",
+      "model": "factorized_pitch_family_release_spin",
+      "mean_auc": 0.5898760330578512,
+      "pass_rate": 0.5,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "vy0 + ay + az + ax + vx0",
+      "primary_mode": "trajectory/acceleration",
+      "categories": [
+        "trajectory/acceleration"
+      ]
+    },
+    {
+      "fold_index": 9,
+      "pitch_type": "FF",
+      "layer": "physics_core",
+      "model": "factorized_trend_state_anchored",
+      "mean_auc": 0.765495867768595,
+      "pass_rate": 0.0,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_pos_x + release_pos_z + release_spin_rate + az + ay",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature",
+        "trajectory/acceleration"
+      ]
+    },
+    {
+      "fold_index": 10,
+      "pitch_type": "FF",
+      "layer": "movement_only",
+      "model": "factorized_short_memory_more_uncertain",
+      "mean_auc": 0.5572916666666666,
+      "pass_rate": 0.75,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "pfx_x + pfx_z + plate_z + plate_x",
+      "primary_mode": "movement",
+      "categories": [
+        "movement",
+        "command/location"
+      ]
+    },
+    {
+      "fold_index": 10,
+      "pitch_type": "FF",
+      "layer": "release_only",
+      "model": "factorized_recent_state_anchored",
+      "mean_auc": 0.7743055555555556,
+      "pass_rate": 0.0,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_speed + release_extension + release_pos_z + release_pos_y + release_pos_x",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature"
+      ]
+    },
+    {
+      "fold_index": 10,
+      "pitch_type": "FF",
+      "layer": "trajectory_only",
+      "model": "factorized_trend_state_anchored",
+      "mean_auc": 0.6423611111111112,
+      "pass_rate": 0.25,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "vy0 + vz0 + vx0 + az + ax",
+      "primary_mode": "trajectory/acceleration",
+      "categories": [
+        "trajectory/acceleration"
+      ]
+    },
+    {
+      "fold_index": 10,
+      "pitch_type": "FF",
+      "layer": "physics_core",
+      "model": "factorized_pitch_family_release_spin",
+      "mean_auc": 0.701388888888889,
+      "pass_rate": 0.0,
+      "target_auc": 0.6,
+      "target_pass_rate": 0.8,
+      "classifier_signal": "release_spin_rate + plate_z + vz0 + release_pos_x + release_pos_y",
+      "primary_mode": "release/spin signature",
+      "categories": [
+        "release/spin signature",
+        "trajectory/acceleration",
+        "command/location"
+      ]
+    }
+  ],
+  "consistency": {
+    "physics_core_mean_auc_mean": 0.701872564636052,
+    "physics_core_mean_auc_std": 0.10015941576620443,
+    "physics_core_mean_auc_min": 0.5933333333333333,
+    "physics_core_mean_auc_max": 0.9285714285714286,
+    "physics_core_target_hit_rate": 0.1,
+    "physics_core_pass_rate_mean": 0.225
+  },
+  "primary_scoreboard": {
+    "scoreboard_name": "primary_rolling_scoreboard",
+    "metric_family": "future_game_physics_core_c2st_auc",
+    "interpretation": "Rolling temporal validation is the main truth test because each fold asks whether the model can match a later, unseen game window.",
+    "goals": {
+      "mean_physics_core_auc_max": 0.62,
+      "target_hit_rate_min": 0.4,
+      "worst_fold_physics_core_auc_max_exclusive": 0.8
+    },
+    "current": {
+      "mean_rolling_physics_core_auc": 0.701872564636052,
+      "best_fold_physics_core_auc": 0.5933333333333333,
+      "worst_fold_physics_core_auc": 0.9285714285714286,
+      "target_hit_rate": 0.1
+    },
+    "checks": [
+      {
+        "metric": "Mean rolling physics-core AUC",
+        "current": 0.701872564636052,
+        "current_display": "0.702",
+        "goal": "<= 0.620",
+        "passed": false,
+        "gap_to_goal": 0.08187256463605197,
+        "direction": "lower_is_better"
+      },
+      {
+        "metric": "Target hit rate",
+        "current": 0.1,
+        "current_display": "0.10",
+        "goal": ">= 0.40",
+        "passed": false,
+        "gap_to_goal": 0.30000000000000004,
+        "direction": "higher_is_better"
+      },
+      {
+        "metric": "Worst fold physics-core AUC",
+        "current": 0.9285714285714286,
+        "current_display": "0.929",
+        "goal": "< 0.800",
+        "passed": false,
+        "gap_to_goal": 0.12857142857142856,
+        "direction": "lower_is_better"
+      }
+    ],
+    "cleared_count": 0,
+    "check_count": 3,
+    "passed": false,
+    "status": "rolling_diagnostic"
+  },
+  "data_path": "/Users/elliot18/Desktop/Home/Projects/trajekt-pitcher-twin/data/processed/skubal_2025.csv",
+  "pitcher_id": 669373,
+  "rows_raw": 2849,
+  "rows_clean": 2849,
+  "rows_subset": 835
+}

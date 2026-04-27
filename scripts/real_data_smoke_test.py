@@ -21,7 +21,7 @@ from scipy.optimize import minimize
 
 DEFAULT_DATA = (
     Path(__file__).resolve().parents[2]
-    / "pitch-scout"
+    / "trajekt-scout"
     / "data"
     / "processed"
     / "latest_statcast.csv"

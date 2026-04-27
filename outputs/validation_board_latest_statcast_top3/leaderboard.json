@@ -1,0 +1,38 @@
+[
+  {
+    "pitcher": 676755,
+    "pitcher_name": "Isaac Mattson",
+    "pitch_type": "FF",
+    "pitch_count": 207,
+    "game_count": 14,
+    "holdout_count": 63,
+    "best_physics_core_model": "factorized_short_memory_more_uncertain",
+    "physics_core_mean_auc": 0.5761772853185596,
+    "physics_core_pass_rate": 0.5,
+    "artifact_status": "physics_core_candidate"
+  },
+  {
+    "pitcher": 642547,
+    "pitcher_name": "Freddy Peralta",
+    "pitch_type": "FF",
+    "pitch_count": 292,
+    "game_count": 6,
+    "holdout_count": 88,
+    "best_physics_core_model": "factorized_short_memory_wide_residual",
+    "physics_core_mean_auc": 0.6213991769547325,
+    "physics_core_pass_rate": 0.0,
+    "artifact_status": "physics_core_diagnostic"
+  },
+  {
+    "pitcher": 671737,
+    "pitcher_name": "Taj Bradley",
+    "pitch_type": "FF",
+    "pitch_count": 279,
+    "game_count": 6,
+    "holdout_count": 84,
+    "best_physics_core_model": "factorized_recent_state_anchored",
+    "physics_core_mean_auc": 0.6486686390532544,
+    "physics_core_pass_rate": 0.5,
+    "artifact_status": "physics_core_diagnostic"
+  }
+]

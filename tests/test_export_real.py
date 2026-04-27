@@ -9,7 +9,7 @@ from pitcher_twin.candidates import CandidateThresholds, rank_pitcher_pitch_cand
 from pitcher_twin.features import clean_pitch_features
 from pitcher_twin.models import fit_generator_suite
 from pitcher_twin.sampler import sample_pitch_session
-from pitcher_twin.machine_session_format import to_machine_session_json, write_machine_session_json
+from pitcher_twin.trajekt_format import to_trajekt_json, write_trajekt_json
 from pitcher_twin.validator import temporal_train_holdout
 
 
@@ -46,9 +46,9 @@ def test_sample_pitch_session_labels_simulated_source() -> None:
     assert set(session["pitch_type"]) == {candidate["pitch_type"]}
 
 
-def test_pitch_json_contains_pitch_targets_and_metadata(tmp_path) -> None:
+def test_trajekt_json_contains_pitch_targets_and_metadata(tmp_path) -> None:
     candidate, session = _session()
-    payload = to_machine_session_json(
+    payload = to_trajekt_json(
         session,
         pitcher=candidate["pitcher_name"],
         pitch_type=candidate["pitch_type"],
@@ -58,5 +58,5 @@ def test_pitch_json_contains_pitch_targets_and_metadata(tmp_path) -> None:
     assert payload["pitcher"] == candidate["pitcher_name"]
     assert payload["pitches"][0]["source"] == "simulated_from_real_model"
     path = tmp_path / "session.json"
-    write_machine_session_json(payload, path)
+    write_trajekt_json(payload, path)
     assert json.loads(path.read_text())["pitches"][0]["source"] == "simulated_from_real_model"

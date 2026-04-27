@@ -1,0 +1,3294 @@
+{
+  "model_name": "player_factorized_weather_residual_ablation",
+  "pitcher_name": "Skubal, Tarik",
+  "pitch_type": "FF",
+  "pitcher_id": 669373,
+  "data_path": "/Users/elliot18/Desktop/Home/Projects/trajekt-pitcher-twin/data/processed/skubal_2025.csv",
+  "weather_cache": "outputs/weather_residual_skubal_2025_ff/skubal_2025_game_weather.csv",
+  "rows_raw": 2849,
+  "rows_subset": 835,
+  "n_train": 584,
+  "n_holdout": 251,
+  "weather_feature_columns": [
+    "weather_temperature_2m_f",
+    "weather_relative_humidity_2m",
+    "weather_pressure_msl_hpa",
+    "weather_precipitation_mm",
+    "weather_wind_speed_10m_mph",
+    "weather_wind_dir_sin",
+    "weather_wind_dir_cos",
+    "weather_precip_flag",
+    "weather_roof_open"
+  ],
+  "weather_adjustment_source_row_count": 584,
+  "repeat_count": 12,
+  "acceptance_rule": {
+    "target_physics_core_auc": 0.6,
+    "weather_must_improve_baseline": true
+  },
+  "layer_results": {
+    "command_representation": {
+      "baseline_auc": 0.5317549630655587,
+      "weather_auc": 0.5414646814404432,
+      "delta_auc": 0.009709718374884546,
+      "baseline_std_auc": 0.026213121404769432,
+      "weather_std_auc": 0.03647692678514895,
+      "weather_improved": false,
+      "repeat_count": 12
+    },
+    "movement_only": {
+      "baseline_auc": 0.5372518467220683,
+      "weather_auc": 0.5962459602954755,
+      "delta_auc": 0.058994113573407225,
+      "baseline_std_auc": 0.018370143369131797,
+      "weather_std_auc": 0.0378387157696441,
+      "weather_improved": false,
+      "repeat_count": 12
+    },
+    "release_only": {
+      "baseline_auc": 0.5935047322253001,
+      "weather_auc": 0.5835353185595568,
+      "delta_auc": -0.009969413665743332,
+      "baseline_std_auc": 0.039770387129135484,
+      "weather_std_auc": 0.039513371568159046,
+      "weather_improved": true,
+      "repeat_count": 12
+    },
+    "trajectory_only": {
+      "baseline_auc": 0.6192001385041551,
+      "weather_auc": 0.6136743998153278,
+      "delta_auc": -0.005525738688827331,
+      "baseline_std_auc": 0.035908589289913,
+      "weather_std_auc": 0.028604270936981768,
+      "weather_improved": true,
+      "repeat_count": 12
+    },
+    "physics_core": {
+      "baseline_auc": 0.6461074561403509,
+      "weather_auc": 0.6454005078485688,
+      "delta_auc": -0.0007069482917820835,
+      "baseline_std_auc": 0.04243411624603271,
+      "weather_std_auc": 0.03386778214515782,
+      "weather_improved": true,
+      "repeat_count": 12
+    }
+  },
+  "repeat_results": [
+    {
+      "command_representation": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5193905817174516,
+        "weather_auc": 0.5337603878116344,
+        "delta_auc": 0.014369806094182813,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.09727903318332139
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.040749675491225205
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.09860399618020711
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.036317446789247074
+          }
+        ]
+      },
+      "movement_only": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5554016620498615,
+        "weather_auc": 0.5171398891966759,
+        "delta_auc": -0.03826177285318566,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.12763153830592197
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.0957049914234905
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.031033123189991244
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.010921550034462267
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.3330425064115052
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.20093850098201485
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.11935741475069207
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.058568295527461324
+          }
+        ]
+      },
+      "release_only": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "baseline_auc": 0.5953947368421053,
+        "weather_auc": 0.600415512465374,
+        "delta_auc": 0.005020775623268636,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "release_extension",
+            "importance": 0.5076967312554221
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.47747977976156064
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.313407711976594
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.29243677471527757
+          },
+          {
+            "feature": "release_pos_z",
+            "importance": 0.1885562284380693
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.6965655518769093
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.36269830862847974
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.3444517029624501
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.32648374510959693
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.2864893685941231
+          }
+        ]
+      },
+      "trajectory_only": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.59851108033241,
+        "weather_auc": 0.6179016620498615,
+        "delta_auc": 0.01939058171745156,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "vy0",
+            "importance": 0.3233895900426067
+          },
+          {
+            "feature": "az",
+            "importance": 0.29154270497199897
+          },
+          {
+            "feature": "ay",
+            "importance": 0.22735693716726602
+          },
+          {
+            "feature": "ax",
+            "importance": 0.11363708292423576
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.012538503902617053
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.43027184217616077
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.3308848022273196
+          },
+          {
+            "feature": "ay",
+            "importance": 0.1793920766242395
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.13404093543370416
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.07513046752049823
+          }
+        ]
+      },
+      "physics_core": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.5959141274238227,
+        "weather_auc": 0.6182479224376731,
+        "delta_auc": 0.022333795013850466,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.6921702762672762
+          },
+          {
+            "feature": "ay",
+            "importance": 0.347572831096236
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.3271369493719932
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.32636047711986055
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.20861911940113967
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.40053545633295123
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.3725088296320162
+          },
+          {
+            "feature": "ay",
+            "importance": 0.3390299255462368
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.30023982603062516
+          },
+          {
+            "feature": "release_pos_z",
+            "importance": 0.20091338040476117
+          }
+        ]
+      }
+    },
+    {
+      "command_representation": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.515062326869806,
+        "weather_auc": 0.5860457063711911,
+        "delta_auc": 0.07098337950138511,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.05305094599620101
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.001499636118084115
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.12715138790293487
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.05765566953751813
+          }
+        ]
+      },
+      "movement_only": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5493421052631579,
+        "weather_auc": 0.5732340720221607,
+        "delta_auc": 0.023891966759002847,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.19924705987128302
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.17578733025713517
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.06339466231664741
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.052610204190551964
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.47911771461656716
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.15223705909453297
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.14522751631577496
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.002063143010311561
+          }
+        ]
+      },
+      "release_only": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "baseline_auc": 0.6284626038781164,
+        "weather_auc": 0.5330678670360111,
+        "delta_auc": -0.09539473684210531,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "release_extension",
+            "importance": 0.4731679243684413
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.32682977928354207
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.22424365473359043
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.16335213305303103
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.10967563642400083
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.5261444021020786
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.4110387417227317
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.3643251091251374
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.27465747311092004
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.21956709994178103
+          }
+        ]
+      },
+      "trajectory_only": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.5676939058171745,
+        "weather_auc": 0.6365997229916898,
+        "delta_auc": 0.06890581717451527,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.5295203174078608
+          },
+          {
+            "feature": "ay",
+            "importance": 0.34563889098428263
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.21256282629306947
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.17944767639824466
+          },
+          {
+            "feature": "ax",
+            "importance": 0.16777753067420603
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.621961696380124
+          },
+          {
+            "feature": "ay",
+            "importance": 0.20948681630969887
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.17914574381600692
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.15221971249392316
+          },
+          {
+            "feature": "ax",
+            "importance": 0.09462582098477876
+          }
+        ]
+      },
+      "physics_core": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.5855263157894737,
+        "weather_auc": 0.58898891966759,
+        "delta_auc": 0.003462603878116366,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "ay",
+            "importance": 0.5094656441484764
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.4708588629334923
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.46878192885638786
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.3857289186241247
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.28654968023861344
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "release_extension",
+            "importance": 0.5337073538174852
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.3222977279942356
+          },
+          {
+            "feature": "release_pos_z",
+            "importance": 0.2855382165785268
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.18342732307091567
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.17886491511522237
+          }
+        ]
+      }
+    },
+    {
+      "command_representation": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5181786703601108,
+        "weather_auc": 0.5285664819944598,
+        "delta_auc": 0.010387811634348987,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.034433084607794276
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.015937976563098692
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.13449290234863903
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.06489811805649078
+          }
+        ]
+      },
+      "movement_only": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5202562326869806,
+        "weather_auc": 0.6009349030470914,
+        "delta_auc": 0.08067867036011078,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "pfx_x",
+            "importance": 0.29253021063716217
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.20940002962566806
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.06634703591355835
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.03127512356337066
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.32565586511306177
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.2173351220358996
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.11024390077546803
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.07989905377455768
+          }
+        ]
+      },
+      "release_only": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "baseline_auc": 0.5934903047091413,
+        "weather_auc": 0.5010387811634349,
+        "delta_auc": -0.0924515235457064,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.3767220505747076
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.350354854756487
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.315322117383875
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.26112114538083453
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.21132573543139407
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.5093355780452572
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.4588553376203159
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.2670182320041626
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.22223260553016608
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.14606118289257483
+          }
+        ]
+      },
+      "trajectory_only": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.6144390581717452,
+        "weather_auc": 0.5953947368421053,
+        "delta_auc": -0.019044321329639846,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "ay",
+            "importance": 0.4683507986935114
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.3756444427039533
+          },
+          {
+            "feature": "ax",
+            "importance": 0.3619355467523506
+          },
+          {
+            "feature": "az",
+            "importance": 0.32761615763401847
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.20817707608400746
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.7486076273186667
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.31338311222466264
+          },
+          {
+            "feature": "ay",
+            "importance": 0.3001072812040821
+          },
+          {
+            "feature": "ax",
+            "importance": 0.20281579520030038
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.14888895542832112
+          }
+        ]
+      },
+      "physics_core": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.639196675900277,
+        "weather_auc": 0.6076869806094183,
+        "delta_auc": -0.031509695290858675,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "ay",
+            "importance": 0.6586029133360454
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.572812901087706
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.4907342275483097
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.377916071276069
+          },
+          {
+            "feature": "ax",
+            "importance": 0.25024984975511144
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.6952817380709359
+          },
+          {
+            "feature": "ay",
+            "importance": 0.4436816979376894
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.3557086391266858
+          },
+          {
+            "feature": "ax",
+            "importance": 0.31515915360998276
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.28796618870894236
+          }
+        ]
+      }
+    },
+    {
+      "command_representation": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5626731301939059,
+        "weather_auc": 0.5571329639889196,
+        "delta_auc": -0.005540166204986208,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "plate_z",
+            "importance": 0.1354762933943969
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.0952559036386005
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.094242435153841
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.04249346350410749
+          }
+        ]
+      },
+      "movement_only": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5412049861495845,
+        "weather_auc": 0.6310595567867036,
+        "delta_auc": 0.0898545706371191,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.19707891368340216
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.10037304976476025
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.05930178235723288
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.024331790445036996
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.34421475892153625
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.10450542096542602
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.07926953918963875
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.05445889107402211
+          }
+        ]
+      },
+      "release_only": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "baseline_auc": 0.5678670360110804,
+        "weather_auc": 0.6134002770083102,
+        "delta_auc": 0.045533240997229885,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.48304931923575817
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.28762138815320404
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.21943189575539074
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.20824564183420885
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.18744944567477065
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.41123152941225016
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.20451780494146754
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.1739944155775252
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.16076473111797693
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.15925812335597755
+          }
+        ]
+      },
+      "trajectory_only": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.5673476454293629,
+        "weather_auc": 0.653393351800554,
+        "delta_auc": 0.08604570637119113,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.5741746685570395
+          },
+          {
+            "feature": "ay",
+            "importance": 0.4894940492895055
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.32543462823146524
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.28950949583299995
+          },
+          {
+            "feature": "ax",
+            "importance": 0.11583171783333168
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.5828359198950838
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.3170719441593816
+          },
+          {
+            "feature": "ay",
+            "importance": 0.2659278295238473
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.18918157355891443
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.10443355639451478
+          }
+        ]
+      },
+      "physics_core": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.6275969529085873,
+        "weather_auc": 0.6308864265927978,
+        "delta_auc": 0.003289473684210509,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "ay",
+            "importance": 0.4729390457301786
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.35785915999049406
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.33081454284363804
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.32064724754706064
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.2572263319329318
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.5617243680682915
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.455438054785745
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.32762379587751467
+          },
+          {
+            "feature": "ay",
+            "importance": 0.24168016173465467
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.2128166141277342
+          }
+        ]
+      }
+    },
+    {
+      "command_representation": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5827562326869806,
+        "weather_auc": 0.5387811634349031,
+        "delta_auc": -0.0439750692520775,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.04600278017792833
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.0077951970569848286
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.2324225838977013
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.11102432402913223
+          }
+        ]
+      },
+      "movement_only": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5126385041551247,
+        "weather_auc": 0.5858725761772853,
+        "delta_auc": 0.07323407202216059,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.22108038628772164
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.13093021876151978
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.07325583439317869
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.022296490663102828
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.4259490970829163
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.10319392668656836
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.09370881459789761
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.019729789243631998
+          }
+        ]
+      },
+      "release_only": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "baseline_auc": 0.5704639889196675,
+        "weather_auc": 0.5981648199445984,
+        "delta_auc": 0.027700831024930817,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.6583995549915364
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.30104925154679596
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.2990544770152688
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.2522191360613756
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.19126170577775115
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "release_speed",
+            "importance": 0.3502969876429737
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.27771204049598625
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.20581384644083736
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.18583102627345954
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.15315050135796443
+          }
+        ]
+      },
+      "trajectory_only": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.6476800554016621,
+        "weather_auc": 0.6109764542936288,
+        "delta_auc": -0.03670360110803328,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "vy0",
+            "importance": 0.4499629545374516
+          },
+          {
+            "feature": "az",
+            "importance": 0.23861038647481492
+          },
+          {
+            "feature": "ay",
+            "importance": 0.22820006304693435
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.16820359232944937
+          },
+          {
+            "feature": "ax",
+            "importance": 0.12358361934979677
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.5749594006212858
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.3222754193810118
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.20745053064731228
+          },
+          {
+            "feature": "ay",
+            "importance": 0.16024832836792055
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.0615303774450449
+          }
+        ]
+      },
+      "physics_core": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.6241343490304709,
+        "weather_auc": 0.6317520775623269,
+        "delta_auc": 0.0076177285318559385,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.5261662813321465
+          },
+          {
+            "feature": "ay",
+            "importance": 0.2971655912216576
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.29571698680461433
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.26929975380456983
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.22023878029662844
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.4340787155775308
+          },
+          {
+            "feature": "az",
+            "importance": 0.36701747949083885
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.3496934431482138
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.34022933010544
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.314160737806103
+          }
+        ]
+      }
+    },
+    {
+      "command_representation": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5650969529085873,
+        "weather_auc": 0.5365304709141274,
+        "delta_auc": -0.02856648199445988,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.13209046618900402
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.006269217379552877
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.2587943894127797
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.11662948576278279
+          }
+        ]
+      },
+      "movement_only": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5157548476454293,
+        "weather_auc": 0.5289127423822715,
+        "delta_auc": 0.013157894736842146,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "pfx_x",
+            "importance": 0.15153634019831744
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.14449402745156512
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.12481258425958362
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.10182850645227494
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.40862100603669615
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.15429074020559208
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.05969979255306746
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.05354252839175353
+          }
+        ]
+      },
+      "release_only": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "baseline_auc": 0.5347991689750693,
+        "weather_auc": 0.6009349030470914,
+        "delta_auc": 0.06613573407202211,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.5057634396929073
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.40030366839381987
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.38291093803487486
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.27428612940383823
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.2527438051784975
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.6261648002157006
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.5349217113580416
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.5339669334783714
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.23188795171925103
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.23141586465863703
+          }
+        ]
+      },
+      "trajectory_only": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.6305401662049861,
+        "weather_auc": 0.6301939058171745,
+        "delta_auc": -0.0003462603878116033,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "vy0",
+            "importance": 0.4043964702711003
+          },
+          {
+            "feature": "ay",
+            "importance": 0.36052099664123016
+          },
+          {
+            "feature": "az",
+            "importance": 0.2579683078862433
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.22263041731350314
+          },
+          {
+            "feature": "ax",
+            "importance": 0.06598692746220128
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.4359713998796985
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.3285234956551636
+          },
+          {
+            "feature": "ay",
+            "importance": 0.2040716097310376
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.18571910571246608
+          },
+          {
+            "feature": "ax",
+            "importance": 0.046770191870535445
+          }
+        ]
+      },
+      "physics_core": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.6154778393351801,
+        "weather_auc": 0.6537396121883656,
+        "delta_auc": 0.03826177285318555,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.4365352263995365
+          },
+          {
+            "feature": "ay",
+            "importance": 0.4206648163896939
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.4131795628345604
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.3484822369010918
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.34132675252006484
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "release_extension",
+            "importance": 0.42925935021270734
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.3984527535147764
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.38761906761127224
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.3701002975504389
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.31724057440324616
+          }
+        ]
+      }
+    },
+    {
+      "command_representation": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5486495844875346,
+        "weather_auc": 0.5043282548476454,
+        "delta_auc": -0.04432132963988922,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "plate_z",
+            "importance": 0.08418461262540826
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.05775581873799249
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "plate_z",
+            "importance": 0.06800377468381882
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.052603984001622944
+          }
+        ]
+      },
+      "movement_only": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5287396121883656,
+        "weather_auc": 0.626904432132964,
+        "delta_auc": 0.09816481994459836,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.27563268126344453
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.1834543691044081
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.09861839551741065
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.048456091654713006
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.4516009721898629
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.10979102781594834
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.09198941551513633
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.033176587378145696
+          }
+        ]
+      },
+      "release_only": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "baseline_auc": 0.5460526315789473,
+        "weather_auc": 0.58898891966759,
+        "delta_auc": 0.04293628808864269,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.8122629507377811
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.34919881153443416
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.3294318856285455
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.27814725436529847
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.23750302456229394
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.8749054374437568
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.3545241501239764
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.27885066332454056
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.23403441895754024
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.216131259339121
+          }
+        ]
+      },
+      "trajectory_only": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.659106648199446,
+        "weather_auc": 0.6109764542936288,
+        "delta_auc": -0.04813019390581719,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.41627884447986824
+          },
+          {
+            "feature": "ay",
+            "importance": 0.3292985755341887
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.21638512533658258
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.21446678962079296
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.0620478283511144
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.6899771961935547
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.2076546542540072
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.1613933571030413
+          },
+          {
+            "feature": "ay",
+            "importance": 0.15213620173549436
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.13869079158894196
+          }
+        ]
+      },
+      "physics_core": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.6066481994459834,
+        "weather_auc": 0.680921052631579,
+        "delta_auc": 0.07427285318559562,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.7993912088796918
+          },
+          {
+            "feature": "ay",
+            "importance": 0.40972305506052287
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.3303599557440422
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.29960466265298336
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.2426065705772834
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.9719720241653322
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.5283372267931788
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.38263624982661065
+          },
+          {
+            "feature": "az",
+            "importance": 0.28732434915187444
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.20351869920728974
+          }
+        ]
+      }
+    },
+    {
+      "command_representation": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5015581717451524,
+        "weather_auc": 0.6357340720221607,
+        "delta_auc": 0.13417590027700832,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "plate_z",
+            "importance": 0.12672565795159227
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.048585802424680614
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.05780668241846303
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.02550516044771505
+          }
+        ]
+      },
+      "movement_only": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5761772853185596,
+        "weather_auc": 0.6291551246537396,
+        "delta_auc": 0.052977839335179966,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "pfx_x",
+            "importance": 0.16782622244128056
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.15927402132244559
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.158644622451368
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.06022074998347553
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.46091720007792225
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.1916118426984758
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.08756515771778364
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.019757990588641514
+          }
+        ]
+      },
+      "release_only": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "baseline_auc": 0.5493421052631579,
+        "weather_auc": 0.5384349030470914,
+        "delta_auc": -0.010907202216066447,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "release_extension",
+            "importance": 0.6149036796404087
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.43849749822363004
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.37555307871969335
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.34251988987068066
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.16122711892159797
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "release_extension",
+            "importance": 0.97752810808121
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.7583154000500103
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.501990760014833
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.22325121244460974
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.19579013870613254
+          }
+        ]
+      },
+      "trajectory_only": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.6561634349030471,
+        "weather_auc": 0.6535664819944599,
+        "delta_auc": -0.002596952908587191,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.6138012659682729
+          },
+          {
+            "feature": "ay",
+            "importance": 0.5639388255633716
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.31502068982674813
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.26070006098795084
+          },
+          {
+            "feature": "ax",
+            "importance": 0.20909356221388628
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.7863880581408663
+          },
+          {
+            "feature": "ay",
+            "importance": 0.3742535572546261
+          },
+          {
+            "feature": "ax",
+            "importance": 0.2224480481390462
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.18041709458591532
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.16203303101459057
+          }
+        ]
+      },
+      "physics_core": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.6873268698060941,
+        "weather_auc": 0.6731301939058172,
+        "delta_auc": -0.014196675900276956,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "release_extension",
+            "importance": 0.6791475288975991
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.5862121939967151
+          },
+          {
+            "feature": "ay",
+            "importance": 0.5070059964022944
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.29074324594914763
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.26511688797337624
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "release_extension",
+            "importance": 0.6275223567982607
+          },
+          {
+            "feature": "ay",
+            "importance": 0.555747803083552
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.48318601244233755
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.4492924902091491
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.3967979864457641
+          }
+        ]
+      }
+    },
+    {
+      "command_representation": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5309903047091413,
+        "weather_auc": 0.5489958448753463,
+        "delta_auc": 0.018005540166204925,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.08198150611545302
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.011834668680148933
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.04220381343726451
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.006500661525248479
+          }
+        ]
+      },
+      "movement_only": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5332409972299169,
+        "weather_auc": 0.6073407202216067,
+        "delta_auc": 0.07409972299168976,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.18492384842892876
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.16184928082730338
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.0972701844038452
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.019091027312466355
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.4563921780466488
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.1290531112719982
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.04741777867494052
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.03067238508445409
+          }
+        ]
+      },
+      "release_only": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "baseline_auc": 0.6759002770083102,
+        "weather_auc": 0.6438711911357341,
+        "delta_auc": -0.032029085872576135,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.42621756192251636
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.3447821593706651
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.28521915220876376
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.280097326111482
+          },
+          {
+            "feature": "release_pos_z",
+            "importance": 0.2059295583401789
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.7669275075753696
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.5088911604930313
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.4747283349931094
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.37049056743830355
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.355823795092085
+          }
+        ]
+      },
+      "trajectory_only": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.6158240997229917,
+        "weather_auc": 0.6116689750692521,
+        "delta_auc": -0.0041551246537395725,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.5249094098968572
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.46537412341817386
+          },
+          {
+            "feature": "ay",
+            "importance": 0.4066923663590112
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.22110492338492252
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.07456378026556386
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.7490347684601604
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.36777001102369
+          },
+          {
+            "feature": "ay",
+            "importance": 0.3215787225414725
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.12625327891552784
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.11451548754917763
+          }
+        ]
+      },
+      "physics_core": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.6904432132963989,
+        "weather_auc": 0.6267313019390581,
+        "delta_auc": -0.06371191135734078,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.6681374706154242
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.540382909076749
+          },
+          {
+            "feature": "ay",
+            "importance": 0.532587435799301
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.4841873397943684
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.32138496948342543
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.9831231564161741
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.47880407292794824
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.45613788589261295
+          },
+          {
+            "feature": "az",
+            "importance": 0.4437883216055427
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.42997341741993067
+          }
+        ]
+      }
+    },
+    {
+      "command_representation": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.502770083102493,
+        "weather_auc": 0.5062326869806094,
+        "delta_auc": 0.003462603878116366,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "plate_z",
+            "importance": 0.10685989790279117
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.08708662459505359
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "plate_z",
+            "importance": 0.07833940155552944
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.03937596116720848
+          }
+        ]
+      },
+      "movement_only": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5517659279778393,
+        "weather_auc": 0.5933171745152355,
+        "delta_auc": 0.04155124653739617,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.1652940468232929
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.06427400867515246
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.03572744310819926
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.02200837328938881
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.4308973119637171
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.08801066305339178
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.08103754746069199
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.053231030716817083
+          }
+        ]
+      },
+      "release_only": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "baseline_auc": 0.6180747922437673,
+        "weather_auc": 0.5903739612188366,
+        "delta_auc": -0.027700831024930705,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.40119763898236005
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.32849596038893636
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.3208694109077686
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.25473512975888796
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.19515340126458502
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.616873153956284
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.25745069795021597
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.23893774914384108
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.22788285153186727
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.2274276365533234
+          }
+        ]
+      },
+      "trajectory_only": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.5922783933518005,
+        "weather_auc": 0.5952216066481995,
+        "delta_auc": 0.0029432132963989055,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.7228031601678075
+          },
+          {
+            "feature": "ay",
+            "importance": 0.6105538097336265
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.35767364890129816
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.30591345761672767
+          },
+          {
+            "feature": "ax",
+            "importance": 0.07474762324471336
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.7287163413627388
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.4218777916203603
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.222129763666291
+          },
+          {
+            "feature": "ay",
+            "importance": 0.18936425680562197
+          },
+          {
+            "feature": "ax",
+            "importance": 0.10340467766431903
+          }
+        ]
+      },
+      "physics_core": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.7184903047091413,
+        "weather_auc": 0.7056786703601108,
+        "delta_auc": -0.012811634349030543,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "ay",
+            "importance": 0.46391821561066643
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.27159280387895657
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.24951048240932067
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.23659327999656152
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.22615791983786038
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.523504488042573
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.38847146863480775
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.2579520078952481
+          },
+          {
+            "feature": "ay",
+            "importance": 0.2553656450589539
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.24481192411793712
+          }
+        ]
+      }
+    },
+    {
+      "command_representation": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5013850415512465,
+        "weather_auc": 0.5072714681440443,
+        "delta_auc": 0.005886426592797811,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.17197583928885452
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.06619058875276698
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "plate_z",
+            "importance": 0.14429144280107778
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.038977730508581054
+          }
+        ]
+      },
+      "movement_only": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5186980609418282,
+        "weather_auc": 0.6281163434903048,
+        "delta_auc": 0.10941828254847652,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.15763679164234415
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.050514379299900006
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.03717118783521202
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.03339652569446347
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.2710216645366771
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.08565700561940819
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.04836708018867581
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.02408466321308437
+          }
+        ]
+      },
+      "release_only": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "baseline_auc": 0.6201523545706371,
+        "weather_auc": 0.5687326869806094,
+        "delta_auc": -0.051419667590027696,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.6587888944313247
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.4962919116592522
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.22972095000462486
+          },
+          {
+            "feature": "release_pos_z",
+            "importance": 0.14822703803456377
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.10361597780805118
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.6265478883895035
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.35884371394835485
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.2942804093578253
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.2750514086152092
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.19076199269097
+          }
+        ]
+      },
+      "trajectory_only": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.5948753462603878,
+        "weather_auc": 0.6057825484764543,
+        "delta_auc": 0.010907202216066447,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "ay",
+            "importance": 0.39282695905976933
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.33619794423796456
+          },
+          {
+            "feature": "az",
+            "importance": 0.14101540289716272
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.11749421509313486
+          },
+          {
+            "feature": "ax",
+            "importance": 0.05338439795170917
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.5865291688474045
+          },
+          {
+            "feature": "ay",
+            "importance": 0.32745921442736564
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.2608819378804872
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.11147829687175775
+          },
+          {
+            "feature": "ax",
+            "importance": 0.10173225989254608
+          }
+        ]
+      },
+      "physics_core": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.662915512465374,
+        "weather_auc": 0.6888850415512465,
+        "delta_auc": 0.025969529085872578,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.4477513742361243
+          },
+          {
+            "feature": "ay",
+            "importance": 0.3229924406837207
+          },
+          {
+            "feature": "az",
+            "importance": 0.25563658730331756
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.2370844041673319
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.22970249688758942
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.5261649771469455
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.28270479203894877
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.2798574162532446
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.2391533557218609
+          },
+          {
+            "feature": "az",
+            "importance": 0.21488626050387433
+          }
+        ]
+      }
+    },
+    {
+      "command_representation": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5325484764542936,
+        "weather_auc": 0.514196675900277,
+        "delta_auc": -0.01835180055401664,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "plate_x",
+            "importance": 0.042970129073226344
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.012375811594779646
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "plate_z",
+            "importance": 0.025917869526407657
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.013481613587886918
+          }
+        ]
+      },
+      "movement_only": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "baseline_auc": 0.5438019390581718,
+        "weather_auc": 0.6329639889196675,
+        "delta_auc": 0.08916204986149578,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.1415118816020141
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.07633572790230128
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.07141697687082649
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.011803177230167295
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.34162536382195624
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.09119729477505752
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.03975774203958473
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.03458473059793355
+          }
+        ]
+      },
+      "release_only": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "baseline_auc": 0.6220567867036011,
+        "weather_auc": 0.625,
+        "delta_auc": 0.0029432132963989055,
+        "weather_improved": false,
+        "baseline_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.6908637790103154
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.44849705694982667
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.3526612956299246
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.33676437962996314
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.26329487208819713
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.5448464013312453
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.23041904896927012
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.17602175437640413
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.11793197234521843
+          },
+          {
+            "feature": "release_pos_z",
+            "importance": 0.072951280843428
+          }
+        ]
+      },
+      "trajectory_only": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.6859418282548476,
+        "weather_auc": 0.5424168975069252,
+        "delta_auc": -0.14352493074792239,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "ay",
+            "importance": 0.5224021712736199
+          },
+          {
+            "feature": "az",
+            "importance": 0.4401546464585613
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.37769462922291375
+          },
+          {
+            "feature": "ax",
+            "importance": 0.046067779989537344
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.040537500692636334
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "az",
+            "importance": 0.8897260515549215
+          },
+          {
+            "feature": "ay",
+            "importance": 0.538139052838815
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.2892982443476119
+          },
+          {
+            "feature": "ax",
+            "importance": 0.26617802211901737
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.25446117028429127
+          }
+        ]
+      },
+      "physics_core": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "baseline_auc": 0.6996191135734072,
+        "weather_auc": 0.6381578947368421,
+        "delta_auc": -0.06146121883656508,
+        "weather_improved": true,
+        "baseline_top_leakage": [
+          {
+            "feature": "ay",
+            "importance": 0.6367056074718963
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.4834174125901358
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.36315087436141563
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.28793747244380236
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.2691258633925692
+          }
+        ],
+        "weather_top_leakage": [
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.6065010271274899
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.5029435334095452
+          },
+          {
+            "feature": "ay",
+            "importance": 0.4356814085988182
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.24601344715581924
+          },
+          {
+            "feature": "az",
+            "importance": 0.21933162269998577
+          }
+        ]
+      }
+    }
+  ]
+}

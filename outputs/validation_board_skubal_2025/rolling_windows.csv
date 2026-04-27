@@ -1,0 +1,4 @@
+pitcher,pitcher_name,pitch_type,window_index,train_games,holdout_games,train_rows,holdout_rows,train_end_game,holdout_start_game,holdout_end_game,best_physics_core_model,physics_core_mean_auc,physics_core_pass_rate,artifact_status
+669373,"Skubal, Tarik",CH,1,4,2,108,64,778323,778246,778155,factorized_trend_state_anchored,0.645,0.0,physics_core_diagnostic
+669373,"Skubal, Tarik",CH,2,5,2,143,55,778246,778155,778085,factorized_short_memory_wide_residual,0.5813148788927336,1.0,validated_temporal_success
+669373,"Skubal, Tarik",CH,3,6,2,172,54,778155,778085,777996,pca_latent_residual,0.615916955017301,0.0,physics_core_diagnostic

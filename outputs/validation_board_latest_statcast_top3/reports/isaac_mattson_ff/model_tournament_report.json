@@ -1,0 +1,6618 @@
+{
+  "model_name": "pitcher_twin_model_tournament",
+  "pitcher_name": "Isaac Mattson",
+  "pitch_type": "FF",
+  "n_train": 144,
+  "n_holdout": 63,
+  "sample_count": 220,
+  "repeat_count": 2,
+  "model_names": [
+    "factorized_v2_1",
+    "factorized_release_game_drift_gaussian",
+    "factorized_release_game_drift_copula",
+    "factorized_release_recent_gaussian",
+    "factorized_short_memory_wide_residual",
+    "factorized_short_memory_more_uncertain",
+    "factorized_recent_state_anchored",
+    "factorized_trend_state_anchored",
+    "factorized_release_state_anchored",
+    "factorized_physics_constrained_state",
+    "conditional_state_mixture_residual",
+    "pca_latent_residual",
+    "context_neighbor_residual",
+    "derived_joint_gaussian"
+  ],
+  "target_auc": 0.6,
+  "target_pass_rate": 0.8,
+  "acceptance_rule": {
+    "lower_auc_is_better": true,
+    "validated_layer_target_auc": 0.6,
+    "validated_layer_target_pass_rate": 0.8,
+    "candidate_default_requires_physics_core_at_or_below_target": true,
+    "candidate_default_requires_same_model_all_layers_at_or_below_target_and_pass_rate": true
+  },
+  "candidate_default": false,
+  "best_by_layer": {
+    "command_representation": "factorized_release_game_drift_gaussian",
+    "movement_only": "factorized_trend_state_anchored",
+    "release_only": "factorized_short_memory_wide_residual",
+    "trajectory_only": "factorized_recent_state_anchored",
+    "physics_core": "factorized_short_memory_more_uncertain"
+  },
+  "best_physics_core_model": "factorized_short_memory_more_uncertain",
+  "candidate_source_rows": {
+    "factorized_v2_1": 144,
+    "factorized_release_game_drift_gaussian": 144,
+    "factorized_release_game_drift_copula": 144,
+    "factorized_release_recent_gaussian": 144,
+    "factorized_short_memory_wide_residual": 144,
+    "factorized_short_memory_more_uncertain": 144,
+    "factorized_recent_state_anchored": 144,
+    "factorized_trend_state_anchored": 144,
+    "factorized_release_state_anchored": 144,
+    "factorized_physics_constrained_state": 144,
+    "conditional_state_mixture_residual": 144,
+    "pca_latent_residual": 144,
+    "context_neighbor_residual": 144,
+    "derived_joint_gaussian": 144
+  },
+  "factorized_release_models": {
+    "factorized_v2_1": "player_recent_weighted_game_drift_copula",
+    "factorized_release_game_drift_gaussian": "player_recent_weighted_game_drift_gaussian",
+    "factorized_release_game_drift_copula": "player_recent_weighted_game_drift_copula",
+    "factorized_release_recent_gaussian": "player_recent_multivariate_gaussian",
+    "factorized_short_memory_wide_residual": "short_memory_release_half_life_1.0",
+    "factorized_short_memory_more_uncertain": "short_memory_release_half_life_1.0",
+    "factorized_recent_state_anchored": "short_memory_release_half_life_1.0",
+    "factorized_trend_state_anchored": "short_memory_release_half_life_1.0",
+    "factorized_release_state_anchored": "short_memory_release_half_life_1.0",
+    "factorized_physics_constrained_state": "short_memory_release_half_life_1.0"
+  },
+  "candidate_notes": {
+    "factorized_short_memory_wide_residual": {
+      "release_half_life_games": 1.0,
+      "release_covariance_scale": 2.0,
+      "downstream_residual_covariance_scale": 30.0,
+      "downstream_residual_offset_scale": 0.25,
+      "interpretation": "tests whether the factorized model was underestimating late-season downstream uncertainty"
+    },
+    "factorized_physics_constrained_state": {
+      "description": "Short-memory factorized model with release_pos_y + extension geometry constraint.",
+      "release_geometry_constraint": "release_pos_y_plus_extension",
+      "release_geometry_source_rows": 144,
+      "release_geometry_recent_game_count": 10
+    },
+    "factorized_short_memory_more_uncertain": {
+      "release_half_life_games": 1.0,
+      "release_covariance_scale": 2.0,
+      "downstream_residual_covariance_scale": 40.0,
+      "downstream_residual_offset_scale": 0.15,
+      "interpretation": "tests whether the previous best model was still underestimating downstream physics uncertainty"
+    },
+    "factorized_recent_state_anchored": {
+      "base_model": "factorized_short_memory_wide_residual",
+      "recent_state_anchor_alpha": 0.7,
+      "recent_state_anchor_half_life_games": 1.25,
+      "recent_state_anchor_source_rows": 144,
+      "recent_state_anchor_game_count": 10,
+      "interpretation": "keeps the generated cloud centered on the pitcher's recent learned game state while preserving pitch-level variation"
+    },
+    "factorized_trend_state_anchored": {
+      "base_model": "factorized_short_memory_wide_residual",
+      "trend_state_anchor_alpha": 0.85,
+      "trend_state_anchor_half_life_games": 5.0,
+      "trend_state_anchor_horizon_games": 1.0,
+      "trend_state_anchor_shrinkage": 0.75,
+      "trend_state_anchor_max_recent_std": 1.5,
+      "trend_state_anchor_source_rows": 144,
+      "trend_state_anchor_game_count": 10,
+      "interpretation": "tests whether short-horizon game-state extrapolation improves future physical realism"
+    },
+    "factorized_release_state_anchored": {
+      "base_model": "factorized_recent_state_anchored",
+      "release_anchor_columns": [
+        "release_speed",
+        "release_spin_rate",
+        "release_pos_x",
+        "release_pos_y",
+        "release_pos_z",
+        "release_extension"
+      ],
+      "release_anchor_alpha": 0.7,
+      "release_anchor_source_rows": 144,
+      "release_anchor_game_count": 10,
+      "spin_axis_anchor": "circular_recent_game_mean",
+      "spin_axis_anchor_alpha": 0.7,
+      "spin_axis_anchor_source_rows": 144,
+      "spin_axis_anchor_game_count": 10,
+      "interpretation": "tests whether release-specific centering and circular spin-axis anchoring improve release-layer robustness"
+    },
+    "conditional_state_mixture_residual": {
+      "description": "V2.4 state-conditioned physics-core mixture model.",
+      "state_conditioned": true,
+      "state_count": 3,
+      "state_columns": [
+        "balls",
+        "strikes",
+        "count_bucket_code",
+        "inning",
+        "pitcher_game_pitch_count",
+        "batter_stand_code",
+        "pitcher_score_diff",
+        "previous_release_speed",
+        "previous_release_spin_rate",
+        "previous_pfx_x",
+        "previous_pfx_z",
+        "previous_plate_x",
+        "previous_plate_z",
+        "rolling_5_release_speed_mean",
+        "rolling_5_release_spin_rate_mean",
+        "rolling_5_pfx_x_mean",
+        "rolling_5_pfx_z_mean",
+        "rolling_5_plate_x_mean",
+        "rolling_5_plate_z_mean",
+        "rolling_10_release_speed_mean",
+        "rolling_10_release_spin_rate_mean",
+        "rolling_10_pfx_x_mean",
+        "rolling_10_pfx_z_mean",
+        "rolling_20_release_speed_mean",
+        "rolling_20_release_spin_rate_mean",
+        "rolling_20_pfx_x_mean",
+        "rolling_20_pfx_z_mean"
+      ],
+      "max_components": 3,
+      "source_row_count": 144,
+      "interpretation": "tests whether recent pitcher state and context-specific mixture covariances improve full-physics realism"
+    }
+  },
+  "factorized_variant_notes": {
+    "factorized_short_memory_wide_residual": {
+      "release_half_life_games": 1.0,
+      "release_covariance_scale": 2.0,
+      "downstream_residual_covariance_scale": 30.0,
+      "downstream_residual_offset_scale": 0.25,
+      "interpretation": "tests whether the factorized model was underestimating late-season downstream uncertainty"
+    },
+    "factorized_physics_constrained_state": {
+      "description": "Short-memory factorized model with release_pos_y + extension geometry constraint.",
+      "release_geometry_constraint": "release_pos_y_plus_extension",
+      "release_geometry_source_rows": 144,
+      "release_geometry_recent_game_count": 10
+    },
+    "factorized_short_memory_more_uncertain": {
+      "release_half_life_games": 1.0,
+      "release_covariance_scale": 2.0,
+      "downstream_residual_covariance_scale": 40.0,
+      "downstream_residual_offset_scale": 0.15,
+      "interpretation": "tests whether the previous best model was still underestimating downstream physics uncertainty"
+    },
+    "factorized_recent_state_anchored": {
+      "base_model": "factorized_short_memory_wide_residual",
+      "recent_state_anchor_alpha": 0.7,
+      "recent_state_anchor_half_life_games": 1.25,
+      "recent_state_anchor_source_rows": 144,
+      "recent_state_anchor_game_count": 10,
+      "interpretation": "keeps the generated cloud centered on the pitcher's recent learned game state while preserving pitch-level variation"
+    },
+    "factorized_trend_state_anchored": {
+      "base_model": "factorized_short_memory_wide_residual",
+      "trend_state_anchor_alpha": 0.85,
+      "trend_state_anchor_half_life_games": 5.0,
+      "trend_state_anchor_horizon_games": 1.0,
+      "trend_state_anchor_shrinkage": 0.75,
+      "trend_state_anchor_max_recent_std": 1.5,
+      "trend_state_anchor_source_rows": 144,
+      "trend_state_anchor_game_count": 10,
+      "interpretation": "tests whether short-horizon game-state extrapolation improves future physical realism"
+    },
+    "factorized_release_state_anchored": {
+      "base_model": "factorized_recent_state_anchored",
+      "release_anchor_columns": [
+        "release_speed",
+        "release_spin_rate",
+        "release_pos_x",
+        "release_pos_y",
+        "release_pos_z",
+        "release_extension"
+      ],
+      "release_anchor_alpha": 0.7,
+      "release_anchor_source_rows": 144,
+      "release_anchor_game_count": 10,
+      "spin_axis_anchor": "circular_recent_game_mean",
+      "spin_axis_anchor_alpha": 0.7,
+      "spin_axis_anchor_source_rows": 144,
+      "spin_axis_anchor_game_count": 10,
+      "interpretation": "tests whether release-specific centering and circular spin-axis anchoring improve release-layer robustness"
+    },
+    "conditional_state_mixture_residual": {
+      "description": "V2.4 state-conditioned physics-core mixture model.",
+      "state_conditioned": true,
+      "state_count": 3,
+      "state_columns": [
+        "balls",
+        "strikes",
+        "count_bucket_code",
+        "inning",
+        "pitcher_game_pitch_count",
+        "batter_stand_code",
+        "pitcher_score_diff",
+        "previous_release_speed",
+        "previous_release_spin_rate",
+        "previous_pfx_x",
+        "previous_pfx_z",
+        "previous_plate_x",
+        "previous_plate_z",
+        "rolling_5_release_speed_mean",
+        "rolling_5_release_spin_rate_mean",
+        "rolling_5_pfx_x_mean",
+        "rolling_5_pfx_z_mean",
+        "rolling_5_plate_x_mean",
+        "rolling_5_plate_z_mean",
+        "rolling_10_release_speed_mean",
+        "rolling_10_release_spin_rate_mean",
+        "rolling_10_pfx_x_mean",
+        "rolling_10_pfx_z_mean",
+        "rolling_20_release_speed_mean",
+        "rolling_20_release_spin_rate_mean",
+        "rolling_20_pfx_x_mean",
+        "rolling_20_pfx_z_mean"
+      ],
+      "max_components": 3,
+      "source_row_count": 144,
+      "interpretation": "tests whether recent pitcher state and context-specific mixture covariances improve full-physics realism"
+    }
+  },
+  "layer_results": {
+    "command_representation": {
+      "factorized_v2_1": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.5304709141274238,
+        "std_auc": 0.012465373961218829,
+        "min_auc": 0.5180055401662049,
+        "max_auc": 0.5429362880886426,
+        "pass_rate": 1.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_x",
+            "importance": 0.05851659298978297
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.046554909716864525
+          }
+        ]
+      },
+      "factorized_release_game_drift_gaussian": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.5249307479224377,
+        "std_auc": 0.00969529085872578,
+        "min_auc": 0.5152354570637119,
+        "max_auc": 0.5346260387811634,
+        "pass_rate": 1.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_z",
+            "importance": 0.6205737388807187
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.08766438946035034
+          }
+        ]
+      },
+      "factorized_release_game_drift_copula": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.53601108033241,
+        "std_auc": 0.03462603878116344,
+        "min_auc": 0.5013850415512465,
+        "max_auc": 0.5706371191135734,
+        "pass_rate": 1.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_x",
+            "importance": 0.3255082654702651
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.13342224026456687
+          }
+        ]
+      },
+      "factorized_release_recent_gaussian": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.6911357340720221,
+        "std_auc": 0.006925207756232676,
+        "min_auc": 0.6842105263157895,
+        "max_auc": 0.6980609418282548,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_x",
+            "importance": 0.18689453455883326
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.13110871088764886
+          }
+        ]
+      },
+      "factorized_short_memory_wide_residual": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.6301939058171745,
+        "std_auc": 0.0013850415512465242,
+        "min_auc": 0.628808864265928,
+        "max_auc": 0.631578947368421,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_z",
+            "importance": 0.3147849803715105
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.16540707082722717
+          }
+        ]
+      },
+      "factorized_short_memory_more_uncertain": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.6094182825484764,
+        "std_auc": 0.055401662049861466,
+        "min_auc": 0.554016620498615,
+        "max_auc": 0.6648199445983379,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_x",
+            "importance": 0.25501752319836385
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.15740334245651855
+          }
+        ]
+      },
+      "factorized_recent_state_anchored": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.6232686980609419,
+        "std_auc": 0.08864265927977838,
+        "min_auc": 0.5346260387811634,
+        "max_auc": 0.7119113573407202,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_z",
+            "importance": 0.06836875421973451
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.05346730559667067
+          }
+        ]
+      },
+      "factorized_trend_state_anchored": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.5997229916897506,
+        "std_auc": 0.06509695290858725,
+        "min_auc": 0.5346260387811634,
+        "max_auc": 0.6648199445983379,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_z",
+            "importance": 0.32808084799793713
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.2585753235505627
+          }
+        ]
+      },
+      "factorized_release_state_anchored": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.5290858725761773,
+        "std_auc": 0.005540166204986152,
+        "min_auc": 0.5235457063711911,
+        "max_auc": 0.5346260387811634,
+        "pass_rate": 1.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_z",
+            "importance": 0.14598262237909707
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.04981975082411059
+          }
+        ]
+      },
+      "factorized_physics_constrained_state": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.5457063711911357,
+        "std_auc": 0.0166204986149584,
+        "min_auc": 0.5290858725761773,
+        "max_auc": 0.5623268698060941,
+        "pass_rate": 1.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_z",
+            "importance": 0.1124125046726581
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.05665571577446639
+          }
+        ]
+      },
+      "conditional_state_mixture_residual": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.6745152354570637,
+        "std_auc": 0.04293628808864269,
+        "min_auc": 0.631578947368421,
+        "max_auc": 0.7174515235457064,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_z",
+            "importance": 0.44847562872536206
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.3337939829088398
+          }
+        ]
+      },
+      "pca_latent_residual": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.6080332409972299,
+        "std_auc": 0.10664819944598336,
+        "min_auc": 0.5013850415512465,
+        "max_auc": 0.7146814404432132,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_z",
+            "importance": 0.4083207511752788
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.38918987177243786
+          }
+        ]
+      },
+      "context_neighbor_residual": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.5304709141274238,
+        "std_auc": 0.01800554016620498,
+        "min_auc": 0.5124653739612188,
+        "max_auc": 0.5484764542936288,
+        "pass_rate": 1.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_z",
+            "importance": 0.1943086028817052
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.09826232054480766
+          }
+        ]
+      },
+      "derived_joint_gaussian": {
+        "features": [
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.5609418282548477,
+        "std_auc": 0.015235457063711932,
+        "min_auc": 0.5457063711911357,
+        "max_auc": 0.5761772853185596,
+        "pass_rate": 1.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_z",
+            "importance": 0.3673312339119959
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.004942810126127715
+          }
+        ]
+      }
+    },
+    "movement_only": {
+      "factorized_v2_1": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.7797783933518005,
+        "std_auc": 0.05124653739612184,
+        "min_auc": 0.7285318559556787,
+        "max_auc": 0.8310249307479224,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "pfx_x",
+            "importance": 0.9745999642848071
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.8717953236260014
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.2792226965625429
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.09111586809892794
+          }
+        ]
+      },
+      "factorized_release_game_drift_gaussian": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.832409972299169,
+        "std_auc": 0.012465373961218829,
+        "min_auc": 0.8199445983379502,
+        "max_auc": 0.8448753462603878,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "pfx_z",
+            "importance": 1.6835536840390701
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.9433563282595502
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.10817523073036799
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.06323222252047211
+          }
+        ]
+      },
+      "factorized_release_game_drift_copula": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.8337950138504155,
+        "std_auc": 0.041551246537396114,
+        "min_auc": 0.7922437673130194,
+        "max_auc": 0.8753462603878116,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "pfx_z",
+            "importance": 1.2708544831461415
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.4564893212733157
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.3507845899140714
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.229377596910261
+          }
+        ]
+      },
+      "factorized_release_recent_gaussian": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.7770083102493075,
+        "std_auc": 0.029085872576177285,
+        "min_auc": 0.7479224376731302,
+        "max_auc": 0.8060941828254847,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "pfx_z",
+            "importance": 1.1512377348726714
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.33843275216801155
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.1076648953009761
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.0552644492662458
+          }
+        ]
+      },
+      "factorized_short_memory_wide_residual": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.5637119113573408,
+        "std_auc": 0.031855955678670334,
+        "min_auc": 0.5318559556786704,
+        "max_auc": 0.5955678670360111,
+        "pass_rate": 1.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "pfx_z",
+            "importance": 1.0076334102645603
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.3892455096864505
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.08768761360670028
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.046278844111997036
+          }
+        ]
+      },
+      "factorized_short_memory_more_uncertain": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.5650969529085872,
+        "std_auc": 0.04986149584487537,
+        "min_auc": 0.5152354570637119,
+        "max_auc": 0.6149584487534626,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_x",
+            "importance": 0.3310963568000049
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.19014184059904646
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.10399808071606378
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.028192837681016852
+          }
+        ]
+      },
+      "factorized_recent_state_anchored": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.631578947368421,
+        "std_auc": 0.09695290858725758,
+        "min_auc": 0.5346260387811634,
+        "max_auc": 0.7285318559556786,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "plate_z",
+            "importance": 0.26420245384670155
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.24996335192570318
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.2055826655332302
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.19366308306972632
+          }
+        ]
+      },
+      "factorized_trend_state_anchored": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.5526315789473684,
+        "std_auc": 0.029085872576177285,
+        "min_auc": 0.5235457063711911,
+        "max_auc": 0.5817174515235457,
+        "pass_rate": 1.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.5940429802582043
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.5288692358824411
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.26338461810040775
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.11894268283215868
+          }
+        ]
+      },
+      "factorized_release_state_anchored": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.5623268698060941,
+        "std_auc": 0.027700831024930705,
+        "min_auc": 0.5346260387811634,
+        "max_auc": 0.5900277008310248,
+        "pass_rate": 1.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "pfx_x",
+            "importance": 0.5599728663309902
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.48086865967039205
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.15440292397034452
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.060864131403214346
+          }
+        ]
+      },
+      "factorized_physics_constrained_state": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.5831024930747922,
+        "std_auc": 0.06786703601108035,
+        "min_auc": 0.5152354570637119,
+        "max_auc": 0.6509695290858726,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.2894638541270291
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.25708719325985735
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.1575315638715244
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.0064302104120240065
+          }
+        ]
+      },
+      "conditional_state_mixture_residual": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.7742382271468145,
+        "std_auc": 0.05678670360110799,
+        "min_auc": 0.7174515235457064,
+        "max_auc": 0.8310249307479224,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "pfx_z",
+            "importance": 1.0888852425699136
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.4170689901781078
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.22338442016846502
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.17546514968562393
+          }
+        ]
+      },
+      "pca_latent_residual": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.7617728531855956,
+        "std_auc": 0.011080332409972249,
+        "min_auc": 0.7506925207756233,
+        "max_auc": 0.7728531855955678,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.5752340822084103
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.36957583315872017
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.2025061423422827
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.14037009506504625
+          }
+        ]
+      },
+      "context_neighbor_residual": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.7423822714681441,
+        "std_auc": 0.10526315789473684,
+        "min_auc": 0.6371191135734072,
+        "max_auc": 0.8476454293628809,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.27036701219501835
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.24102051875438923
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.016392008945586258
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.011778134921704616
+          }
+        ]
+      },
+      "derived_joint_gaussian": {
+        "features": [
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z"
+        ],
+        "mean_auc": 0.6260387811634349,
+        "std_auc": 0.011080332409972304,
+        "min_auc": 0.6149584487534626,
+        "max_auc": 0.6371191135734072,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.9882733371719437
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.35223092652148713
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.25842103367796015
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.0360656203495195
+          }
+        ]
+      }
+    },
+    "release_only": {
+      "factorized_v2_1": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "mean_auc": 0.7839335180055402,
+        "std_auc": 0.06648199445983377,
+        "min_auc": 0.7174515235457064,
+        "max_auc": 0.850415512465374,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.526747923891706
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.40627559034495225
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.3601083723510659
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.34004147806049273
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.14253879465150907
+          }
+        ]
+      },
+      "factorized_release_game_drift_gaussian": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "mean_auc": 0.7036011080332409,
+        "std_auc": 0.07479224376731303,
+        "min_auc": 0.628808864265928,
+        "max_auc": 0.778393351800554,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_speed",
+            "importance": 0.7140291913089352
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.5978071545807191
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.45208895064445337
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.2618161765489614
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.154105677463165
+          }
+        ]
+      },
+      "factorized_release_game_drift_copula": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "mean_auc": 0.7354570637119113,
+        "std_auc": 0.015235457063711932,
+        "min_auc": 0.7202216066481995,
+        "max_auc": 0.7506925207756233,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_speed",
+            "importance": 0.6557902907976347
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.5264015944152134
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.46119708835062756
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.19969386641103334
+          },
+          {
+            "feature": "release_pos_z",
+            "importance": 0.1603228508515455
+          }
+        ]
+      },
+      "factorized_release_recent_gaussian": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "mean_auc": 0.7146814404432134,
+        "std_auc": 0.055401662049861466,
+        "min_auc": 0.6592797783933518,
+        "max_auc": 0.7700831024930748,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_pos_y",
+            "importance": 0.8440084733044413
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.8364844898448657
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.45530767807805916
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.3151653921549655
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.2905407018677135
+          }
+        ]
+      },
+      "factorized_short_memory_wide_residual": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "mean_auc": 0.5858725761772854,
+        "std_auc": 0.0789473684210526,
+        "min_auc": 0.5069252077562327,
+        "max_auc": 0.6648199445983379,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_pos_y",
+            "importance": 0.8384269908260831
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.538958614748565
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.45992242630189034
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.30940982484843405
+          },
+          {
+            "feature": "release_pos_z",
+            "importance": 0.2110703442661146
+          }
+        ]
+      },
+      "factorized_short_memory_more_uncertain": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "mean_auc": 0.7700831024930748,
+        "std_auc": 0.038781163434903065,
+        "min_auc": 0.7313019390581718,
+        "max_auc": 0.8088642659279779,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.44717704330962726
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.32353229194184463
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.32145080789399183
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.30547343402986293
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.3002355902379069
+          }
+        ]
+      },
+      "factorized_recent_state_anchored": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "mean_auc": 0.6717451523545707,
+        "std_auc": 0.059556786703601095,
+        "min_auc": 0.6121883656509696,
+        "max_auc": 0.7313019390581718,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.7265516852208187
+          },
+          {
+            "feature": "release_pos_z",
+            "importance": 0.4708984430966185
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.2618851719872756
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.20751875936224834
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.19689101290800068
+          }
+        ]
+      },
+      "factorized_trend_state_anchored": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "mean_auc": 0.7119113573407202,
+        "std_auc": 0.0027700831024930483,
+        "min_auc": 0.7091412742382271,
+        "max_auc": 0.7146814404432132,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.4233693920007812
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.3799568842191441
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.25132810458559024
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.25131360555687354
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.19163828931414725
+          }
+        ]
+      },
+      "factorized_release_state_anchored": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "mean_auc": 0.592797783933518,
+        "std_auc": 0.02216066481994461,
+        "min_auc": 0.5706371191135734,
+        "max_auc": 0.6149584487534626,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.6610173973374821
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.38737472735737166
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.3078815614325647
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.21959201058762137
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.12361107889482571
+          }
+        ]
+      },
+      "factorized_physics_constrained_state": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "mean_auc": 0.7285318559556786,
+        "std_auc": 0.08587257617728533,
+        "min_auc": 0.6426592797783933,
+        "max_auc": 0.814404432132964,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.8656009582542781
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.48744608991816796
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.44960559503492187
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.3759847316456174
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.21788552244331497
+          }
+        ]
+      },
+      "conditional_state_mixture_residual": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "mean_auc": 0.8698060941828255,
+        "std_auc": 0.08310249307479223,
+        "min_auc": 0.7867036011080333,
+        "max_auc": 0.9529085872576177,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_speed",
+            "importance": 1.0038664937372754
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.780438650315749
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.7323471035405209
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.6385935746896719
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.6286107141850253
+          }
+        ]
+      },
+      "pca_latent_residual": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "mean_auc": 0.9279778393351801,
+        "std_auc": 0.02216066481994461,
+        "min_auc": 0.9058171745152355,
+        "max_auc": 0.9501385041551247,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_pos_y",
+            "importance": 0.9105963113155381
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.7529781010542385
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.7407268249562775
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.3979766373393716
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.3275650516654023
+          }
+        ]
+      },
+      "context_neighbor_residual": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "mean_auc": 0.8490304709141274,
+        "std_auc": 0.012465373961218829,
+        "min_auc": 0.8365650969529086,
+        "max_auc": 0.8614958448753463,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_pos_x",
+            "importance": 0.7876669066852582
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.6726593467655209
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.6068725434893824
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.4533238032640317
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.39773659188209787
+          }
+        ]
+      },
+      "derived_joint_gaussian": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension"
+        ],
+        "mean_auc": 0.8933518005540166,
+        "std_auc": 0.0013850415512465242,
+        "min_auc": 0.8919667590027701,
+        "max_auc": 0.8947368421052632,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_pos_x",
+            "importance": 0.7346143501881215
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.5451938687642792
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.5354546342508771
+          },
+          {
+            "feature": "release_pos_z",
+            "importance": 0.4708084115238496
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.43970886718553925
+          }
+        ]
+      }
+    },
+    "trajectory_only": {
+      "factorized_v2_1": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.8337950138504155,
+        "std_auc": 0.005540166204986152,
+        "min_auc": 0.8282548476454293,
+        "max_auc": 0.8393351800554016,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "ay",
+            "importance": 0.9305055073374164
+          },
+          {
+            "feature": "ax",
+            "importance": 0.7220560635063283
+          },
+          {
+            "feature": "az",
+            "importance": 0.6939631306013544
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.2086442629550523
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.1699121786522146
+          }
+        ]
+      },
+      "factorized_release_game_drift_gaussian": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.9113573407202216,
+        "std_auc": 0.013850415512465408,
+        "min_auc": 0.8975069252077562,
+        "max_auc": 0.925207756232687,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "ay",
+            "importance": 1.0178043852867318
+          },
+          {
+            "feature": "ax",
+            "importance": 0.9023733423413702
+          },
+          {
+            "feature": "az",
+            "importance": 0.6359054318158675
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.33268873831717577
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.18418620978093653
+          }
+        ]
+      },
+      "factorized_release_game_drift_copula": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.8310249307479225,
+        "std_auc": 0.0027700831024931034,
+        "min_auc": 0.8282548476454293,
+        "max_auc": 0.8337950138504155,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "ay",
+            "importance": 1.2349718970521735
+          },
+          {
+            "feature": "az",
+            "importance": 0.8485953142475796
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.5554121901988067
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.22584276209564705
+          },
+          {
+            "feature": "ax",
+            "importance": 0.05266510870979007
+          }
+        ]
+      },
+      "factorized_release_recent_gaussian": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.7922437673130194,
+        "std_auc": 0.03878116343490301,
+        "min_auc": 0.7534626038781164,
+        "max_auc": 0.8310249307479224,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "ay",
+            "importance": 1.1020191602277671
+          },
+          {
+            "feature": "az",
+            "importance": 0.484094182434089
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.24037855372194963
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.17030428830931535
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.1345472164066418
+          }
+        ]
+      },
+      "factorized_short_memory_wide_residual": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.6578947368421053,
+        "std_auc": 0.06509695290858725,
+        "min_auc": 0.592797783933518,
+        "max_auc": 0.7229916897506925,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "ay",
+            "importance": 0.4465051932414116
+          },
+          {
+            "feature": "az",
+            "importance": 0.3210329527402459
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.2784931295131386
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.23215289492133137
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.1678117487243182
+          }
+        ]
+      },
+      "factorized_short_memory_more_uncertain": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.6274238227146814,
+        "std_auc": 0.04570637119113574,
+        "min_auc": 0.5817174515235457,
+        "max_auc": 0.6731301939058172,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "vy0",
+            "importance": 0.48065713087549317
+          },
+          {
+            "feature": "az",
+            "importance": 0.4505347305493277
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.2372849146017781
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.16591944301011208
+          },
+          {
+            "feature": "ax",
+            "importance": 0.10262667009667935
+          }
+        ]
+      },
+      "factorized_recent_state_anchored": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.5831024930747922,
+        "std_auc": 0.06786703601108035,
+        "min_auc": 0.5152354570637119,
+        "max_auc": 0.6509695290858726,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "vy0",
+            "importance": 0.3905314405181945
+          },
+          {
+            "feature": "ax",
+            "importance": 0.3009774643447165
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.29102978056945206
+          },
+          {
+            "feature": "ay",
+            "importance": 0.19258161059529738
+          },
+          {
+            "feature": "az",
+            "importance": 0.13669816662986414
+          }
+        ]
+      },
+      "factorized_trend_state_anchored": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.6385041551246537,
+        "std_auc": 0.0706371191135734,
+        "min_auc": 0.5678670360110804,
+        "max_auc": 0.7091412742382271,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "az",
+            "importance": 0.42093023556587117
+          },
+          {
+            "feature": "ax",
+            "importance": 0.3559316227509336
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.3500966738383527
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.25801792509022464
+          },
+          {
+            "feature": "ay",
+            "importance": 0.12192667190002197
+          }
+        ]
+      },
+      "factorized_release_state_anchored": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.6191135734072022,
+        "std_auc": 0.031855955678670334,
+        "min_auc": 0.5872576177285319,
+        "max_auc": 0.6509695290858726,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "az",
+            "importance": 0.35808632611121294
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.2254499878046538
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.10765179103301349
+          },
+          {
+            "feature": "ax",
+            "importance": 0.08240409067793439
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.0689042267069901
+          }
+        ]
+      },
+      "factorized_physics_constrained_state": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.6218836565096952,
+        "std_auc": 0.05678670360110799,
+        "min_auc": 0.5650969529085873,
+        "max_auc": 0.6786703601108033,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "vy0",
+            "importance": 0.5025403959900234
+          },
+          {
+            "feature": "az",
+            "importance": 0.2868450967750196
+          },
+          {
+            "feature": "ay",
+            "importance": 0.15418472818990173
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.11346478200953547
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.08357595091003768
+          }
+        ]
+      },
+      "conditional_state_mixture_residual": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.8074792243767313,
+        "std_auc": 0.026315789473684237,
+        "min_auc": 0.7811634349030471,
+        "max_auc": 0.8337950138504155,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "az",
+            "importance": 0.6213516105771141
+          },
+          {
+            "feature": "ay",
+            "importance": 0.5491724436477752
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.47246109592127505
+          },
+          {
+            "feature": "ax",
+            "importance": 0.22164077810631966
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.19456445601968536
+          }
+        ]
+      },
+      "pca_latent_residual": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.7479224376731302,
+        "std_auc": 0.03601108033240996,
+        "min_auc": 0.7119113573407202,
+        "max_auc": 0.7839335180055401,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "ay",
+            "importance": 0.6496906908877719
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.6053718548528435
+          },
+          {
+            "feature": "az",
+            "importance": 0.5574071810212037
+          },
+          {
+            "feature": "ax",
+            "importance": 0.42793154642621045
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.24269727662435156
+          }
+        ]
+      },
+      "context_neighbor_residual": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.7326869806094183,
+        "std_auc": 0.02631578947368418,
+        "min_auc": 0.7063711911357341,
+        "max_auc": 0.7590027700831025,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "vy0",
+            "importance": 0.5143769473004071
+          },
+          {
+            "feature": "az",
+            "importance": 0.2189740924011273
+          },
+          {
+            "feature": "ay",
+            "importance": 0.1774701497953323
+          },
+          {
+            "feature": "vx0",
+            "importance": 0.1350178282619401
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.09386876288206639
+          }
+        ]
+      },
+      "derived_joint_gaussian": {
+        "features": [
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.8448753462603877,
+        "std_auc": 0.07479224376731303,
+        "min_auc": 0.7700831024930748,
+        "max_auc": 0.9196675900277008,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "ay",
+            "importance": 0.6155844478520375
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.5608260358618224
+          },
+          {
+            "feature": "az",
+            "importance": 0.3961598905180667
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.2859107601520651
+          },
+          {
+            "feature": "ax",
+            "importance": 0.27469367685592033
+          }
+        ]
+      }
+    },
+    "physics_core": {
+      "factorized_v2_1": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.8698060941828254,
+        "std_auc": 0.06371191135734072,
+        "min_auc": 0.8060941828254847,
+        "max_auc": 0.9335180055401662,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "ay",
+            "importance": 1.0394771981887205
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 1.0093635179384353
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.4579412494086245
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.42745194214130783
+          },
+          {
+            "feature": "ax",
+            "importance": 0.4121761187976574
+          }
+        ]
+      },
+      "factorized_release_game_drift_gaussian": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.9265927977839336,
+        "std_auc": 0.023545706371191133,
+        "min_auc": 0.9030470914127424,
+        "max_auc": 0.9501385041551247,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "ay",
+            "importance": 0.8575762630849302
+          },
+          {
+            "feature": "ax",
+            "importance": 0.7308611076782924
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.7039102153535175
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.6956191450128046
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.6486052348858478
+          }
+        ]
+      },
+      "factorized_release_game_drift_copula": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.8518005540166205,
+        "std_auc": 0.04570637119113574,
+        "min_auc": 0.8060941828254847,
+        "max_auc": 0.8975069252077562,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "ay",
+            "importance": 1.2038613479973324
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.8315385868630245
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.4132525165238186
+          },
+          {
+            "feature": "release_pos_z",
+            "importance": 0.3850146525415862
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.2601008314539628
+          }
+        ]
+      },
+      "factorized_release_recent_gaussian": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.8822714681440443,
+        "std_auc": 0.0013850415512465242,
+        "min_auc": 0.8808864265927978,
+        "max_auc": 0.8836565096952909,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "pfx_z",
+            "importance": 0.6479165494100498
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.5694450593997671
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.5044531774184782
+          },
+          {
+            "feature": "az",
+            "importance": 0.4993796465271516
+          },
+          {
+            "feature": "ay",
+            "importance": 0.4870548289334143
+          }
+        ]
+      },
+      "factorized_short_memory_wide_residual": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.6772853185595568,
+        "std_auc": 0.09279778393351801,
+        "min_auc": 0.5844875346260388,
+        "max_auc": 0.7700831024930748,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "ay",
+            "importance": 0.9329647012945886
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.8390411389191331
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.5502056850405075
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.4351190143559534
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.3169499210848133
+          }
+        ]
+      },
+      "factorized_short_memory_more_uncertain": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.5761772853185596,
+        "std_auc": 0.060941828254847674,
+        "min_auc": 0.5152354570637119,
+        "max_auc": 0.6371191135734072,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.8008546532748454
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.49478156146697205
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.4081792789694101
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.3440963269903898
+          },
+          {
+            "feature": "az",
+            "importance": 0.34260281314567753
+          }
+        ]
+      },
+      "factorized_recent_state_anchored": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.6454293628808865,
+        "std_auc": 0.13019390581717455,
+        "min_auc": 0.5152354570637119,
+        "max_auc": 0.775623268698061,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_spin_rate",
+            "importance": 1.2379976695523667
+          },
+          {
+            "feature": "release_pos_z",
+            "importance": 0.712839442110215
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.44124662524636354
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.23514160052060973
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.23035362259748957
+          }
+        ]
+      },
+      "factorized_trend_state_anchored": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.610803324099723,
+        "std_auc": 0.0789473684210526,
+        "min_auc": 0.5318559556786704,
+        "max_auc": 0.6897506925207756,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.7074147781681355
+          },
+          {
+            "feature": "vz0",
+            "importance": 0.4448917551115137
+          },
+          {
+            "feature": "plate_z",
+            "importance": 0.410753550123254
+          },
+          {
+            "feature": "plate_x",
+            "importance": 0.40604385820637934
+          },
+          {
+            "feature": "ay",
+            "importance": 0.3987789686928453
+          }
+        ]
+      },
+      "factorized_release_state_anchored": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.6149584487534626,
+        "std_auc": 0.027700831024930705,
+        "min_auc": 0.5872576177285319,
+        "max_auc": 0.6426592797783933,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.6543988746483731
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.5932968304350636
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.3220509646359846
+          },
+          {
+            "feature": "az",
+            "importance": 0.29361077167537014
+          },
+          {
+            "feature": "pfx_x",
+            "importance": 0.27566709100425263
+          }
+        ]
+      },
+      "factorized_physics_constrained_state": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.5955678670360112,
+        "std_auc": 0.08864265927977838,
+        "min_auc": 0.5069252077562327,
+        "max_auc": 0.6842105263157895,
+        "pass_rate": 0.5,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.7900544335430929
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.5436283029224256
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.37131834576320666
+          },
+          {
+            "feature": "release_pos_z",
+            "importance": 0.345781692299744
+          },
+          {
+            "feature": "pfx_z",
+            "importance": 0.3188577625825825
+          }
+        ]
+      },
+      "conditional_state_mixture_residual": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.9085872576177285,
+        "std_auc": 0.03878116343490301,
+        "min_auc": 0.8698060941828255,
+        "max_auc": 0.9473684210526315,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_pos_x",
+            "importance": 0.9000235608623424
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.5729618298391442
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.5369678132889495
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.45092014935895247
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.4274149303132974
+          }
+        ]
+      },
+      "pca_latent_residual": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.8933518005540166,
+        "std_auc": 0.015235457063711877,
+        "min_auc": 0.8781163434903048,
+        "max_auc": 0.9085872576177285,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_pos_y",
+            "importance": 0.9548991969051961
+          },
+          {
+            "feature": "release_pos_x",
+            "importance": 0.8212506108267408
+          },
+          {
+            "feature": "release_pos_z",
+            "importance": 0.636238156074597
+          },
+          {
+            "feature": "release_extension",
+            "importance": 0.490971305025549
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.4340430586331898
+          }
+        ]
+      },
+      "context_neighbor_residual": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.8656509695290859,
+        "std_auc": 0.012465373961218884,
+        "min_auc": 0.853185595567867,
+        "max_auc": 0.8781163434903048,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_pos_x",
+            "importance": 0.9910151139310054
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.4860831700787678
+          },
+          {
+            "feature": "spin_axis_cos",
+            "importance": 0.46516790557026094
+          },
+          {
+            "feature": "vy0",
+            "importance": 0.43223898665237853
+          },
+          {
+            "feature": "release_speed",
+            "importance": 0.38542103372913333
+          }
+        ]
+      },
+      "derived_joint_gaussian": {
+        "features": [
+          "release_speed",
+          "release_spin_rate",
+          "spin_axis_cos",
+          "spin_axis_sin",
+          "release_pos_x",
+          "release_pos_y",
+          "release_pos_z",
+          "release_extension",
+          "pfx_x",
+          "pfx_z",
+          "plate_x",
+          "plate_z",
+          "vx0",
+          "vy0",
+          "vz0",
+          "ax",
+          "ay",
+          "az"
+        ],
+        "mean_auc": 0.9127423822714682,
+        "std_auc": 0.012465373961218884,
+        "min_auc": 0.9002770083102493,
+        "max_auc": 0.925207756232687,
+        "pass_rate": 0.0,
+        "repeat_count": 2,
+        "n_real": 63,
+        "n_simulated": 63,
+        "top_leakage_features": [
+          {
+            "feature": "release_pos_x",
+            "importance": 0.9014970323348774
+          },
+          {
+            "feature": "ay",
+            "importance": 0.6889809097046201
+          },
+          {
+            "feature": "release_pos_y",
+            "importance": 0.48176943438952263
+          },
+          {
+            "feature": "release_spin_rate",
+            "importance": 0.41558268282477484
+          },
+          {
+            "feature": "spin_axis_sin",
+            "importance": 0.37013405877268846
+          }
+        ]
+      }
+    }
+  },
+  "repeat_results": [
+    {
+      "command_representation": {
+        "factorized_v2_1": {
+          "auc": 0.5429362880886426,
+          "raw_auc": 0.45706371191135736,
+          "train_auc": 0.53099173553719,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.05851659298978297
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.046554909716864525
+            }
+          ]
+        },
+        "factorized_release_game_drift_gaussian": {
+          "auc": 0.5152354570637119,
+          "raw_auc": 0.5152354570637119,
+          "train_auc": 0.6802685950413223,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.6205737388807187
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.08766438946035034
+            }
+          ]
+        },
+        "factorized_release_game_drift_copula": {
+          "auc": 0.5013850415512465,
+          "raw_auc": 0.4986149584487535,
+          "train_auc": 0.5733471074380165,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.3255082654702651
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.13342224026456687
+            }
+          ]
+        },
+        "factorized_release_recent_gaussian": {
+          "auc": 0.6842105263157895,
+          "raw_auc": 0.6842105263157895,
+          "train_auc": 0.5790289256198347,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.18689453455883326
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.13110871088764886
+            }
+          ]
+        },
+        "factorized_short_memory_wide_residual": {
+          "auc": 0.631578947368421,
+          "raw_auc": 0.3684210526315789,
+          "train_auc": 0.6224173553719008,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.3147849803715105
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.16540707082722717
+            }
+          ]
+        },
+        "factorized_short_memory_more_uncertain": {
+          "auc": 0.6648199445983379,
+          "raw_auc": 0.6648199445983379,
+          "train_auc": 0.5444214876033058,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.25501752319836385
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.15740334245651855
+            }
+          ]
+        },
+        "factorized_recent_state_anchored": {
+          "auc": 0.7119113573407202,
+          "raw_auc": 0.2880886426592798,
+          "train_auc": 0.59400826446281,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.06836875421973451
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.05346730559667067
+            }
+          ]
+        },
+        "factorized_trend_state_anchored": {
+          "auc": 0.6648199445983379,
+          "raw_auc": 0.6648199445983379,
+          "train_auc": 0.6084710743801653,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.32808084799793713
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.2585753235505627
+            }
+          ]
+        },
+        "factorized_release_state_anchored": {
+          "auc": 0.5346260387811634,
+          "raw_auc": 0.5346260387811634,
+          "train_auc": 0.537706611570248,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.14598262237909707
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.04981975082411059
+            }
+          ]
+        },
+        "factorized_physics_constrained_state": {
+          "auc": 0.5623268698060941,
+          "raw_auc": 0.5623268698060941,
+          "train_auc": 0.5547520661157025,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.1124125046726581
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.05665571577446639
+            }
+          ]
+        },
+        "conditional_state_mixture_residual": {
+          "auc": 0.631578947368421,
+          "raw_auc": 0.631578947368421,
+          "train_auc": 0.6807851239669421,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.44847562872536206
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.3337939829088398
+            }
+          ]
+        },
+        "pca_latent_residual": {
+          "auc": 0.5013850415512465,
+          "raw_auc": 0.4986149584487535,
+          "train_auc": 0.6854338842975206,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.4083207511752788
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.38918987177243786
+            }
+          ]
+        },
+        "context_neighbor_residual": {
+          "auc": 0.5124653739612188,
+          "raw_auc": 0.5124653739612188,
+          "train_auc": 0.5532024793388429,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.1943086028817052
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.09826232054480766
+            }
+          ]
+        },
+        "derived_joint_gaussian": {
+          "auc": 0.5761772853185596,
+          "raw_auc": 0.5761772853185596,
+          "train_auc": 0.6074380165289256,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.3673312339119959
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.004942810126127715
+            }
+          ]
+        }
+      },
+      "movement_only": {
+        "factorized_v2_1": {
+          "auc": 0.7285318559556787,
+          "raw_auc": 0.7285318559556787,
+          "train_auc": 0.8460743801652892,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_x",
+              "importance": 0.9745999642848071
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.8717953236260014
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.2792226965625429
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.09111586809892794
+            }
+          ]
+        },
+        "factorized_release_game_drift_gaussian": {
+          "auc": 0.8448753462603878,
+          "raw_auc": 0.8448753462603878,
+          "train_auc": 0.9158057851239669,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 1.6835536840390701
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.9433563282595502
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.10817523073036799
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.06323222252047211
+            }
+          ]
+        },
+        "factorized_release_game_drift_copula": {
+          "auc": 0.7922437673130194,
+          "raw_auc": 0.7922437673130194,
+          "train_auc": 0.8378099173553719,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 1.2708544831461415
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.4564893212733157
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.3507845899140714
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.229377596910261
+            }
+          ]
+        },
+        "factorized_release_recent_gaussian": {
+          "auc": 0.7479224376731302,
+          "raw_auc": 0.7479224376731302,
+          "train_auc": 0.8140495867768595,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 1.1512377348726714
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.33843275216801155
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.1076648953009761
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.0552644492662458
+            }
+          ]
+        },
+        "factorized_short_memory_wide_residual": {
+          "auc": 0.5955678670360111,
+          "raw_auc": 0.40443213296398894,
+          "train_auc": 0.7556818181818182,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 1.0076334102645603
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.3892455096864505
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.08768761360670028
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.046278844111997036
+            }
+          ]
+        },
+        "factorized_short_memory_more_uncertain": {
+          "auc": 0.6149584487534626,
+          "raw_auc": 0.6149584487534626,
+          "train_auc": 0.6322314049586777,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.3310963568000049
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.19014184059904646
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.10399808071606378
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.028192837681016852
+            }
+          ]
+        },
+        "factorized_recent_state_anchored": {
+          "auc": 0.7285318559556786,
+          "raw_auc": 0.27146814404432135,
+          "train_auc": 0.5836776859504132,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.26420245384670155
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.24996335192570318
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.2055826655332302
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.19366308306972632
+            }
+          ]
+        },
+        "factorized_trend_state_anchored": {
+          "auc": 0.5817174515235457,
+          "raw_auc": 0.5817174515235457,
+          "train_auc": 0.7122933884297521,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 0.5940429802582043
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.5288692358824411
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.26338461810040775
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.11894268283215868
+            }
+          ]
+        },
+        "factorized_release_state_anchored": {
+          "auc": 0.5346260387811634,
+          "raw_auc": 0.46537396121883656,
+          "train_auc": 0.6838842975206612,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_x",
+              "importance": 0.5599728663309902
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.48086865967039205
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.15440292397034452
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.060864131403214346
+            }
+          ]
+        },
+        "factorized_physics_constrained_state": {
+          "auc": 0.6509695290858726,
+          "raw_auc": 0.6509695290858726,
+          "train_auc": 0.6430785123966942,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 0.2894638541270291
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.25708719325985735
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.1575315638715244
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.0064302104120240065
+            }
+          ]
+        },
+        "conditional_state_mixture_residual": {
+          "auc": 0.7174515235457064,
+          "raw_auc": 0.7174515235457064,
+          "train_auc": 0.8357438016528925,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 1.0888852425699136
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.4170689901781078
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.22338442016846502
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.17546514968562393
+            }
+          ]
+        },
+        "pca_latent_residual": {
+          "auc": 0.7506925207756233,
+          "raw_auc": 0.7506925207756233,
+          "train_auc": 0.6942148760330579,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 0.5752340822084103
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.36957583315872017
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.2025061423422827
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.14037009506504625
+            }
+          ]
+        },
+        "context_neighbor_residual": {
+          "auc": 0.6371191135734072,
+          "raw_auc": 0.6371191135734072,
+          "train_auc": 0.5867768595041323,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 0.27036701219501835
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.24102051875438923
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.016392008945586258
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.011778134921704616
+            }
+          ]
+        },
+        "derived_joint_gaussian": {
+          "auc": 0.6149584487534626,
+          "raw_auc": 0.6149584487534626,
+          "train_auc": 0.7840909090909091,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 0.9882733371719437
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.35223092652148713
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.25842103367796015
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.0360656203495195
+            }
+          ]
+        }
+      },
+      "release_only": {
+        "factorized_v2_1": {
+          "auc": 0.7174515235457064,
+          "raw_auc": 0.7174515235457064,
+          "train_auc": 0.7443181818181818,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.526747923891706
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.40627559034495225
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.3601083723510659
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.34004147806049273
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.14253879465150907
+            }
+          ]
+        },
+        "factorized_release_game_drift_gaussian": {
+          "auc": 0.778393351800554,
+          "raw_auc": 0.778393351800554,
+          "train_auc": 0.7964876033057852,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_speed",
+              "importance": 0.7140291913089352
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.5978071545807191
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.45208895064445337
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.2618161765489614
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.154105677463165
+            }
+          ]
+        },
+        "factorized_release_game_drift_copula": {
+          "auc": 0.7506925207756233,
+          "raw_auc": 0.7506925207756233,
+          "train_auc": 0.7753099173553719,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_speed",
+              "importance": 0.6557902907976347
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.5264015944152134
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.46119708835062756
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.19969386641103334
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.1603228508515455
+            }
+          ]
+        },
+        "factorized_release_recent_gaussian": {
+          "auc": 0.6592797783933518,
+          "raw_auc": 0.6592797783933518,
+          "train_auc": 0.8517561983471075,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_pos_y",
+              "importance": 0.8440084733044413
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.8364844898448657
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.45530767807805916
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.3151653921549655
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.2905407018677135
+            }
+          ]
+        },
+        "factorized_short_memory_wide_residual": {
+          "auc": 0.6648199445983379,
+          "raw_auc": 0.6648199445983379,
+          "train_auc": 0.7711776859504132,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_pos_y",
+              "importance": 0.8384269908260831
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.538958614748565
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.45992242630189034
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.30940982484843405
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.2110703442661146
+            }
+          ]
+        },
+        "factorized_short_memory_more_uncertain": {
+          "auc": 0.7313019390581718,
+          "raw_auc": 0.7313019390581718,
+          "train_auc": 0.7494834710743802,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.44717704330962726
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.32353229194184463
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.32145080789399183
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.30547343402986293
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.3002355902379069
+            }
+          ]
+        },
+        "factorized_recent_state_anchored": {
+          "auc": 0.7313019390581718,
+          "raw_auc": 0.7313019390581718,
+          "train_auc": 0.7644628099173554,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.7265516852208187
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.4708984430966185
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.2618851719872756
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.20751875936224834
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.19689101290800068
+            }
+          ]
+        },
+        "factorized_trend_state_anchored": {
+          "auc": 0.7146814404432132,
+          "raw_auc": 0.7146814404432132,
+          "train_auc": 0.7107438016528925,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.4233693920007812
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.3799568842191441
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.25132810458559024
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.25131360555687354
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.19163828931414725
+            }
+          ]
+        },
+        "factorized_release_state_anchored": {
+          "auc": 0.6149584487534626,
+          "raw_auc": 0.6149584487534626,
+          "train_auc": 0.6916322314049587,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.6610173973374821
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.38737472735737166
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.3078815614325647
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.21959201058762137
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.12361107889482571
+            }
+          ]
+        },
+        "factorized_physics_constrained_state": {
+          "auc": 0.814404432132964,
+          "raw_auc": 0.814404432132964,
+          "train_auc": 0.7763429752066116,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.8656009582542781
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.48744608991816796
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.44960559503492187
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.3759847316456174
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.21788552244331497
+            }
+          ]
+        },
+        "conditional_state_mixture_residual": {
+          "auc": 0.7867036011080333,
+          "raw_auc": 0.7867036011080333,
+          "train_auc": 0.9488636363636364,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_speed",
+              "importance": 1.0038664937372754
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.780438650315749
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.7323471035405209
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.6385935746896719
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.6286107141850253
+            }
+          ]
+        },
+        "pca_latent_residual": {
+          "auc": 0.9501385041551247,
+          "raw_auc": 0.9501385041551247,
+          "train_auc": 0.9070247933884298,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_pos_y",
+              "importance": 0.9105963113155381
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.7529781010542385
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.7407268249562775
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.3979766373393716
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.3275650516654023
+            }
+          ]
+        },
+        "context_neighbor_residual": {
+          "auc": 0.8365650969529086,
+          "raw_auc": 0.8365650969529086,
+          "train_auc": 0.8739669421487604,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_pos_x",
+              "importance": 0.7876669066852582
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.6726593467655209
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.6068725434893824
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.4533238032640317
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.39773659188209787
+            }
+          ]
+        },
+        "derived_joint_gaussian": {
+          "auc": 0.8919667590027701,
+          "raw_auc": 0.8919667590027701,
+          "train_auc": 0.8827479338842975,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_pos_x",
+              "importance": 0.7346143501881215
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.5451938687642792
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.5354546342508771
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.4708084115238496
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.43970886718553925
+            }
+          ]
+        }
+      },
+      "trajectory_only": {
+        "factorized_v2_1": {
+          "auc": 0.8282548476454293,
+          "raw_auc": 0.8282548476454293,
+          "train_auc": 0.878099173553719,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.9305055073374164
+            },
+            {
+              "feature": "ax",
+              "importance": 0.7220560635063283
+            },
+            {
+              "feature": "az",
+              "importance": 0.6939631306013544
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.2086442629550523
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.1699121786522146
+            }
+          ]
+        },
+        "factorized_release_game_drift_gaussian": {
+          "auc": 0.925207756232687,
+          "raw_auc": 0.925207756232687,
+          "train_auc": 0.9111570247933884,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 1.0178043852867318
+            },
+            {
+              "feature": "ax",
+              "importance": 0.9023733423413702
+            },
+            {
+              "feature": "az",
+              "importance": 0.6359054318158675
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.33268873831717577
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.18418620978093653
+            }
+          ]
+        },
+        "factorized_release_game_drift_copula": {
+          "auc": 0.8282548476454293,
+          "raw_auc": 0.8282548476454293,
+          "train_auc": 0.9028925619834711,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 1.2349718970521735
+            },
+            {
+              "feature": "az",
+              "importance": 0.8485953142475796
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.5554121901988067
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.22584276209564705
+            },
+            {
+              "feature": "ax",
+              "importance": 0.05266510870979007
+            }
+          ]
+        },
+        "factorized_release_recent_gaussian": {
+          "auc": 0.7534626038781164,
+          "raw_auc": 0.7534626038781164,
+          "train_auc": 0.8724173553719008,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 1.1020191602277671
+            },
+            {
+              "feature": "az",
+              "importance": 0.484094182434089
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.24037855372194963
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.17030428830931535
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.1345472164066418
+            }
+          ]
+        },
+        "factorized_short_memory_wide_residual": {
+          "auc": 0.7229916897506925,
+          "raw_auc": 0.7229916897506925,
+          "train_auc": 0.6911157024793388,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.4465051932414116
+            },
+            {
+              "feature": "az",
+              "importance": 0.3210329527402459
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.2784931295131386
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.23215289492133137
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.1678117487243182
+            }
+          ]
+        },
+        "factorized_short_memory_more_uncertain": {
+          "auc": 0.5817174515235457,
+          "raw_auc": 0.5817174515235457,
+          "train_auc": 0.7133264462809917,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "vy0",
+              "importance": 0.48065713087549317
+            },
+            {
+              "feature": "az",
+              "importance": 0.4505347305493277
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.2372849146017781
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.16591944301011208
+            },
+            {
+              "feature": "ax",
+              "importance": 0.10262667009667935
+            }
+          ]
+        },
+        "factorized_recent_state_anchored": {
+          "auc": 0.5152354570637119,
+          "raw_auc": 0.48476454293628807,
+          "train_auc": 0.668904958677686,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "vy0",
+              "importance": 0.3905314405181945
+            },
+            {
+              "feature": "ax",
+              "importance": 0.3009774643447165
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.29102978056945206
+            },
+            {
+              "feature": "ay",
+              "importance": 0.19258161059529738
+            },
+            {
+              "feature": "az",
+              "importance": 0.13669816662986414
+            }
+          ]
+        },
+        "factorized_trend_state_anchored": {
+          "auc": 0.7091412742382271,
+          "raw_auc": 0.7091412742382271,
+          "train_auc": 0.7091942148760331,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "az",
+              "importance": 0.42093023556587117
+            },
+            {
+              "feature": "ax",
+              "importance": 0.3559316227509336
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.3500966738383527
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.25801792509022464
+            },
+            {
+              "feature": "ay",
+              "importance": 0.12192667190002197
+            }
+          ]
+        },
+        "factorized_release_state_anchored": {
+          "auc": 0.6509695290858726,
+          "raw_auc": 0.6509695290858726,
+          "train_auc": 0.6518595041322314,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "az",
+              "importance": 0.35808632611121294
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.2254499878046538
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.10765179103301349
+            },
+            {
+              "feature": "ax",
+              "importance": 0.08240409067793439
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.0689042267069901
+            }
+          ]
+        },
+        "factorized_physics_constrained_state": {
+          "auc": 0.6786703601108033,
+          "raw_auc": 0.6786703601108033,
+          "train_auc": 0.6833677685950413,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "vy0",
+              "importance": 0.5025403959900234
+            },
+            {
+              "feature": "az",
+              "importance": 0.2868450967750196
+            },
+            {
+              "feature": "ay",
+              "importance": 0.15418472818990173
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.11346478200953547
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.08357595091003768
+            }
+          ]
+        },
+        "conditional_state_mixture_residual": {
+          "auc": 0.8337950138504155,
+          "raw_auc": 0.8337950138504155,
+          "train_auc": 0.8207644628099173,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "az",
+              "importance": 0.6213516105771141
+            },
+            {
+              "feature": "ay",
+              "importance": 0.5491724436477752
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.47246109592127505
+            },
+            {
+              "feature": "ax",
+              "importance": 0.22164077810631966
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.19456445601968536
+            }
+          ]
+        },
+        "pca_latent_residual": {
+          "auc": 0.7119113573407202,
+          "raw_auc": 0.7119113573407202,
+          "train_auc": 0.8512396694214877,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.6496906908877719
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.6053718548528435
+            },
+            {
+              "feature": "az",
+              "importance": 0.5574071810212037
+            },
+            {
+              "feature": "ax",
+              "importance": 0.42793154642621045
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.24269727662435156
+            }
+          ]
+        },
+        "context_neighbor_residual": {
+          "auc": 0.7590027700831025,
+          "raw_auc": 0.7590027700831025,
+          "train_auc": 0.734504132231405,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "vy0",
+              "importance": 0.5143769473004071
+            },
+            {
+              "feature": "az",
+              "importance": 0.2189740924011273
+            },
+            {
+              "feature": "ay",
+              "importance": 0.1774701497953323
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.1350178282619401
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.09386876288206639
+            }
+          ]
+        },
+        "derived_joint_gaussian": {
+          "auc": 0.7700831024930748,
+          "raw_auc": 0.7700831024930748,
+          "train_auc": 0.8300619834710744,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.6155844478520375
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.5608260358618224
+            },
+            {
+              "feature": "az",
+              "importance": 0.3961598905180667
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.2859107601520651
+            },
+            {
+              "feature": "ax",
+              "importance": 0.27469367685592033
+            }
+          ]
+        }
+      },
+      "physics_core": {
+        "factorized_v2_1": {
+          "auc": 0.8060941828254847,
+          "raw_auc": 0.8060941828254847,
+          "train_auc": 0.9349173553719008,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 1.0394771981887205
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 1.0093635179384353
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.4579412494086245
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.42745194214130783
+            },
+            {
+              "feature": "ax",
+              "importance": 0.4121761187976574
+            }
+          ]
+        },
+        "factorized_release_game_drift_gaussian": {
+          "auc": 0.9501385041551247,
+          "raw_auc": 0.9501385041551247,
+          "train_auc": 0.9514462809917356,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.8575762630849302
+            },
+            {
+              "feature": "ax",
+              "importance": 0.7308611076782924
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.7039102153535175
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.6956191450128046
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.6486052348858478
+            }
+          ]
+        },
+        "factorized_release_game_drift_copula": {
+          "auc": 0.8975069252077562,
+          "raw_auc": 0.8975069252077562,
+          "train_auc": 0.9183884297520661,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 1.2038613479973324
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.8315385868630245
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.4132525165238186
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.3850146525415862
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.2601008314539628
+            }
+          ]
+        },
+        "factorized_release_recent_gaussian": {
+          "auc": 0.8836565096952909,
+          "raw_auc": 0.8836565096952909,
+          "train_auc": 0.9096074380165289,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 0.6479165494100498
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.5694450593997671
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.5044531774184782
+            },
+            {
+              "feature": "az",
+              "importance": 0.4993796465271516
+            },
+            {
+              "feature": "ay",
+              "importance": 0.4870548289334143
+            }
+          ]
+        },
+        "factorized_short_memory_wide_residual": {
+          "auc": 0.5844875346260388,
+          "raw_auc": 0.5844875346260388,
+          "train_auc": 0.8569214876033058,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.9329647012945886
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.8390411389191331
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.5502056850405075
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.4351190143559534
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.3169499210848133
+            }
+          ]
+        },
+        "factorized_short_memory_more_uncertain": {
+          "auc": 0.5152354570637119,
+          "raw_auc": 0.5152354570637119,
+          "train_auc": 0.868801652892562,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.8008546532748454
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.49478156146697205
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.4081792789694101
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.3440963269903898
+            },
+            {
+              "feature": "az",
+              "importance": 0.34260281314567753
+            }
+          ]
+        },
+        "factorized_recent_state_anchored": {
+          "auc": 0.5152354570637119,
+          "raw_auc": 0.48476454293628807,
+          "train_auc": 0.881198347107438,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 1.2379976695523667
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.712839442110215
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.44124662524636354
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.23514160052060973
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.23035362259748957
+            }
+          ]
+        },
+        "factorized_trend_state_anchored": {
+          "auc": 0.5318559556786704,
+          "raw_auc": 0.5318559556786704,
+          "train_auc": 0.8636363636363636,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.7074147781681355
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.4448917551115137
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.410753550123254
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.40604385820637934
+            },
+            {
+              "feature": "ay",
+              "importance": 0.3987789686928453
+            }
+          ]
+        },
+        "factorized_release_state_anchored": {
+          "auc": 0.5872576177285319,
+          "raw_auc": 0.5872576177285319,
+          "train_auc": 0.8037190082644629,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.6543988746483731
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.5932968304350636
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.3220509646359846
+            },
+            {
+              "feature": "az",
+              "importance": 0.29361077167537014
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.27566709100425263
+            }
+          ]
+        },
+        "factorized_physics_constrained_state": {
+          "auc": 0.6842105263157895,
+          "raw_auc": 0.6842105263157895,
+          "train_auc": 0.8372933884297521,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.7900544335430929
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.5436283029224256
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.37131834576320666
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.345781692299744
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.3188577625825825
+            }
+          ]
+        },
+        "conditional_state_mixture_residual": {
+          "auc": 0.9473684210526315,
+          "raw_auc": 0.9473684210526315,
+          "train_auc": 0.9266528925619835,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_pos_x",
+              "importance": 0.9000235608623424
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.5729618298391442
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.5369678132889495
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.45092014935895247
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.4274149303132974
+            }
+          ]
+        },
+        "pca_latent_residual": {
+          "auc": 0.8781163434903048,
+          "raw_auc": 0.8781163434903048,
+          "train_auc": 0.9462809917355371,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_pos_y",
+              "importance": 0.9548991969051961
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.8212506108267408
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.636238156074597
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.490971305025549
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.4340430586331898
+            }
+          ]
+        },
+        "context_neighbor_residual": {
+          "auc": 0.8781163434903048,
+          "raw_auc": 0.8781163434903048,
+          "train_auc": 0.8894628099173554,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_pos_x",
+              "importance": 0.9910151139310054
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.4860831700787678
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.46516790557026094
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.43223898665237853
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.38542103372913333
+            }
+          ]
+        },
+        "derived_joint_gaussian": {
+          "auc": 0.9002770083102493,
+          "raw_auc": 0.9002770083102493,
+          "train_auc": 0.9266528925619835,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_pos_x",
+              "importance": 0.9014970323348774
+            },
+            {
+              "feature": "ay",
+              "importance": 0.6889809097046201
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.48176943438952263
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.41558268282477484
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.37013405877268846
+            }
+          ]
+        }
+      }
+    },
+    {
+      "command_representation": {
+        "factorized_v2_1": {
+          "auc": 0.5180055401662049,
+          "raw_auc": 0.481994459833795,
+          "train_auc": 0.5098140495867769,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.09812089077832895
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.014772178095171867
+            }
+          ]
+        },
+        "factorized_release_game_drift_gaussian": {
+          "auc": 0.5346260387811634,
+          "raw_auc": 0.46537396121883656,
+          "train_auc": 0.5955578512396694,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.2551360521497614
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.22472545651695794
+            }
+          ]
+        },
+        "factorized_release_game_drift_copula": {
+          "auc": 0.5706371191135734,
+          "raw_auc": 0.5706371191135734,
+          "train_auc": 0.5475206611570248,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.0688234824933887
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.0646489067443079
+            }
+          ]
+        },
+        "factorized_release_recent_gaussian": {
+          "auc": 0.6980609418282548,
+          "raw_auc": 0.6980609418282548,
+          "train_auc": 0.6425619834710744,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.4572326452900811
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.072235360642527
+            }
+          ]
+        },
+        "factorized_short_memory_wide_residual": {
+          "auc": 0.628808864265928,
+          "raw_auc": 0.37119113573407203,
+          "train_auc": 0.7050619834710744,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.8998177625979106
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.23190384228467734
+            }
+          ]
+        },
+        "factorized_short_memory_more_uncertain": {
+          "auc": 0.554016620498615,
+          "raw_auc": 0.44598337950138506,
+          "train_auc": 0.5366735537190083,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.1724110527889053
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.008104025080097757
+            }
+          ]
+        },
+        "factorized_recent_state_anchored": {
+          "auc": 0.5346260387811634,
+          "raw_auc": 0.5346260387811634,
+          "train_auc": 0.5428719008264463,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.18490429235873357
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.006208790314714884
+            }
+          ]
+        },
+        "factorized_trend_state_anchored": {
+          "auc": 0.5346260387811634,
+          "raw_auc": 0.5346260387811634,
+          "train_auc": 0.5144628099173554,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.050615554312289306
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.021782080724848735
+            }
+          ]
+        },
+        "factorized_release_state_anchored": {
+          "auc": 0.5235457063711911,
+          "raw_auc": 0.5235457063711911,
+          "train_auc": 0.5728305785123967,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.2997610757074362
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.04527762716481149
+            }
+          ]
+        },
+        "factorized_physics_constrained_state": {
+          "auc": 0.5290858725761773,
+          "raw_auc": 0.5290858725761773,
+          "train_auc": 0.5795454545454546,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.26981289545841414
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.051514389257154646
+            }
+          ]
+        },
+        "conditional_state_mixture_residual": {
+          "auc": 0.7174515235457064,
+          "raw_auc": 0.7174515235457064,
+          "train_auc": 0.6616735537190083,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.46228643504169786
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.18939520251432407
+            }
+          ]
+        },
+        "pca_latent_residual": {
+          "auc": 0.7146814404432132,
+          "raw_auc": 0.7146814404432132,
+          "train_auc": 0.6079545454545454,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.31733879929351216
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.007180319453692652
+            }
+          ]
+        },
+        "context_neighbor_residual": {
+          "auc": 0.5484764542936288,
+          "raw_auc": 0.5484764542936288,
+          "train_auc": 0.6730371900826446,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.6149309932741379
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.06372845767101161
+            }
+          ]
+        },
+        "derived_joint_gaussian": {
+          "auc": 0.5457063711911357,
+          "raw_auc": 0.5457063711911357,
+          "train_auc": 0.6606404958677686,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.5795450558926553
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.06787077431445343
+            }
+          ]
+        }
+      },
+      "movement_only": {
+        "factorized_v2_1": {
+          "auc": 0.8310249307479224,
+          "raw_auc": 0.8310249307479224,
+          "train_auc": 0.8863636363636364,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 1.526600931559338
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.6397516181683731
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.1801974462608118
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.03142703401901902
+            }
+          ]
+        },
+        "factorized_release_game_drift_gaussian": {
+          "auc": 0.8199445983379502,
+          "raw_auc": 0.8199445983379502,
+          "train_auc": 0.8662190082644629,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 1.3839778317568014
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.7140221907117054
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.19211658468375467
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.1675526805241424
+            }
+          ]
+        },
+        "factorized_release_game_drift_copula": {
+          "auc": 0.8753462603878116,
+          "raw_auc": 0.8753462603878116,
+          "train_auc": 0.827995867768595,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 1.1684741412704052
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.7160782518868438
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.16855213420672976
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.10878761818370472
+            }
+          ]
+        },
+        "factorized_release_recent_gaussian": {
+          "auc": 0.8060941828254847,
+          "raw_auc": 0.8060941828254847,
+          "train_auc": 0.8667355371900827,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 1.340895782791032
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.4383284763193963
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.11753058883941343
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.0760729163640144
+            }
+          ]
+        },
+        "factorized_short_memory_wide_residual": {
+          "auc": 0.5318559556786704,
+          "raw_auc": 0.46814404432132967,
+          "train_auc": 0.7035123966942148,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.6151635077722745
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.5711166219119086
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.2624808021602357
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.12189280117715556
+            }
+          ]
+        },
+        "factorized_short_memory_more_uncertain": {
+          "auc": 0.5152354570637119,
+          "raw_auc": 0.5152354570637119,
+          "train_auc": 0.5800619834710744,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_x",
+              "importance": 0.3178613856586851
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.20026051079217863
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.13850716511863587
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.03508106390260231
+            }
+          ]
+        },
+        "factorized_recent_state_anchored": {
+          "auc": 0.5346260387811634,
+          "raw_auc": 0.5346260387811634,
+          "train_auc": 0.6880165289256198,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_x",
+              "importance": 0.47995734056935113
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.40447140082703353
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.25687372337721565
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.05981327296368577
+            }
+          ]
+        },
+        "factorized_trend_state_anchored": {
+          "auc": 0.5235457063711911,
+          "raw_auc": 0.5235457063711911,
+          "train_auc": 0.6725206611570248,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 0.3584819038011237
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.201954687240088
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.15223541917794703
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.12756149380321802
+            }
+          ]
+        },
+        "factorized_release_state_anchored": {
+          "auc": 0.5900277008310248,
+          "raw_auc": 0.4099722991689751,
+          "train_auc": 0.5919421487603306,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_x",
+              "importance": 0.3232664708007359
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.2594632851290975
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.10511607549022083
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.008201996819054877
+            }
+          ]
+        },
+        "factorized_physics_constrained_state": {
+          "auc": 0.5152354570637119,
+          "raw_auc": 0.48476454293628807,
+          "train_auc": 0.6193181818181818,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "plate_z",
+              "importance": 0.3194471135969595
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.29045472057341065
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.10800684728790685
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.10286509116578357
+            }
+          ]
+        },
+        "conditional_state_mixture_residual": {
+          "auc": 0.8310249307479224,
+          "raw_auc": 0.8310249307479224,
+          "train_auc": 0.8641528925619835,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 1.4409898387771198
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.16821587127564128
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.022793321052386187
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.0157621507316922
+            }
+          ]
+        },
+        "pca_latent_residual": {
+          "auc": 0.7728531855955678,
+          "raw_auc": 0.7728531855955678,
+          "train_auc": 0.731404958677686,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 0.6538454105283216
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.44163856369675786
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.3753984972967519
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.16239586991106122
+            }
+          ]
+        },
+        "context_neighbor_residual": {
+          "auc": 0.8476454293628809,
+          "raw_auc": 0.8476454293628809,
+          "train_auc": 0.7102272727272727,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 0.6106492449408027
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.4037792820810826
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.25668102666096554
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.23935256787356468
+            }
+          ]
+        },
+        "derived_joint_gaussian": {
+          "auc": 0.6371191135734072,
+          "raw_auc": 0.6371191135734072,
+          "train_auc": 0.8305785123966942,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 1.2713716511721513
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.36009544611828925
+            },
+            {
+              "feature": "plate_x",
+              "importance": 0.30110139771922356
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.15788940175584207
+            }
+          ]
+        }
+      },
+      "release_only": {
+        "factorized_v2_1": {
+          "auc": 0.850415512465374,
+          "raw_auc": 0.850415512465374,
+          "train_auc": 0.7675619834710744,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.5906695503143903
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.469800296449342
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.40387865137028145
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.3088144071694115
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.23115324093912765
+            }
+          ]
+        },
+        "factorized_release_game_drift_gaussian": {
+          "auc": 0.628808864265928,
+          "raw_auc": 0.628808864265928,
+          "train_auc": 0.7773760330578512,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.8215168520363524
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.3200459513405538
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.2643852487045619
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.23012746197836856
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.20060746265362722
+            }
+          ]
+        },
+        "factorized_release_game_drift_copula": {
+          "auc": 0.7202216066481995,
+          "raw_auc": 0.7202216066481995,
+          "train_auc": 0.7479338842975206,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.6214087907804239
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.37037637588589417
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.25827570339900296
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.2573151220282928
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.21773544706569992
+            }
+          ]
+        },
+        "factorized_release_recent_gaussian": {
+          "auc": 0.7700831024930748,
+          "raw_auc": 0.7700831024930748,
+          "train_auc": 0.8620867768595041,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.6980463995214641
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.6715631941967602
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.4446525884479876
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.44358710121443434
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.36581824117501194
+            }
+          ]
+        },
+        "factorized_short_memory_wide_residual": {
+          "auc": 0.5069252077562327,
+          "raw_auc": 0.4930747922437673,
+          "train_auc": 0.7742768595041323,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.5630122779583725
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.5532169743110232
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.42607529835612407
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.2910568066009782
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.28233232898157645
+            }
+          ]
+        },
+        "factorized_short_memory_more_uncertain": {
+          "auc": 0.8088642659279779,
+          "raw_auc": 0.8088642659279779,
+          "train_auc": 0.7577479338842975,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.8680300045613579
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.19683599352702313
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.1600473828375354
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.1561120767104251
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.11961110853860399
+            }
+          ]
+        },
+        "factorized_recent_state_anchored": {
+          "auc": 0.6121883656509696,
+          "raw_auc": 0.6121883656509696,
+          "train_auc": 0.8078512396694215,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.6978883194191264
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.6673834009569022
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.4536797287248173
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.35138025028586994
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.26763389417545463
+            }
+          ]
+        },
+        "factorized_trend_state_anchored": {
+          "auc": 0.7091412742382271,
+          "raw_auc": 0.7091412742382271,
+          "train_auc": 0.7360537190082644,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.4223781601072783
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.3567224480368544
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.30259011563974025
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.23956465137688152
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.2210033409278484
+            }
+          ]
+        },
+        "factorized_release_state_anchored": {
+          "auc": 0.5706371191135734,
+          "raw_auc": 0.5706371191135734,
+          "train_auc": 0.7629132231404959,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.5720146495423101
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.49199495451547104
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.3161998343965534
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.2616326748677772
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.190247079925089
+            }
+          ]
+        },
+        "factorized_physics_constrained_state": {
+          "auc": 0.6426592797783933,
+          "raw_auc": 0.6426592797783933,
+          "train_auc": 0.7422520661157025,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.7042665239248088
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.2785297469672556
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.1972134330865413
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.15479009721470913
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.11200071878449136
+            }
+          ]
+        },
+        "conditional_state_mixture_residual": {
+          "auc": 0.9529085872576177,
+          "raw_auc": 0.9529085872576177,
+          "train_auc": 0.8202479338842975,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_pos_x",
+              "importance": 0.5417799907645664
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.5298663863501141
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.49349939899743833
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.4454404884495043
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.22664993859742463
+            }
+          ]
+        },
+        "pca_latent_residual": {
+          "auc": 0.9058171745152355,
+          "raw_auc": 0.9058171745152355,
+          "train_auc": 0.9023760330578512,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.8089523668299796
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.5910556037105507
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.5645672535607615
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.5450392423517466
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.48660524685795925
+            }
+          ]
+        },
+        "context_neighbor_residual": {
+          "auc": 0.8614958448753463,
+          "raw_auc": 0.8614958448753463,
+          "train_auc": 0.8760330578512396,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_pos_x",
+              "importance": 0.8120691721255785
+            },
+            {
+              "feature": "release_speed",
+              "importance": 0.5964484693213127
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.3897272710256673
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.323997514126515
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.27082288226411294
+            }
+          ]
+        },
+        "derived_joint_gaussian": {
+          "auc": 0.8947368421052632,
+          "raw_auc": 0.8947368421052632,
+          "train_auc": 0.9323347107438017,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_speed",
+              "importance": 0.9099054024556722
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.8938964763921317
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.6316097308256678
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.6241617592153212
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.42225211253682554
+            }
+          ]
+        }
+      },
+      "trajectory_only": {
+        "factorized_v2_1": {
+          "auc": 0.8393351800554016,
+          "raw_auc": 0.8393351800554016,
+          "train_auc": 0.9323347107438017,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "az",
+              "importance": 1.3546753135698486
+            },
+            {
+              "feature": "ay",
+              "importance": 1.037698922123774
+            },
+            {
+              "feature": "ax",
+              "importance": 0.5999333074571143
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.2195850626926482
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.008266216884874751
+            }
+          ]
+        },
+        "factorized_release_game_drift_gaussian": {
+          "auc": 0.8975069252077562,
+          "raw_auc": 0.8975069252077562,
+          "train_auc": 0.9297520661157025,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 1.5513739453428987
+            },
+            {
+              "feature": "az",
+              "importance": 0.7605256953177397
+            },
+            {
+              "feature": "ax",
+              "importance": 0.7034734901115026
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.3998829498035335
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.07025726858547511
+            }
+          ]
+        },
+        "factorized_release_game_drift_copula": {
+          "auc": 0.8337950138504155,
+          "raw_auc": 0.8337950138504155,
+          "train_auc": 0.8894628099173554,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "az",
+              "importance": 1.1061687468403032
+            },
+            {
+              "feature": "ay",
+              "importance": 0.7497224718156709
+            },
+            {
+              "feature": "ax",
+              "importance": 0.35910364100731823
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.17195874582972856
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.1584821032165781
+            }
+          ]
+        },
+        "factorized_release_recent_gaussian": {
+          "auc": 0.8310249307479224,
+          "raw_auc": 0.8310249307479224,
+          "train_auc": 0.8682851239669421,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.991647386638852
+            },
+            {
+              "feature": "az",
+              "importance": 0.6531604258409273
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.33178053694975373
+            },
+            {
+              "feature": "ax",
+              "importance": 0.3158457278808031
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.19632788115437386
+            }
+          ]
+        },
+        "factorized_short_memory_wide_residual": {
+          "auc": 0.592797783933518,
+          "raw_auc": 0.592797783933518,
+          "train_auc": 0.7546487603305785,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.6484738930446666
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.4925205185475864
+            },
+            {
+              "feature": "ax",
+              "importance": 0.31854438333229423
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.1950265757867239
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.18750955466411834
+            }
+          ]
+        },
+        "factorized_short_memory_more_uncertain": {
+          "auc": 0.6731301939058172,
+          "raw_auc": 0.6731301939058172,
+          "train_auc": 0.7035123966942148,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "vx0",
+              "importance": 0.38044993499450874
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.3674521707877465
+            },
+            {
+              "feature": "ax",
+              "importance": 0.3460055704865728
+            },
+            {
+              "feature": "ay",
+              "importance": 0.3248560542484403
+            },
+            {
+              "feature": "az",
+              "importance": 0.32053220684608746
+            }
+          ]
+        },
+        "factorized_recent_state_anchored": {
+          "auc": 0.6509695290858726,
+          "raw_auc": 0.6509695290858726,
+          "train_auc": 0.7670454545454546,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.4652639263169429
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.4182257173390089
+            },
+            {
+              "feature": "az",
+              "importance": 0.34070921991882985
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.23993453659417452
+            },
+            {
+              "feature": "ax",
+              "importance": 0.17526794416431057
+            }
+          ]
+        },
+        "factorized_trend_state_anchored": {
+          "auc": 0.5678670360110804,
+          "raw_auc": 0.5678670360110804,
+          "train_auc": 0.6740702479338843,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "az",
+              "importance": 0.389453958472958
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.34158443211467515
+            },
+            {
+              "feature": "ax",
+              "importance": 0.31721648206436986
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.2550680870990343
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.23280116212088398
+            }
+          ]
+        },
+        "factorized_release_state_anchored": {
+          "auc": 0.5872576177285319,
+          "raw_auc": 0.5872576177285319,
+          "train_auc": 0.6642561983471075,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "vy0",
+              "importance": 0.44275744952163887
+            },
+            {
+              "feature": "az",
+              "importance": 0.2966664580232959
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.21406106674187078
+            },
+            {
+              "feature": "ay",
+              "importance": 0.17417114410510667
+            },
+            {
+              "feature": "ax",
+              "importance": 0.1327041265464714
+            }
+          ]
+        },
+        "factorized_physics_constrained_state": {
+          "auc": 0.5650969529085873,
+          "raw_auc": 0.5650969529085873,
+          "train_auc": 0.7045454545454546,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "az",
+              "importance": 0.5050038509349573
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.36898252192884423
+            },
+            {
+              "feature": "ax",
+              "importance": 0.31325175864467203
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.25664617812989265
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.09361038524784714
+            }
+          ]
+        },
+        "conditional_state_mixture_residual": {
+          "auc": 0.7811634349030471,
+          "raw_auc": 0.7811634349030471,
+          "train_auc": 0.9137396694214877,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "az",
+              "importance": 1.4375939807046965
+            },
+            {
+              "feature": "ay",
+              "importance": 0.6829693072296129
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.40250148949955544
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.22902716807365292
+            },
+            {
+              "feature": "ax",
+              "importance": 0.189915502168904
+            }
+          ]
+        },
+        "pca_latent_residual": {
+          "auc": 0.7839335180055401,
+          "raw_auc": 0.7839335180055401,
+          "train_auc": 0.7701446280991735,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "vz0",
+              "importance": 0.6287483838473669
+            },
+            {
+              "feature": "az",
+              "importance": 0.5354103233222967
+            },
+            {
+              "feature": "ay",
+              "importance": 0.3155554934595482
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.10183515328954043
+            },
+            {
+              "feature": "ax",
+              "importance": 0.05637387588497496
+            }
+          ]
+        },
+        "context_neighbor_residual": {
+          "auc": 0.7063711911357341,
+          "raw_auc": 0.7063711911357341,
+          "train_auc": 0.8791322314049587,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "vz0",
+              "importance": 0.949816605630759
+            },
+            {
+              "feature": "ay",
+              "importance": 0.7176251320791355
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.571303106099981
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.2913380118479812
+            },
+            {
+              "feature": "az",
+              "importance": 0.26917380103569344
+            }
+          ]
+        },
+        "derived_joint_gaussian": {
+          "auc": 0.9196675900277008,
+          "raw_auc": 0.9196675900277008,
+          "train_auc": 0.8274793388429752,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "vz0",
+              "importance": 0.598285981093299
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.45779995038579685
+            },
+            {
+              "feature": "ay",
+              "importance": 0.44076154459796413
+            },
+            {
+              "feature": "az",
+              "importance": 0.38023394292659385
+            },
+            {
+              "feature": "ax",
+              "importance": 0.19006912062233983
+            }
+          ]
+        }
+      },
+      "physics_core": {
+        "factorized_v2_1": {
+          "auc": 0.9335180055401662,
+          "raw_auc": 0.9335180055401662,
+          "train_auc": 0.9400826446280992,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_pos_x",
+              "importance": 0.8474805739941567
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.6760026433991098
+            },
+            {
+              "feature": "ay",
+              "importance": 0.6455437211933214
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.5873410695566251
+            },
+            {
+              "feature": "ax",
+              "importance": 0.572312360945179
+            }
+          ]
+        },
+        "factorized_release_game_drift_gaussian": {
+          "auc": 0.9030470914127424,
+          "raw_auc": 0.9030470914127424,
+          "train_auc": 0.952995867768595,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 1.2818590984461116
+            },
+            {
+              "feature": "release_extension",
+              "importance": 0.6468308360897743
+            },
+            {
+              "feature": "ax",
+              "importance": 0.6237674181652766
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.5227026692424512
+            },
+            {
+              "feature": "az",
+              "importance": 0.48217434076401866
+            }
+          ]
+        },
+        "factorized_release_game_drift_copula": {
+          "auc": 0.8060941828254847,
+          "raw_auc": 0.8060941828254847,
+          "train_auc": 0.9152892561983471,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.7922339637494314
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.646863000191847
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.5662475621546526
+            },
+            {
+              "feature": "ax",
+              "importance": 0.555116753704497
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.5492965314565423
+            }
+          ]
+        },
+        "factorized_release_recent_gaussian": {
+          "auc": 0.8808864265927978,
+          "raw_auc": 0.8808864265927978,
+          "train_auc": 0.9390495867768595,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.7643715514194501
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.7339835732743244
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.481648462674031
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.4502479878964237
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.4098525252816196
+            }
+          ]
+        },
+        "factorized_short_memory_wide_residual": {
+          "auc": 0.7700831024930748,
+          "raw_auc": 0.7700831024930748,
+          "train_auc": 0.7892561983471075,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.6759975885706756
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.49556798612268904
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.4528652980327597
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.4453639601185393
+            },
+            {
+              "feature": "vy0",
+              "importance": 0.33322172887372814
+            }
+          ]
+        },
+        "factorized_short_memory_more_uncertain": {
+          "auc": 0.6371191135734072,
+          "raw_auc": 0.6371191135734072,
+          "train_auc": 0.8481404958677686,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 1.2119798405404754
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.5351052065621846
+            },
+            {
+              "feature": "ay",
+              "importance": 0.27313648412356895
+            },
+            {
+              "feature": "pfx_x",
+              "importance": 0.22992804322239854
+            },
+            {
+              "feature": "ax",
+              "importance": 0.20246385397366695
+            }
+          ]
+        },
+        "factorized_recent_state_anchored": {
+          "auc": 0.775623268698061,
+          "raw_auc": 0.775623268698061,
+          "train_auc": 0.8068181818181818,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "ay",
+              "importance": 0.5903818522156808
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.565077196872906
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.4140499154626957
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.38187749350371925
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.21906283211255936
+            }
+          ]
+        },
+        "factorized_trend_state_anchored": {
+          "auc": 0.6897506925207756,
+          "raw_auc": 0.6897506925207756,
+          "train_auc": 0.7933884297520661,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.46338163911269753
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.39600799711957
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.3856082343354082
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.2744508006097769
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.2668388308089792
+            }
+          ]
+        },
+        "factorized_release_state_anchored": {
+          "auc": 0.6426592797783933,
+          "raw_auc": 0.6426592797783933,
+          "train_auc": 0.7773760330578512,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "vy0",
+              "importance": 0.5096124145309182
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.48416430497308455
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.4513338794956275
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.33621536008315944
+            },
+            {
+              "feature": "az",
+              "importance": 0.2344382356506027
+            }
+          ]
+        },
+        "factorized_physics_constrained_state": {
+          "auc": 0.5069252077562327,
+          "raw_auc": 0.4930747922437673,
+          "train_auc": 0.8083677685950413,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.7421588172661178
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.4250953680380239
+            },
+            {
+              "feature": "plate_z",
+              "importance": 0.33161161090044966
+            },
+            {
+              "feature": "vz0",
+              "importance": 0.33019258781397354
+            },
+            {
+              "feature": "release_pos_z",
+              "importance": 0.27929680900945875
+            }
+          ]
+        },
+        "conditional_state_mixture_residual": {
+          "auc": 0.8698060941828255,
+          "raw_auc": 0.8698060941828255,
+          "train_auc": 0.9359504132231405,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "pfx_z",
+              "importance": 0.9105502641291581
+            },
+            {
+              "feature": "release_pos_x",
+              "importance": 0.7986764219678378
+            },
+            {
+              "feature": "az",
+              "importance": 0.7439671008459908
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.42630574335539767
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.41721051544023796
+            }
+          ]
+        },
+        "pca_latent_residual": {
+          "auc": 0.9085872576177285,
+          "raw_auc": 0.9085872576177285,
+          "train_auc": 0.9225206611570248,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_pos_x",
+              "importance": 0.9331630611212233
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.5292124382934015
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.5289643312129685
+            },
+            {
+              "feature": "vx0",
+              "importance": 0.4982242796839131
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.4885713444493187
+            }
+          ]
+        },
+        "context_neighbor_residual": {
+          "auc": 0.853185595567867,
+          "raw_auc": 0.853185595567867,
+          "train_auc": 0.9375,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_pos_x",
+              "importance": 1.001080927517212
+            },
+            {
+              "feature": "ay",
+              "importance": 0.610234015360835
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.43809713099769126
+            },
+            {
+              "feature": "release_spin_rate",
+              "importance": 0.39955635745531104
+            },
+            {
+              "feature": "pfx_z",
+              "importance": 0.30438810059822397
+            }
+          ]
+        },
+        "derived_joint_gaussian": {
+          "auc": 0.925207756232687,
+          "raw_auc": 0.925207756232687,
+          "train_auc": 0.949896694214876,
+          "n_real": 63,
+          "n_simulated": 63,
+          "top_leakage_features": [
+            {
+              "feature": "release_pos_x",
+              "importance": 0.9375236799727289
+            },
+            {
+              "feature": "ay",
+              "importance": 0.7145788644122699
+            },
+            {
+              "feature": "release_pos_y",
+              "importance": 0.710140406715791
+            },
+            {
+              "feature": "spin_axis_sin",
+              "importance": 0.42435003107982816
+            },
+            {
+              "feature": "spin_axis_cos",
+              "importance": 0.39852347571851493
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "data_path": "/Users/elliot18/assistant/projects/trajekt-scout/data/processed/latest_statcast.csv",
+  "pitcher_id": 676755,
+  "rows_clean": 116772,
+  "rows_subset": 207,
+  "validation_board_candidate": {
+    "pitcher": 676755,
+    "pitcher_name": "Isaac Mattson",
+    "pitch_type": "FF",
+    "pitch_count": 207,
+    "game_count": 14,
+    "holdout_count": 63,
+    "physics_core_complete_count": 207,
+    "candidate_score": 362.75,
+    "train_fraction": 0.7
+  }
+}

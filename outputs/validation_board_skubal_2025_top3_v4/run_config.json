@@ -1,0 +1,15 @@
+{
+  "data_path": "/Users/elliot18/Desktop/Home/Projects/trajekt-pitcher-twin/data/processed/skubal_2025.csv",
+  "output_dir": "outputs/validation_board_skubal_2025_top3_v4",
+  "top": 3,
+  "min_pitches": 300,
+  "min_games": 8,
+  "min_holdout": 60,
+  "repeats": 3,
+  "samples": 260,
+  "random_state": 42,
+  "rolling": false,
+  "rolling_repeats": 1,
+  "max_rolling_windows": 3,
+  "candidate_count": 3
+}

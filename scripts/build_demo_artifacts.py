@@ -18,7 +18,7 @@ from pitcher_twin.data import load_statcast_cache  # noqa: E402
 from pitcher_twin.features import FEATURE_GROUPS, clean_pitch_features  # noqa: E402
 from pitcher_twin.models import fit_generator_suite  # noqa: E402
 from pitcher_twin.sampler import sample_pitch_session  # noqa: E402
-from pitcher_twin.machine_session_format import to_machine_session_json, write_machine_session_json  # noqa: E402
+from pitcher_twin.trajekt_format import to_trajekt_json, write_trajekt_json  # noqa: E402
 from pitcher_twin.validator import classifier_two_sample_test, temporal_train_holdout  # noqa: E402
 
 
@@ -524,7 +524,7 @@ def build_real_demo_artifacts(
         holdout,
         n_samples,
     )
-    payload = to_machine_session_json(
+    payload = to_trajekt_json(
         final_session,
         pitcher=candidate["pitcher_name"],
         pitch_type=candidate["pitch_type"],
@@ -585,7 +585,7 @@ def build_real_demo_artifacts(
         "model_results": feature_group_results[selected_feature_group]["model_results"],
     }
     _write_json(validation_report, report)
-    write_machine_session_json(payload, session_json)
+    write_trajekt_json(payload, session_json)
     morning_report.write_text(_morning_report(report))
     return {
         "candidate_rankings": candidate_rankings,

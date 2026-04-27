@@ -1,0 +1,4 @@
+pitcher,pitcher_name,pitch_type,pitch_count,game_count,holdout_count,best_physics_core_model,physics_core_mean_auc,physics_core_pass_rate,artifact_status
+669373,"Skubal, Tarik",FF,835,31,251,factorized_recent_state_anchored,0.5331255771006463,1.0,validated_temporal_success
+669373,"Skubal, Tarik",SI,681,31,205,pca_latent_residual,0.6652792230315643,0.0,physics_core_diagnostic
+669373,"Skubal, Tarik",CH,895,31,269,factorized_trend_state_anchored,0.6803840877914952,0.0,physics_core_diagnostic

@@ -1,0 +1,38 @@
+[
+  {
+    "pitcher": 669373,
+    "pitcher_name": "Skubal, Tarik",
+    "pitch_type": "FF",
+    "pitch_count": 835,
+    "game_count": 31,
+    "holdout_count": 251,
+    "best_physics_core_model": "factorized_recent_state_anchored",
+    "physics_core_mean_auc": 0.5331255771006463,
+    "physics_core_pass_rate": 1.0,
+    "artifact_status": "validated_temporal_success"
+  },
+  {
+    "pitcher": 669373,
+    "pitcher_name": "Skubal, Tarik",
+    "pitch_type": "SI",
+    "pitch_count": 681,
+    "game_count": 31,
+    "holdout_count": 205,
+    "best_physics_core_model": "pca_latent_residual",
+    "physics_core_mean_auc": 0.6652792230315643,
+    "physics_core_pass_rate": 0.0,
+    "artifact_status": "physics_core_diagnostic"
+  },
+  {
+    "pitcher": 669373,
+    "pitcher_name": "Skubal, Tarik",
+    "pitch_type": "CH",
+    "pitch_count": 895,
+    "game_count": 31,
+    "holdout_count": 269,
+    "best_physics_core_model": "factorized_trend_state_anchored",
+    "physics_core_mean_auc": 0.6803840877914952,
+    "physics_core_pass_rate": 0.0,
+    "artifact_status": "physics_core_diagnostic"
+  }
+]

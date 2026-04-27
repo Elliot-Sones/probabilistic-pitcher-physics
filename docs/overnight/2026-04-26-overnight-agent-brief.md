@@ -1,6 +1,6 @@
 # Pitcher Twin Overnight Agent Brief
 
-You are working on Pitcher Twin, a real-data ML/DS project for target system Sports.
+You are working on Pitcher Twin, a real-data ML/DS project for Trajekt Sports.
 
 ## Mission
 
@@ -25,7 +25,7 @@ You are working on Pitcher Twin, a real-data ML/DS project for target system Spo
 Use this real Statcast cache first:
 
 ```text
-/Users/elliot18/assistant/projects/pitch-scout/data/processed/latest_statcast.csv
+/Users/elliot18/assistant/projects/trajekt-scout/data/processed/latest_statcast.csv
 ```
 
 That cache covers roughly one month of 2026 data. It is enough for smoke validation, but not enough for the full target of `>= 600` real pitches per selected pitcher/pitch type.
@@ -36,7 +36,7 @@ From the project root:
 
 ```bash
 python scripts/run_full_real_data_pipeline.py \
-  --data /Users/elliot18/assistant/projects/pitch-scout/data/processed/latest_statcast.csv \
+  --data /Users/elliot18/assistant/projects/trajekt-scout/data/processed/latest_statcast.csv \
   --output-dir outputs/overnight
 ```
 
@@ -51,7 +51,7 @@ Build the presentation demo artifact too:
 
 ```bash
 python scripts/build_demo_artifacts.py \
-  --data /Users/elliot18/assistant/projects/pitch-scout/data/processed/latest_statcast.csv \
+  --data /Users/elliot18/assistant/projects/trajekt-scout/data/processed/latest_statcast.csv \
   --output-dir outputs/real_demo \
   --min-pitches 200 \
   --min-holdout 50 \

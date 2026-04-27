@@ -3,7 +3,6 @@ __pycache__/
 *.py[cod]
 .DS_Store
 .ipynb_checkpoints/
-.superpowers/
 .worktrees/
 
 data/raw/*
@@ -11,6 +10,12 @@ data/processed/*
 models/*
 outputs/figures/*
 outputs/samples/*
+
+# Allow the public Statcast CSV used by the hosted demo
+!data/processed/skubal_2025.csv
+
+# Private meeting brief — never publish
+PROJECT_BRIEF.md
 outputs/overnight*/
 outputs/overnight_*/
 outputs/real_demo/

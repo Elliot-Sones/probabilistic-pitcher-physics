@@ -1,0 +1,4 @@
+pitcher,pitcher_name,pitch_type,pitch_count,game_count,holdout_count,best_physics_core_model,physics_core_mean_auc,physics_core_pass_rate,artifact_status
+676755,Isaac Mattson,FF,207,14,63,factorized_short_memory_more_uncertain,0.5761772853185596,0.5,physics_core_candidate
+642547,Freddy Peralta,FF,292,6,88,factorized_short_memory_wide_residual,0.6213991769547325,0.0,physics_core_diagnostic
+671737,Taj Bradley,FF,279,6,84,factorized_recent_state_anchored,0.6486686390532544,0.5,physics_core_diagnostic

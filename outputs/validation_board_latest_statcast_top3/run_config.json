@@ -1,0 +1,15 @@
+{
+  "data_path": "/Users/elliot18/assistant/projects/trajekt-scout/data/processed/latest_statcast.csv",
+  "output_dir": "outputs/validation_board_latest_statcast_top3",
+  "top": 3,
+  "min_pitches": 200,
+  "min_games": 4,
+  "min_holdout": 40,
+  "repeats": 2,
+  "samples": 220,
+  "random_state": 42,
+  "rolling": false,
+  "rolling_repeats": 1,
+  "max_rolling_windows": 3,
+  "candidate_count": 3
+}

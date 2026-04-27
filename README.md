@@ -1,167 +1,148 @@
 # Pitcher Twin
 
-**Pitcher Twin learns a real pitcher’s pitch-to-pitch variability from public Statcast and generates validated pitch distributions, not one average pitch.** It measures whether generated pitches look like later real pitches using **C2ST AUC**, where **0.50 is ideal** and **<= 0.60 is the validation target**.
+**A real pitcher doesn't throw one fastball — they throw a cloud of them, shaped by count, inning, batter, fatigue, score, and the simple fact that no human releases the ball the same way twice.** Pitcher Twin learns that cloud from public Statcast and generates pitches a classifier struggles to tell apart from real held-out ones.
 
-## Results
+> **Live demo:** _link goes here once Streamlit Cloud deploy is wired up_ &nbsp;·&nbsp; **Local run:** `streamlit run app/streamlit_app.py`
 
-The strongest current model is **V2.1 factorized physics residual**. On Tarik Skubal 2025 four-seam fastballs, it improves the hardest full-physics layer from the game-drift baselines to **0.611 C2ST AUC**, just above the `<= 0.60` validation target.
+---
 
-![V2.1 AUC results](docs/assets/readme/v21_results_auc.png)
+## The honest scoreboard
 
-| Layer | V2.1 factorized | Game-drift Gaussian | Game-drift copula | Status |
-|---|---:|---:|---:|---|
-| command/location | 0.519 | 0.587 | 0.514 | strong |
-| movement only | 0.554 | 0.588 | 0.507 | strong |
-| release only | 0.575 | 0.641 | 0.612 | improved |
-| trajectory only | 0.600 | 0.629 | 0.650 | borderline |
-| physics core | 0.611 | 0.663 | 0.696 | improved, still diagnostic |
+| | Status | Result | Detail |
+|---|---|---:|---|
+| **Single 70/30 split** (Skubal 2025 FF) | ✅ validated | **0.533 AUC** · 100% pass | classifier trained to spot fakes barely beats a coin flip |
+| **Rolling temporal stress test** (10 future-game folds) | 🟡 diagnostic | **0.702 mean AUC** | goal ≤ 0.620 · best fold 0.593 · worst fold 0.929 |
+| **Cross-pitcher generalization** | 🟡 mixed | 4 pitchers · 3 pitch types | Skubal FF validates; SI/CH/Mattson/Peralta/Bradley remain diagnostic |
 
-What this means:
+Lower AUC is better. `0.50` means a classifier specifically trained to detect synthetic pitches has no meaningful signal. Rolling validation is now the primary truth test — single-split AUC is treated as a ceiling, not a guarantee.
 
-- **Command and movement are strong.**
-- **Full joint physics improved meaningfully, but is still diagnostic.**
-- The next model gap is preserving coupled release, spin-axis, release-extension, trajectory, and command structure.
+---
 
-## What We Built
+## What it does
 
-- Real Statcast ingestion and feature cleaning.
-- Candidate ranking for viable `(pitcher, pitch_type)` pairs.
-- Temporal train/holdout validation: earlier pitches train, later pitches test.
-- A generator suite: empirical, Gaussian, recent-window, context-weighted, game-drift, copula, GMM, and V2.1 factorized residual models.
-- C2ST validation that asks whether a classifier can distinguish generated pitches from held-out real pitches.
-- Machine-session JSON export with validation metadata.
-- README visuals: real pitch-variation graphs, an animated GIF, result chart, SVG diagrams, and editable Excalidraw sources.
+Pitcher Twin models the **distribution** of a pitcher's actual pitch outcomes rather than a single centroid. It learns release, velocity, spin, movement, trajectory, and command from real Statcast rows, then generates pitch clouds that can be tested against future real pitches.
 
-## How It Works
+The goal is a practical generator that answers: *"If I want to practice this pitch type from this pitcher in this game state, what range of pitches should I expect?"*
 
-The core loop is:
+The output is a Trajekt-shaped session JSON of sampled pitches with **layered validation metadata** — every pitch carries the trust level of every layer (command, movement, trajectory, release, full physics) so consumers can downgrade gracefully when full physics is still diagnostic.
 
-![Pitcher Twin pipeline](docs/assets/readme/pitcher_twin_pipeline.svg)
+---
 
-Editable Excalidraw source: [pitcher_twin_pipeline.excalidraw](docs/assets/readme/pitcher_twin_pipeline.excalidraw)
+## How it works
 
-Validation uses a classifier two-sample test:
+### The factorized physics chain (V2.1+)
 
-1. Train models on earlier real pitches.
-2. Generate pitch samples.
-3. Mix generated pitches with later real holdout pitches.
-4. Train a classifier to tell generated from real.
-5. Score detectability AUC.
+Instead of modeling all pitch features as one tangled blob, the generator chains them in physical order:
 
-Lower AUC is better. `0.50` means the generated and real holdout pitches are hard to distinguish.
-
-## Case Study
-
-The current case study is **Tarik Skubal 2025 FF**:
-
-- `2,849` total Statcast rows
-- `835` Skubal FF pitches
-- `31` games
-- `584` train pitches
-- `251` temporal holdout pitches
-
-This is the same pitch type from the same pitcher. The spread is real Statcast variation, not generated data.
-
-![Tarik Skubal FF real variation](docs/assets/readme/skubal_ff_variation.png)
-
-The animation slices those same FF pitch locations by pitcher game pitch count.
-
-![Skubal FF pitch-count variation](docs/assets/readme/skubal_ff_pitch_sequence.gif)
-
-## Technical Idea
-
-Pitcher Twin models a pitch as coupled layers, not one flat vector:
-
-| Layer | What it captures | Example columns |
-|---|---|---|
-| release | how the ball leaves the hand | `release_speed`, `release_spin_rate`, `spin_axis`, release slot |
-| movement | ball movement summary | `pfx_x`, `pfx_z` |
-| trajectory | fitted flight dynamics | `vx0`, `vy0`, `vz0`, `ax`, `ay`, `az` |
-| command | where the pitch finishes | `plate_x`, `plate_z` |
-| physics core | all layers together | release + movement + trajectory + command |
-
-V2.1 samples the pitch as a physics chain:
-
-![V2.1 physics chain](docs/assets/readme/v21_physics_chain.svg)
-
-Editable Excalidraw source: [v21_physics_chain.excalidraw](docs/assets/readme/v21_physics_chain.excalidraw)
-
-V2.1 uses:
-
-- the strongest release generator from the existing model suite;
-- residual layers for movement, trajectory, and command;
-- Gaussian-copula downstream residual sampling;
-- recent-game downstream residual drift;
-- a train-only release variance floor.
-
-## Reproduce
-
-Install dependencies:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python3 -m pip install -r requirements.txt
+```text
+release point / velocity / spin
+   → movement residual
+   → trajectory residual
+   → command residual
 ```
 
-Run tests:
+A Gaussian mixture at each layer captures the natural sub-modes (high-inside vs. low-away vs. middle-up fastballs aren't one distribution). Residual layers absorb the mechanical noise the pitcher didn't intend — the *human-error envelope*. Every layer is conditioned on game state (count, inning, batter handedness, pitch-count fatigue, score differential) and trend-anchored to capture mid-season drift in release point and stuff.
 
-```bash
-pytest -q
+### The validator (classifier two-sample test)
+
+For every model variant, we:
+
+1. Train on the earlier 70% of a pitcher's pitches.
+2. Generate synthetic samples from the trained model.
+3. Mix synthetic samples with real held-out pitches from the later 30%.
+4. Train a logistic-regression classifier to tell synthetic from real.
+5. Report ROC-AUC. Lower means harder to detect.
+
+The single-split version is the **ceiling**. The rolling temporal version repeats this across many future-game windows — which is now the primary truth test.
+
+### The rolling temporal scoreboard
+
+```text
+train games  1-10  → test games 11-12
+train games  1-12  → test games 13-14
+...
+train games  1-28  → test games 29-30
 ```
 
-Fetch the Skubal 2025 data:
+10 rolling folds, 4 repeats per fold. The "miss" flags are honest: the model can match some future windows (best fold 0.593) but still drifts hard on others (worst fold 0.929).
+
+---
+
+## Quick start
 
 ```bash
-python3 scripts/fetch_baseball_savant_pitcher_csv.py \
-  --pitcher-id 669373 \
-  --season 2025 \
-  --output data/processed/skubal_2025.csv
-```
+# install
+pip install -r requirements.txt
 
-Run the V2.1 validation:
+# run the dashboard locally
+streamlit run app/streamlit_app.py
 
-```bash
-python3 scripts/run_factorized_validation.py \
+# regenerate the headline tournament
+python scripts/run_model_tournament.py \
   --data data/processed/skubal_2025.csv \
-  --output-dir outputs/factorized_skubal_2025_ff \
+  --output-dir outputs/model_tournament_skubal_2025_ff \
   --pitcher-id 669373 \
-  --pitch-type FF
-```
+  --pitch-type FF \
+  --repeats 30
 
-Regenerate README visuals:
-
-```bash
-python3 scripts/build_readme_visuals.py \
+# regenerate the cross-pitcher validation board
+python scripts/run_validation_board.py \
   --data data/processed/skubal_2025.csv \
-  --output-dir docs/assets/readme
+  --output-dir outputs/validation_board_skubal_2025_top3 \
+  --top 3 --repeats 3 --samples 260
+
+# regenerate the rolling truth test
+.venv/bin/python scripts/run_rolling_temporal_board.py \
+  --data data/processed/skubal_2025.csv \
+  --output-dir outputs/rolling_validation_skubal_2025_ff \
+  --pitcher-id 669373 --pitch-type FF \
+  --initial-train-games 10 --test-games 2 --step-games 2 --repeats 4
 ```
 
-## Key Files
+Run tests: `pytest -q`.
 
-| Path | Purpose |
+---
+
+## What's in the repo
+
+| Path | What lives there |
 |---|---|
-| [src/pitcher_twin/models.py](src/pitcher_twin/models.py) | generator suite, game drift, copula helpers |
-| [src/pitcher_twin/factorized.py](src/pitcher_twin/factorized.py) | V2.1 factorized physics-residual model |
-| [src/pitcher_twin/features.py](src/pitcher_twin/features.py) | real Statcast feature engineering |
-| [src/pitcher_twin/validator.py](src/pitcher_twin/validator.py) | temporal split and C2ST validation |
-| [scripts/run_factorized_validation.py](scripts/run_factorized_validation.py) | V2.1 validation runner |
-| [scripts/build_readme_visuals.py](scripts/build_readme_visuals.py) | README graph, GIF, SVG, and Excalidraw generation |
+| `app/streamlit_app.py` | The hosted demo — hero overlay, try-it interactive, rolling truth test, validation board |
+| `src/pitcher_twin/` | Core library — generators, factorized physics chain, validator, tournament, rolling validation |
+| `scripts/` | CLI entry points: data fetch, tournaments, validation boards |
+| `tests/` | pytest suite (93 tests) |
+| `data/processed/skubal_2025.csv` | Public Statcast pull used by the live demo |
+| `docs/presentation.md` | Client-facing single-page pitch |
+| `docs/research-log.md` | Full V2.1 → V4 model chronology and ablations |
+| `outputs/` | Generated tournament results, validation boards, scorecards |
 
-## Data Policy
+---
 
-This project is real-data only.
+## Data policy
 
-- No mock pitch rows.
-- No synthetic weather rows.
-- No fake player examples.
-- No silent fallback demo data.
-- Generated samples are allowed only when labeled as model output.
+- **Real data only.** No mock pitches, no synthetic weather, no fake players.
+- Generated samples are **always labeled** as model output, never as observed.
+- Holdout pitches are split temporally (last 30% of games), never randomly.
 
-## Next Work
+---
 
-- Run repeated-seed robustness for V2.1.
-- Preserve spin-axis and release-extension structure more tightly.
-- Add count/fatigue effects inside residual-drift layers.
-- Test V2.1 across more pitcher/pitch pairs.
-- Revisit weather only after the physics-residual layer clears the validation target.
+## What's next
+
+The current frontier is concentrated in release-geometry and spin-axis modeling. The detection signal — the features the C2ST classifier exploits to spot fakes — is dominated by `release_pos_x`, `release_extension`, `spin_axis_cos/sin`, `release_spin_rate`, and `vy0`. Hand-tuned circular spin residuals (V4) didn't close the gap. The next concrete candidate:
+
+```text
+conditional release-state mixture
+  with circular spin-axis component
+  and velocity/spin covariance per latent state
+```
+
+i.e., learn the release/spin distribution as a conditional mixture given pitch family, recent game state, and count/fatigue — instead of fixing it to a global average.
+
+---
+
+## Links
+
+- 📊 [`docs/presentation.md`](docs/presentation.md) — single-page client overview
+- 📓 [`docs/research-log.md`](docs/research-log.md) — full V2.1 → V4 model chronology with ablations
+- 🔬 [`docs/research/`](docs/research) — individual research notes per iteration
+- 🛠 [`docs/implementation-plan.md`](docs/implementation-plan.md) — engineering plan

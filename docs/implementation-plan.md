@@ -2,7 +2,7 @@
 
 ## Goal
 
-Build a credible ML/DS demo showing pitcher-specific pitch variability, realistic sampling, validation, and machine-session export.
+Build a credible ML/DS demo showing pitcher-specific pitch variability, realistic sampling, validation, and Trajekt-shaped export.
 
 ## Phase 1: Repo And Data
 
@@ -118,14 +118,14 @@ Output:
 
 - `outputs/figures/pitcher_latent_space.html`
 
-## Phase 7: target system Export
+## Phase 7: Trajekt Export
 
-Create `src/pitcher_twin/machine_session_format.py`.
+Create `src/pitcher_twin/trajekt_format.py`.
 
 Function:
 
 ```python
-to_machine_session_json(samples, pitcher, pitch_type, count_bucket, metadata)
+to_trajekt_json(samples, pitcher, pitch_type, count_bucket, metadata)
 ```
 
 Output:

@@ -64,7 +64,7 @@ def build_baseball_savant_csv_url(
 
 
 def fetch_csv(url: str, output_path: Path) -> Path:
-    request = Request(url, headers={"User-Agent": "pitch-pitcher-twin/1.0"})
+    request = Request(url, headers={"User-Agent": "trajekt-pitcher-twin/1.0"})
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with urlopen(request, timeout=90) as response:
         output_path.write_bytes(response.read())

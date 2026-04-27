@@ -4,7 +4,7 @@ This report summarizes real-data validation outputs. It does not include mock da
 
 ## Data
 
-- Data path: `/Users/elliot18/assistant/projects/pitch-scout/data/processed/latest_statcast.csv`
+- Data path: `/Users/elliot18/assistant/projects/trajekt-scout/data/processed/latest_statcast.csv`
 - Rows after cleaning: `115616`
 - Date range: `2026-03-26` to `2026-04-24`
 - Feature count: `18`

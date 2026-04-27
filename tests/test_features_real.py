@@ -7,10 +7,12 @@ import pandas as pd
 
 from pitcher_twin.features import (
     FEATURE_GROUPS,
+    RECENT_STATE_FEATURES,
     add_count_bucket,
     add_pitcher_game_pitch_count,
     add_pitcher_score_diff,
     add_real_context_features,
+    add_recent_pitcher_state_features,
     add_spin_axis_components,
     build_feature_matrix,
     clean_pitch_features,
@@ -79,6 +81,35 @@ def test_pitcher_score_diff_is_positive_when_pitchers_team_leads() -> None:
     )
     result = add_pitcher_score_diff(df)
     assert result["pitcher_score_diff"].tolist() == [2.0, 3.0, 2.0]
+
+
+def test_recent_pitcher_state_features_use_prior_pitches_only() -> None:
+    df = pd.DataFrame(
+        {
+            "game_date": ["2026-04-01"] * 6,
+            "game_pk": [1] * 6,
+            "pitcher": [10] * 6,
+            "at_bat_number": [1, 1, 2, 2, 3, 3],
+            "pitch_number": [1, 2, 1, 2, 1, 2],
+            "pitch_type": ["FF", "SL", "FF", "FF", "SL", "FF"],
+            "release_speed": [94.0, 95.0, 96.0, 97.0, 98.0, 99.0],
+            "release_spin_rate": [2200, 2210, 2220, 2230, 2240, 2250],
+            "pfx_x": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
+            "pfx_z": [1.1, 1.2, 1.3, 1.4, 1.5, 1.6],
+            "plate_x": [-0.3, -0.2, -0.1, 0.0, 0.1, 0.2],
+            "plate_z": [2.1, 2.2, 2.3, 2.4, 2.5, 2.6],
+        }
+    )
+
+    result = add_recent_pitcher_state_features(df)
+
+    assert set(RECENT_STATE_FEATURES).issubset(result.columns)
+    assert pd.isna(result.loc[0, "previous_release_speed"])
+    assert result.loc[1, "previous_release_speed"] == 94.0
+    assert result.loc[2, "previous_plate_x"] == -0.2
+    assert result.loc[3, "rolling_5_release_speed_mean"] == 95.0
+    assert result.loc[5, "rolling_5_pfx_z_mean"] == np.mean([1.1, 1.2, 1.3, 1.4, 1.5])
+    assert result.loc[2, "previous_pitch_type_code"] == result.loc[1, "pitch_type_code"]
 
 
 def test_build_feature_matrix_returns_declared_group_columns() -> None:

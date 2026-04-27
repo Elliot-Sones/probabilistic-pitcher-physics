@@ -2,7 +2,7 @@
 
 ## Thesis
 
-Real MLB pitchers throw probability distributions, not point estimates. Pitcher Twin learns a generative model of each pitcher's real pitch-to-pitch variability, conditions that distribution on game state when sample size allows, validates realism with a classifier, and exports realistic machine-session sessions.
+Real MLB pitchers throw probability distributions, not point estimates. Pitcher Twin learns a generative model of each pitcher's real pitch-to-pitch variability, conditions that distribution on game state when sample size allows, validates realism with a classifier, and exports realistic Trajekt-shaped sessions.
 
 ## Product Concept
 
@@ -32,7 +32,7 @@ Cleaned pitch features
     |   Conditional sampler
     |        |
     |        v
-    |   Humanized Machine Session JSON
+    |   Humanized Trajekt JSON
     |
     +--> Realism validator
     |        |
@@ -186,7 +186,7 @@ Why Monte Carlo matters:
 
 - GMM describes the cloud.
 - Monte Carlo samples actual pitches from the cloud.
-- target system needs pitch targets, not just charts.
+- Trajekt needs pitch targets, not just charts.
 
 ## Validation
 
@@ -252,7 +252,7 @@ Must-have:
 - Movement cloud
 - Canonical session vs humanized session trajectory plot
 - Validator AUC callout
-- Machine Session JSON preview
+- Trajekt JSON preview
 
 Nice-to-have:
 
@@ -260,7 +260,7 @@ Nice-to-have:
 - Pitcher latent-space scatter
 - Nearest-neighbor table
 
-## Machine Session JSON Shape
+## Trajekt JSON Shape
 
 ```json
 {

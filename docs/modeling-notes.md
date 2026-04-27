@@ -47,7 +47,7 @@ Do not lead with weather or wind speed.
 Reasons:
 
 - public Statcast does not include clean pitch-level wind
-- target system sessions are usually cage/indoor contexts
+- Trajekt sessions are usually cage/indoor contexts
 - weather effects are hard to isolate from public data
 
 Human variability is the core signal. External variability can be future work.

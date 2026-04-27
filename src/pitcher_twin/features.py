@@ -36,6 +36,27 @@ OPTIONAL_CONTEXT_FEATURES = [
     "recent_workload",
 ]
 
+RECENT_STATE_BASE_COLUMNS = [
+    "release_speed",
+    "release_spin_rate",
+    "pfx_x",
+    "pfx_z",
+    "plate_x",
+    "plate_z",
+]
+
+RECENT_STATE_WINDOWS = [5, 10, 20]
+
+RECENT_STATE_FEATURES = (
+    ["pitch_type_code", "previous_pitch_type_code"]
+    + [f"previous_{column}" for column in RECENT_STATE_BASE_COLUMNS]
+    + [
+        f"rolling_{window}_{column}_mean"
+        for window in RECENT_STATE_WINDOWS
+        for column in RECENT_STATE_BASE_COLUMNS
+    ]
+)
+
 FEATURE_GROUPS = {
     "release_only": PITCH_PHYSICS_FEATURES,
     "movement_only": MOVEMENT_FEATURES,
@@ -167,6 +188,57 @@ def add_real_context_features(df: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
+def add_recent_pitcher_state_features(df: pd.DataFrame) -> pd.DataFrame:
+    """Add prior-pitch and rolling pitcher-state features without future leakage."""
+    result = df.copy()
+    if "pitch_type" in result.columns:
+        pitch_type = result["pitch_type"].astype("string")
+        codes = pd.Categorical(pitch_type).codes.astype(float)
+        codes[codes < 0] = np.nan
+        result["pitch_type_code"] = codes
+    else:
+        result["pitch_type_code"] = np.nan
+
+    required = {"pitcher"}
+    if not required.issubset(result.columns):
+        for feature in RECENT_STATE_FEATURES:
+            if feature not in result.columns:
+                result[feature] = np.nan
+        return result
+
+    sort_columns = [
+        column
+        for column in ["game_date", "game_pk", "pitcher", "at_bat_number", "pitch_number"]
+        if column in result.columns
+    ]
+    if "pitcher" not in sort_columns:
+        sort_columns.append("pitcher")
+    ordered = result.sort_values(sort_columns, kind="mergesort")
+    grouped = ordered.groupby("pitcher", dropna=False)
+
+    ordered["previous_pitch_type_code"] = grouped["pitch_type_code"].shift(1)
+    for column in RECENT_STATE_BASE_COLUMNS:
+        if column not in ordered.columns:
+            ordered[f"previous_{column}"] = np.nan
+            for window in RECENT_STATE_WINDOWS:
+                ordered[f"rolling_{window}_{column}_mean"] = np.nan
+            continue
+        values = pd.to_numeric(ordered[column], errors="coerce")
+        shifted = values.groupby(ordered["pitcher"], dropna=False).shift(1)
+        ordered[f"previous_{column}"] = shifted
+        for window in RECENT_STATE_WINDOWS:
+            ordered[f"rolling_{window}_{column}_mean"] = (
+                shifted.groupby(ordered["pitcher"], dropna=False)
+                .rolling(window=window, min_periods=1)
+                .mean()
+                .reset_index(level=0, drop=True)
+            )
+
+    for feature in RECENT_STATE_FEATURES:
+        result[feature] = ordered[feature].reindex(result.index)
+    return result
+
+
 def filter_pitch_types(df: pd.DataFrame, pitch_types: list[str] | tuple[str, ...] | None) -> pd.DataFrame:
     if pitch_types is None:
         return df.reset_index(drop=True)
@@ -179,8 +251,14 @@ def clean_pitch_features(
 ) -> pd.DataFrame:
     result = add_spin_axis_components(df)
     result = add_real_context_features(result)
+    result = add_recent_pitcher_state_features(result)
     result = filter_pitch_types(result, pitch_types)
-    numeric_columns = sorted({column for columns in FEATURE_GROUPS.values() for column in columns})
+    numeric_columns = sorted(
+        {column for columns in FEATURE_GROUPS.values() for column in columns}
+        | set(CONTEXT_FEATURES)
+        | set(OPTIONAL_CONTEXT_FEATURES)
+        | set(RECENT_STATE_FEATURES)
+    )
     for column in numeric_columns:
         if column in result.columns:
             result[column] = pd.to_numeric(result[column], errors="coerce")

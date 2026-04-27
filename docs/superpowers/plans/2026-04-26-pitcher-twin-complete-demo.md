@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` for inline implementation or `superpowers:subagent-driven-development` for independent finishing tasks. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build a completed, real-data Pitcher Twin project that finds the best real MLB pitcher/pitch candidates, trains generative pitch-variability models on public Statcast, proves the model learned player-specific variability rather than random noise, joins real external context where available, validates realism rigorously, iterates model choice until the acceptance criteria are met or honestly reports failure, and exports machine-session JSON.
+**Goal:** Build a completed, real-data Pitcher Twin project that finds the best real MLB pitcher/pitch candidates, trains generative pitch-variability models on public Statcast, proves the model learned player-specific variability rather than random noise, joins real external context where available, validates realism rigorously, iterates model choice until the acceptance criteria are met or honestly reports failure, and exports Trajekt-shaped JSON.
 
 **Architecture:** Real data only. Public Statcast is the source of truth for pitches. Real venue/time weather is joined from a public historical weather source and cached. Tests use small cached slices of real public data, never fabricated rows. The modeling stack compares multiple generative models and multiple feature representations under the same validation protocol; GMM is the interpretable baseline, not the assumed winner.
 
@@ -48,7 +48,7 @@ This is the minimum project worth showing.
 - Multiple generative model families trained on real pitch features.
 - Same-season holdout validation completed.
 - Player-specific model beats random-noise and league-average baselines on the real-vs-generated classifier test.
-- Model-generated session exported as machine-session JSON.
+- Model-generated session exported as Trajekt-shaped JSON.
 - Real-vs-simulated plots, validation comparison table, leakage analysis, and JSON export are saved as artifacts.
 
 ### Finish Line B: Full Contextual ML/DS Demo
@@ -247,7 +247,7 @@ If these fail thresholds, automatically choose the highest-ranked real candidate
 - `src/pitcher_twin/model_selection.py`: candidate/model selection by validation.
 - `src/pitcher_twin/validator.py`: C2ST, distribution distance, drift, ablations.
 - `src/pitcher_twin/sampler.py`: model sampling API.
-- `src/pitcher_twin/machine_session_format.py`: machine-session JSON.
+- `src/pitcher_twin/trajekt_format.py`: Trajekt-shaped JSON.
 - `src/pitcher_twin/visualize.py`: plots.
 - `scripts/fetch_real_statcast.py`: real Statcast fetch/copy/cache.
 - `scripts/fetch_real_weather.py`: real historical weather cache.
@@ -355,7 +355,7 @@ Create `docs/overnight/2026-04-26-overnight-agent-brief.md` with:
 ```markdown
 # Pitcher Twin Overnight Agent Brief
 
-You are working on Pitcher Twin, a real-data ML/DS project for target system Sports.
+You are working on Pitcher Twin, a real-data ML/DS project for Trajekt Sports.
 
 Mission:
 
@@ -377,13 +377,13 @@ Start by reading:
 
 Known local real data:
 
-- `/Users/elliot18/assistant/projects/pitch-scout/data/processed/latest_statcast.csv`
+- `/Users/elliot18/assistant/projects/trajekt-scout/data/processed/latest_statcast.csv`
 
 Run the current smoke-test harness first:
 
 ```bash
 python scripts/run_full_real_data_pipeline.py \
-  --data /Users/elliot18/assistant/projects/pitch-scout/data/processed/latest_statcast.csv \
+  --data /Users/elliot18/assistant/projects/trajekt-scout/data/processed/latest_statcast.csv \
   --output-dir outputs/overnight
 ```
 
@@ -461,7 +461,7 @@ Create scripts that can run unattended:
 
 ```bash
 python scripts/run_full_real_data_pipeline.py \
-  --data /Users/elliot18/assistant/projects/pitch-scout/data/processed/latest_statcast.csv \
+  --data /Users/elliot18/assistant/projects/trajekt-scout/data/processed/latest_statcast.csv \
   --output-dir outputs/overnight
 
 python scripts/summarize_overnight_results.py \
@@ -476,7 +476,7 @@ The scripts must fail if the data path is missing. They must not create fallback
 From the project root:
 
 ```bash
-cd /Users/elliot18/assistant/projects/pitch-pitcher-twin
+cd /Users/elliot18/assistant/projects/trajekt-pitcher-twin
 
 ml-intern --max-iterations 200 "
 Read docs/overnight/2026-04-26-overnight-agent-brief.md.
@@ -531,7 +531,7 @@ Rules:
 Prefer the existing real cache if available:
 
 ```bash
-/Users/elliot18/assistant/projects/pitch-scout/data/processed/latest_statcast.csv
+/Users/elliot18/assistant/projects/trajekt-scout/data/processed/latest_statcast.csv
 ```
 
 Then expand with pybaseball for a larger window:
@@ -638,7 +638,7 @@ If using the existing 2026 cache:
 
 ```bash
 python scripts/select_best_candidate.py \
-  --input /Users/elliot18/assistant/projects/pitch-scout/data/processed/latest_statcast.csv \
+  --input /Users/elliot18/assistant/projects/trajekt-scout/data/processed/latest_statcast.csv \
   --output outputs/candidate_rankings.csv
 ```
 
@@ -1019,14 +1019,14 @@ Only claim a context feature helps if validation supports it.
 
 ---
 
-## Phase 7: Sampling And Machine Session JSON
+## Phase 7: Sampling And Trajekt JSON
 
 **Purpose:** Generate realistic sessions from the selected real model.
 
 **Files:**
 
 - Create: `src/pitcher_twin/sampler.py`
-- Create: `src/pitcher_twin/machine_session_format.py`
+- Create: `src/pitcher_twin/trajekt_format.py`
 - Create: `tests/test_export_real.py`
 
 - [ ] **Step 7.1: Sample session**
@@ -1108,7 +1108,7 @@ If artifacts are missing, show the exact command to build them. Do not use fallb
 
 ## Phase 10: README And Final Project Polish
 
-**Purpose:** Make it forwardable to target system.
+**Purpose:** Make it forwardable to Trajekt.
 
 README must include:
 
@@ -1124,7 +1124,7 @@ README must include:
 
 Demo line:
 
-> I selected the best real pitcher/pitch candidate from public Statcast by sample size and feature completeness, trained a generative variability model, proved it learned player-specific variation by beating random-noise and league-average baselines in a real-vs-generated classifier test, and exported a machine-session session from the final real-data model.
+> I selected the best real pitcher/pitch candidate from public Statcast by sample size and feature completeness, trained a generative variability model, proved it learned player-specific variation by beating random-noise and league-average baselines in a real-vs-generated classifier test, and exported a Trajekt-shaped session from the final real-data model.
 
 ---
 

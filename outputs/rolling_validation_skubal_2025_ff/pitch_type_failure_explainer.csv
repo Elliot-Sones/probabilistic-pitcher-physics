@@ -1,0 +1,30 @@
+fold_index,pitch_type,layer,model,mean_auc,pass_rate,target_auc,target_pass_rate,classifier_signal,primary_mode,categories
+1,FF,command_representation,factorized_pitch_family_release_spin,0.5744444444444444,0.75,0.6,0.8,plate_z + plate_x,command/location,['command/location']
+1,FF,release_only,factorized_trend_state_anchored,0.6311111111111111,0.5,0.6,0.8,release_spin_rate + release_speed + release_pos_z + spin_axis_cos + release_pos_x,release/spin signature,['release/spin signature']
+1,FF,physics_core,factorized_release_state_anchored,0.5933333333333333,0.5,0.6,0.8,release_pos_z + release_pos_x + spin_axis_sin + release_extension + az,release/spin signature,"['release/spin signature', 'trajectory/acceleration']"
+2,FF,command_representation,factorized_release_game_drift_gaussian,0.569526627218935,0.5,0.6,0.8,plate_z + plate_x,command/location,['command/location']
+2,FF,release_only,factorized_physics_constrained_state,0.5576923076923077,0.75,0.6,0.8,release_extension + release_pos_x + release_pos_z + spin_axis_cos + release_spin_rate,release/spin signature,['release/spin signature']
+2,FF,trajectory_only,factorized_short_memory_more_uncertain,0.5710059171597633,0.75,0.6,0.8,vz0 + ay + az + ax + vx0,trajectory/acceleration,['trajectory/acceleration']
+2,FF,physics_core,factorized_short_memory_more_uncertain,0.6020710059171598,0.5,0.6,0.8,release_spin_rate + release_extension + release_pos_x + vy0 + ay,release/spin signature,"['release/spin signature', 'trajectory/acceleration']"
+3,FF,command_representation,factorized_pitch_family_release_spin,0.5369897959183674,0.75,0.6,0.8,plate_z + plate_x,command/location,['command/location']
+3,FF,release_only,derived_joint_gaussian,0.9349489795918368,0.0,0.6,0.8,release_pos_z + release_speed + release_pos_x + release_spin_rate + release_pos_y,release/spin signature,['release/spin signature']
+3,FF,physics_core,factorized_release_state_anchored,0.9285714285714286,0.0,0.6,0.8,release_pos_z + release_pos_y + ay + release_extension + release_pos_x,release/spin signature,"['release/spin signature', 'trajectory/acceleration']"
+4,FF,release_only,factorized_release_recent_gaussian,0.5833333333333333,0.5,0.6,0.8,spin_axis_cos + release_pos_z + release_extension + release_spin_rate + release_speed,release/spin signature,['release/spin signature']
+4,FF,physics_core,factorized_trend_state_anchored,0.638888888888889,0.5,0.6,0.8,release_pos_z + release_spin_rate + release_pos_x + release_pos_y + vy0,release/spin signature,"['release/spin signature', 'trajectory/acceleration']"
+5,FF,release_only,factorized_trend_state_anchored,0.6080246913580247,0.25,0.6,0.8,release_pos_z + release_speed + spin_axis_cos + spin_axis_sin + release_pos_x,release/spin signature,['release/spin signature']
+5,FF,physics_core,factorized_trend_state_anchored,0.6080246913580247,0.5,0.6,0.8,release_pos_z + vy0 + release_speed + release_extension + pfx_z,acceleration/movement consistency,"['release/spin signature', 'trajectory/acceleration', 'movement']"
+6,FF,release_only,context_neighbor_residual,0.6929012345679013,0.0,0.6,0.8,release_pos_z + release_pos_x + release_spin_rate + release_speed + release_pos_y,release/spin signature,['release/spin signature']
+6,FF,trajectory_only,factorized_short_memory_wide_residual,0.5648148148148148,0.75,0.6,0.8,vx0 + ax + vy0 + ay + az,trajectory/acceleration,['trajectory/acceleration']
+6,FF,physics_core,context_neighbor_residual,0.6628086419753086,0.25,0.6,0.8,release_pos_x + release_pos_z + release_spin_rate + az + pfx_z,acceleration/movement consistency,"['release/spin signature', 'trajectory/acceleration', 'movement']"
+7,FF,release_only,factorized_release_recent_gaussian,0.6601239669421488,0.0,0.6,0.8,spin_axis_cos + release_speed + release_pos_z + release_pos_y + release_pos_x,release/spin signature,['release/spin signature']
+7,FF,physics_core,factorized_trend_state_anchored,0.7252066115702479,0.0,0.6,0.8,release_pos_z + az + ay + ax + release_spin_rate,release/spin signature,"['release/spin signature', 'trajectory/acceleration']"
+8,FF,movement_only,factorized_physics_constrained_state,0.5491689750692521,0.75,0.6,0.8,pfx_x + pfx_z + plate_x + plate_z,movement,"['movement', 'command/location']"
+8,FF,release_only,context_neighbor_residual,0.7222991689750693,0.0,0.6,0.8,release_extension + release_pos_y + spin_axis_cos + release_pos_x + release_spin_rate,release/spin signature,['release/spin signature']
+8,FF,physics_core,conditional_state_mixture_residual,0.7929362880886428,0.0,0.6,0.8,release_spin_rate + release_extension + release_pos_y + plate_z + pfx_z,release/spin signature,"['release/spin signature', 'movement', 'command/location']"
+9,FF,release_only,context_neighbor_residual,0.78099173553719,0.0,0.6,0.8,release_pos_z + release_pos_x + spin_axis_sin + release_speed + release_spin_rate,release/spin signature,['release/spin signature']
+9,FF,trajectory_only,factorized_pitch_family_release_spin,0.5898760330578512,0.5,0.6,0.8,vy0 + ay + az + ax + vx0,trajectory/acceleration,['trajectory/acceleration']
+9,FF,physics_core,factorized_trend_state_anchored,0.765495867768595,0.0,0.6,0.8,release_pos_x + release_pos_z + release_spin_rate + az + ay,release/spin signature,"['release/spin signature', 'trajectory/acceleration']"
+10,FF,movement_only,factorized_short_memory_more_uncertain,0.5572916666666666,0.75,0.6,0.8,pfx_x + pfx_z + plate_z + plate_x,movement,"['movement', 'command/location']"
+10,FF,release_only,factorized_recent_state_anchored,0.7743055555555556,0.0,0.6,0.8,release_speed + release_extension + release_pos_z + release_pos_y + release_pos_x,release/spin signature,['release/spin signature']
+10,FF,trajectory_only,factorized_trend_state_anchored,0.6423611111111112,0.25,0.6,0.8,vy0 + vz0 + vx0 + az + ax,trajectory/acceleration,['trajectory/acceleration']
+10,FF,physics_core,factorized_pitch_family_release_spin,0.701388888888889,0.0,0.6,0.8,release_spin_rate + plate_z + vz0 + release_pos_x + release_pos_y,release/spin signature,"['release/spin signature', 'trajectory/acceleration', 'command/location']"

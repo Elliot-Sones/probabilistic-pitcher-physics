@@ -66,6 +66,8 @@ class FactorizedPhysicsModel:
     downstream_residual_cov: np.ndarray
     downstream_residual_copula: dict[str, object] | None
     downstream_residual_offset: np.ndarray
+    weather_feature_columns: list[str]
+    weather_residual_adjustment: dict[str, object] | None
     context_columns: list[str]
     feature_columns: list[str]
     source_row_count: int
@@ -164,6 +166,40 @@ def _recent_game_residual_offset(source_frame: pd.DataFrame, residuals: np.ndarr
     return np.average(game_means_array, axis=0, weights=recency_weights)
 
 
+def _fit_weather_residual_adjustment(
+    source_frame: pd.DataFrame,
+    residuals: np.ndarray,
+    weather_columns: list[str],
+    residual_offset: np.ndarray,
+    ridge: float = 20.0,
+) -> dict[str, object] | None:
+    if not weather_columns:
+        return None
+    missing = [column for column in weather_columns if column not in source_frame.columns]
+    if missing:
+        raise ValueError(f"Missing weather columns: {', '.join(missing)}")
+    weather_frame = source_frame[weather_columns].apply(pd.to_numeric, errors="coerce")
+    complete = weather_frame.notna().all(axis=1).to_numpy()
+    if int(complete.sum()) < max(20, len(weather_columns) + 3):
+        return None
+
+    x = weather_frame.loc[complete].to_numpy(float)
+    y = residuals[complete] - residual_offset
+    x_mean = x.mean(axis=0)
+    x_std = x.std(axis=0)
+    x_std[x_std < 1e-8] = 1.0
+    xz = (x - x_mean) / x_std
+    xtx = xz.T @ xz + np.eye(xz.shape[1]) * ridge
+    beta = np.linalg.solve(xtx, xz.T @ y)
+    return {
+        "weather_columns": weather_columns,
+        "x_mean": x_mean,
+        "x_std": x_std,
+        "beta": beta,
+        "source_row_count": int(complete.sum()),
+    }
+
+
 def sample_residual_layer(
     layer: ResidualLayer,
     context: pd.DataFrame,
@@ -215,15 +251,18 @@ def fit_factorized_physics_model(
     pitcher_name: str,
     pitch_type: str,
     random_state: int = 42,
+    weather_feature_columns: list[str] | None = None,
 ) -> FactorizedPhysicsModel:
     context_columns = _available_context_columns(player_train)
+    weather_columns = list(weather_feature_columns or [])
     keep = FACTORIZED_PHYSICS_COLUMNS + context_columns
     metadata_columns = [
         column
         for column in ["game_date", "game_pk", "at_bat_number", "pitch_number"]
         if column in player_train.columns and column not in keep
     ]
-    source_frame = player_train[metadata_columns + keep].dropna(subset=keep)
+    source_columns = metadata_columns + keep + [column for column in weather_columns if column not in keep]
+    source_frame = player_train[source_columns].dropna(subset=keep)
     if metadata_columns:
         source_frame = source_frame.sort_values(metadata_columns, kind="mergesort")
     source_frame = source_frame.reset_index(drop=True)
@@ -281,6 +320,16 @@ def fit_factorized_physics_model(
     downstream_residual_cov = (
         downstream_residual_cov + np.eye(downstream_residuals.shape[1]) * 1e-5
     )
+    downstream_residual_offset = _recent_game_residual_offset(
+        source_frame,
+        downstream_residuals,
+    )
+    weather_residual_adjustment = _fit_weather_residual_adjustment(
+        source_frame,
+        downstream_residuals,
+        weather_columns,
+        downstream_residual_offset,
+    )
     return FactorizedPhysicsModel(
         model_name="player_factorized_physics_residual",
         pitcher_name=pitcher_name,
@@ -300,10 +349,9 @@ def fit_factorized_physics_model(
         ),
         downstream_residual_cov=downstream_residual_cov,
         downstream_residual_copula=fit_residual_gaussian_copula(downstream_residuals),
-        downstream_residual_offset=_recent_game_residual_offset(
-            source_frame,
-            downstream_residuals,
-        ),
+        downstream_residual_offset=downstream_residual_offset,
+        weather_feature_columns=weather_columns,
+        weather_residual_adjustment=weather_residual_adjustment,
         context_columns=context_columns,
         feature_columns=FACTORIZED_PHYSICS_COLUMNS,
         source_row_count=int(len(frame)),
@@ -314,10 +362,21 @@ def _context_for_sampling(
     model: FactorizedPhysicsModel,
     context_df: pd.DataFrame | None,
     n: int,
+    include_weather: bool = False,
 ) -> pd.DataFrame:
-    if context_df is None or not model.context_columns:
+    sampling_columns = list(model.context_columns)
+    if include_weather:
+        sampling_columns.extend(
+            column for column in model.weather_feature_columns if column not in sampling_columns
+        )
+    if context_df is None or not sampling_columns:
         return pd.DataFrame(index=range(n))
-    context = context_df[model.context_columns].dropna().reset_index(drop=True)
+    missing = [column for column in sampling_columns if column not in context_df.columns]
+    if missing and include_weather:
+        raise ValueError(f"Weather sampling requires context rows with weather columns: {', '.join(missing)}")
+    if missing:
+        sampling_columns = [column for column in sampling_columns if column in context_df.columns]
+    context = context_df[sampling_columns].reset_index(drop=True)
     if context.empty:
         return pd.DataFrame(index=range(n))
     if len(context) >= n:
@@ -365,9 +424,16 @@ def sample_factorized_physics(
     n: int,
     context_df: pd.DataFrame | None = None,
     random_state: int = 42,
+    use_weather: bool = False,
 ) -> pd.DataFrame:
-    context = _context_for_sampling(model, context_df, n)
-    downstream_residuals = _sample_downstream_residuals(model, n=n, random_state=random_state + 1)
+    context = _context_for_sampling(model, context_df, n, include_weather=use_weather)
+    downstream_residuals = _sample_downstream_residuals(
+        model,
+        n=n,
+        random_state=random_state + 1,
+        context=context,
+        use_weather=use_weather,
+    )
     movement_end = len(MOVEMENT_FLIGHT_COLUMNS)
     trajectory_end = movement_end + len(TRAJECTORY_FEATURES)
 
@@ -404,6 +470,8 @@ def _sample_downstream_residuals(
     model: FactorizedPhysicsModel,
     n: int,
     random_state: int,
+    context: pd.DataFrame | None = None,
+    use_weather: bool = False,
 ) -> np.ndarray:
     if model.downstream_residual_copula is not None:
         residuals = sample_residual_gaussian_copula(
@@ -419,7 +487,30 @@ def _sample_downstream_residuals(
             size=n,
             check_valid="ignore",
         )
-    return residuals + model.downstream_residual_offset
+    residuals = residuals + model.downstream_residual_offset
+    if use_weather:
+        residuals = residuals + _weather_residual_effect(model, context, n)
+    return residuals
+
+
+def _weather_residual_effect(
+    model: FactorizedPhysicsModel,
+    context: pd.DataFrame | None,
+    n: int,
+) -> np.ndarray:
+    if model.weather_residual_adjustment is None:
+        raise ValueError("Weather residual adjustment is unavailable for this model.")
+    weather_columns = list(model.weather_residual_adjustment["weather_columns"])
+    if context is None or not set(weather_columns).issubset(context.columns):
+        raise ValueError("Weather sampling requires context rows with weather columns.")
+    weather_frame = context[weather_columns].apply(pd.to_numeric, errors="coerce")
+    if weather_frame.isna().any(axis=None):
+        raise ValueError("Weather sampling requires non-null weather columns.")
+    if len(weather_frame) != n:
+        raise ValueError("Weather context row count must match requested sample count.")
+    x = weather_frame.to_numpy(float)
+    xz = (x - model.weather_residual_adjustment["x_mean"]) / model.weather_residual_adjustment["x_std"]
+    return xz @ model.weather_residual_adjustment["beta"]
 
 
 def _fit_baseline_model(

@@ -8,6 +8,6 @@ __all__ = [
     "validator",
     "latent",
     "visualize",
-    "machine_session_format",
+    "trajekt_format",
 ]
 

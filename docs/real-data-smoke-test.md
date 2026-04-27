@@ -6,7 +6,7 @@ This check uses real public Statcast rows only. No mock rows, fake players, or f
 
 ## Data Used
 
-- Source file: `/Users/elliot18/assistant/projects/pitch-scout/data/processed/latest_statcast.csv`
+- Source file: `/Users/elliot18/assistant/projects/trajekt-scout/data/processed/latest_statcast.csv`
 - Rows after physical-feature cleaning: `115,616`
 - Date range: `2026-03-26` to `2026-04-24`
 - Feature set: 18 physical pitch features
@@ -89,7 +89,7 @@ The interesting project is a conditional pitcher-variability model:
 - weather/stadium context, once joined from a real external source
 - temporal validation against future games
 
-The strongest target system story is:
+The strongest Trajekt story is:
 
 > Real pitchers do not throw one centroid. They throw distributions that shift across count, fatigue, day, environment, and mechanics. A static distribution gets caught by the validator; the product opportunity is a realistic mode that learns and samples those conditional shifts.
 
