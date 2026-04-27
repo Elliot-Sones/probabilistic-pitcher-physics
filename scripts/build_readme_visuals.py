@@ -21,6 +21,16 @@ ROLLING_GOALS = {
     "target_hit_rate": 0.40,
     "worst_fold": 0.800,
 }
+BEST_RESULT = {
+    "pitcher": "Tarik Skubal",
+    "pitch_type": "FF",
+    "season": "2025",
+    "pitches": 835,
+    "games": 31,
+    "holdout": 251,
+    "auc": 0.533,
+    "pass_rate": 1.00,
+}
 
 
 def _font(size: int, *, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
@@ -160,6 +170,269 @@ def build_scoreboard_png() -> None:
 
 def _blend(a: tuple[int, int, int], b: tuple[int, int, int], amount: float) -> tuple[int, int, int]:
     return tuple(round(a[i] * amount + b[i] * (1 - amount)) for i in range(3))
+
+
+def _save_gif(path: Path, frames: list[Image.Image], *, duration: int = 95) -> None:
+    frames[0].save(
+        path,
+        save_all=True,
+        append_images=frames[1:],
+        duration=duration,
+        loop=0,
+        optimize=True,
+    )
+
+
+def _draw_label_value(
+    draw: ImageDraw.ImageDraw,
+    xy: tuple[int, int],
+    label: str,
+    value: str,
+    *,
+    accent: tuple[int, int, int],
+) -> None:
+    x, y = xy
+    draw.text((x, y), label.upper(), font=_font(17, bold=True), fill=(98, 91, 80))
+    draw.text((x, y + 23), value, font=_font(36, bold=True), fill=accent)
+
+
+def build_best_results_gif() -> None:
+    width, height = 1400, 760
+    ink = (25, 24, 21)
+    cream = (247, 244, 236)
+    white = (255, 255, 255)
+    green = (31, 122, 77)
+    amber = (215, 165, 49)
+    red = (164, 61, 50)
+    frames: list[Image.Image] = []
+    title_font = _font(58, bold=True)
+    sub_font = _font(28)
+    metric_font = _font(62, bold=True)
+    small_font = _font(21)
+    hold_frames = 6
+
+    for step in range(30):
+        t = min(1.0, step / 20)
+        image = Image.new("RGB", (width, height), cream)
+        draw = ImageDraw.Draw(image)
+        draw.rounded_rectangle((42, 42, width - 42, height - 42), radius=30, fill=white)
+        draw.text((82, 82), "Best Validated Result", font=title_font, fill=ink)
+        draw.text(
+            (82, 152),
+            "Tarik Skubal 2025 FF: generated pitches vs later real Statcast holdout",
+            font=sub_font,
+            fill=(98, 91, 80),
+        )
+        draw.rounded_rectangle((82, 220, 1318, 610), radius=28, fill=(250, 242, 224))
+        draw.text((122, 260), "C2ST AUC", font=small_font, fill=(98, 91, 80))
+        draw.text((122, 294), f"{BEST_RESULT['auc']:.3f}", font=metric_font, fill=green)
+        draw.text((122, 372), "lower is better; 0.50 is ideal", font=small_font, fill=(98, 91, 80))
+        draw.text((122, 450), "Pass rate", font=small_font, fill=(98, 91, 80))
+        draw.text((122, 484), f"{BEST_RESULT['pass_rate']:.0%}", font=metric_font, fill=green)
+
+        scale_x0, scale_y = 500, 355
+        scale_w = 700
+        draw.line((scale_x0, scale_y, scale_x0 + scale_w, scale_y), fill=(216, 205, 184), width=12)
+        for value, color, label in [(0.50, green, "ideal"), (0.60, amber, "target"), (0.90, red, "easy to detect")]:
+            x = scale_x0 + int(((value - 0.50) / 0.45) * scale_w)
+            draw.line((x, scale_y - 28, x, scale_y + 28), fill=color, width=4)
+            draw.text((x - 34, scale_y + 42), label, font=_font(17, bold=True), fill=color)
+        current_auc = 0.90 + (BEST_RESULT["auc"] - 0.90) * t
+        x = scale_x0 + int(((current_auc - 0.50) / 0.45) * scale_w)
+        draw.ellipse((x - 20, scale_y - 20, x + 20, scale_y + 20), fill=green, outline=ink, width=3)
+        draw.text((x - 44, scale_y - 72), f"{current_auc:.3f}", font=_font(26, bold=True), fill=ink)
+
+        _draw_label_value(draw, (520, 460), "Real FF pitches", f"{BEST_RESULT['pitches']:,}", accent=ink)
+        _draw_label_value(draw, (755, 460), "Games", str(BEST_RESULT["games"]), accent=ink)
+        _draw_label_value(draw, (930, 460), "Holdout rows", str(BEST_RESULT["holdout"]), accent=ink)
+        _draw_label_value(draw, (1160, 460), "Pitch", str(BEST_RESULT["pitch_type"]), accent=ink)
+
+        draw.rounded_rectangle((82, 636, 1318, 694), radius=18, fill=(220, 239, 229))
+        draw.text(
+            (112, 654),
+            "Result first: the classifier barely separates generated Skubal fastballs from later real ones.",
+            font=_font(25, bold=True),
+            fill=green,
+        )
+        frames.extend([image] * (hold_frames if step in {0, 21, 29} else 1))
+    _save_gif(ASSET_DIR / "best-validated-result.gif", frames, duration=80)
+
+
+def build_pitch_cloud_generator_gif() -> None:
+    width, height = 1400, 760
+    ink = (25, 24, 21)
+    cream = (247, 244, 236)
+    green = (31, 122, 77)
+    amber = (215, 165, 49)
+    red = (164, 61, 50)
+    frames: list[Image.Image] = []
+    title_font = _font(54, bold=True)
+    sub_font = _font(26)
+    label_font = _font(22, bold=True)
+    small_font = _font(18)
+    controls = [
+        ("Pitcher", "Tarik Skubal"),
+        ("Pitch", "FF"),
+        ("Inning", "7"),
+        ("Pitch count", "88"),
+        ("Count", "2-2"),
+        ("Batter", "LHB"),
+    ]
+    points = []
+    for i in range(52):
+        angle = i * 0.63
+        radius = 1.0 + (i % 7) * 0.18
+        px = math.cos(angle) * radius * 52 + math.sin(i) * 16
+        pz = math.sin(angle * 0.8) * radius * 42 + math.cos(i * 0.4) * 14
+        velo = 94.7 + math.sin(i * 0.5) * 1.1
+        points.append((px, pz, velo))
+
+    for frame_index in range(36):
+        shown = min(len(points), 5 + frame_index * 2)
+        image = Image.new("RGB", (width, height), cream)
+        draw = ImageDraw.Draw(image)
+        draw.rounded_rectangle((42, 42, width - 42, height - 42), radius=30, fill=(255, 255, 255))
+        draw.text((82, 82), "Generate A Pitch Probability Cloud", font=title_font, fill=ink)
+        draw.text(
+            (82, 145),
+            "The output is a distribution of likely pitch characteristics, not one guessed pitch.",
+            font=sub_font,
+            fill=(98, 91, 80),
+        )
+        for index, (label, value) in enumerate(controls):
+            x = 82 + (index % 3) * 265
+            y = 220 + (index // 3) * 86
+            draw.rounded_rectangle((x, y, x + 228, y + 62), radius=16, fill=(250, 242, 224))
+            draw.text((x + 18, y + 12), label, font=small_font, fill=(98, 91, 80))
+            draw.text((x + 18, y + 34), value, font=label_font, fill=ink)
+
+        zone = (900, 210, 1240, 610)
+        draw.rounded_rectangle((845, 190, 1292, 654), radius=22, fill=(247, 244, 236), outline=(216, 205, 184), width=2)
+        draw.text((870, 212), "Generated plate-location samples", font=label_font, fill=ink)
+        draw.rectangle(zone, outline=ink, width=4)
+        for i in range(1, 3):
+            x = zone[0] + i * ((zone[2] - zone[0]) // 3)
+            y = zone[1] + i * ((zone[3] - zone[1]) // 3)
+            draw.line((x, zone[1], x, zone[3]), fill=(216, 205, 184), width=2)
+            draw.line((zone[0], y, zone[2], y), fill=(216, 205, 184), width=2)
+        for px, pz, velo in points[:shown]:
+            x = int((zone[0] + zone[2]) / 2 + px)
+            y = int((zone[1] + zone[3]) / 2 - pz)
+            color = green if velo >= 95.0 else amber
+            draw.ellipse((x - 7, y - 7, x + 7, y + 7), fill=color, outline=ink)
+        draw.rounded_rectangle((82, 520, 780, 640), radius=20, fill=(220, 239, 229))
+        draw.text((112, 544), "Expected FF envelope", font=label_font, fill=green)
+        draw.text((112, 582), "velocity 94-96 mph  |  command cloud  |  sampled session JSON", font=small_font, fill=ink)
+        if frame_index > 25:
+            draw.rounded_rectangle((112, 612, 430, 668), radius=18, fill=green)
+            draw.text((142, 628), "Export samples", font=_font(24, bold=True), fill=(255, 250, 240))
+        frames.append(image)
+    _save_gif(ASSET_DIR / "pitch-cloud-generator.gif", frames, duration=85)
+
+
+def build_factorized_chain_gif() -> None:
+    width, height = 1400, 760
+    ink = (25, 24, 21)
+    cream = (247, 244, 236)
+    colors = [(31, 122, 77), (47, 111, 130), (215, 165, 49), (164, 61, 50)]
+    layers = [
+        ("Release + velocity + spin", "where/how the ball leaves the hand"),
+        ("Movement residual", "break and induced movement around release"),
+        ("Trajectory residual", "vx0/vy0/vz0 + acceleration consistency"),
+        ("Command residual", "plate_x / plate_z location cloud"),
+    ]
+    frames: list[Image.Image] = []
+    for frame_index in range(40):
+        active = min(3, frame_index // 9)
+        image = Image.new("RGB", (width, height), cream)
+        draw = ImageDraw.Draw(image)
+        draw.rounded_rectangle((42, 42, width - 42, height - 42), radius=30, fill=(255, 255, 255))
+        draw.text((82, 82), "How The Model Learns A Pitcher's Style", font=_font(54, bold=True), fill=ink)
+        draw.text(
+            (82, 145),
+            "It does not average every feature together; it samples physics in a chain.",
+            font=_font(26),
+            fill=(98, 91, 80),
+        )
+        start_x, y = 92, 330
+        for index, (title, subtitle) in enumerate(layers):
+            x = start_x + index * 318
+            color = colors[index]
+            fill = _blend(color, (255, 255, 255), 0.16 if index <= active else 0.05)
+            outline = color if index <= active else (216, 205, 184)
+            draw.rounded_rectangle((x, y, x + 260, y + 170), radius=26, fill=fill, outline=outline, width=4)
+            draw.ellipse((x + 24, y + 24, x + 72, y + 72), fill=color if index <= active else (216, 205, 184))
+            draw.text((x + 40, y + 34), str(index + 1), font=_font(24, bold=True), fill=(255, 250, 240))
+            draw.text((x + 24, y + 88), title, font=_font(24, bold=True), fill=ink)
+            draw.text((x + 24, y + 122), subtitle, font=_font(17), fill=(98, 91, 80))
+            if index < len(layers) - 1:
+                arrow_color = ink if index < active else (216, 205, 184)
+                _draw_arrow(draw, (x + 268, y + 86), (x + 308, y + 86), arrow_color)
+        draw.rounded_rectangle((82, 570, 1318, 652), radius=22, fill=(250, 242, 224))
+        message = [
+            "Start with the pitcher's release state.",
+            "Then sample movement that is plausible for that release.",
+            "Then preserve trajectory/acceleration consistency.",
+            "Finally produce a command cloud and exportable samples.",
+        ][active]
+        draw.text((116, 596), message, font=_font(28, bold=True), fill=colors[active])
+        frames.extend([image] * (5 if frame_index % 9 == 0 else 1))
+    _save_gif(ASSET_DIR / "factorized-physics-chain.gif", frames, duration=90)
+
+
+def build_c2st_validator_gif() -> None:
+    width, height = 1400, 760
+    ink = (25, 24, 21)
+    cream = (247, 244, 236)
+    green = (31, 122, 77)
+    amber = (215, 165, 49)
+    red = (164, 61, 50)
+    stages = [
+        ("Train", "early real pitches"),
+        ("Generate", "synthetic pitch samples"),
+        ("Hold out", "later real pitches"),
+        ("Classifier", "tries to spot fakes"),
+        ("Score", "AUC 0.533"),
+    ]
+    frames: list[Image.Image] = []
+    for frame_index in range(42):
+        active = min(4, frame_index // 8)
+        image = Image.new("RGB", (width, height), cream)
+        draw = ImageDraw.Draw(image)
+        draw.rounded_rectangle((42, 42, width - 42, height - 42), radius=30, fill=(255, 255, 255))
+        draw.text((82, 82), "How We Prove Realism", font=_font(56, bold=True), fill=ink)
+        draw.text(
+            (82, 148),
+            "A classifier two-sample test asks: can a model tell generated pitches from future real ones?",
+            font=_font(26),
+            fill=(98, 91, 80),
+        )
+        for index, (title, subtitle) in enumerate(stages):
+            x = 92 + index * 252
+            y = 300
+            color = green if index <= active else (216, 205, 184)
+            draw.rounded_rectangle((x, y, x + 205, y + 138), radius=22, fill=_blend(color, (255, 250, 240), 0.14), outline=color, width=4)
+            draw.text((x + 24, y + 34), title, font=_font(27, bold=True), fill=ink)
+            draw.text((x + 24, y + 76), subtitle, font=_font(18), fill=(98, 91, 80))
+            if index < len(stages) - 1:
+                _draw_arrow(draw, (x + 214, y + 69), (x + 244, y + 69), ink if index < active else (216, 205, 184))
+
+        draw.rounded_rectangle((220, 515, 1180, 630), radius=28, fill=(220, 239, 229))
+        if active < 4:
+            text = "The validator stays blind to the labels until the classifier test."
+            color = ink
+        else:
+            text = "Best result: 0.533 AUC, close to coin-flip separation."
+            color = green
+        draw.text((260, 552), text, font=_font(34, bold=True), fill=color)
+        draw.line((320, 654, 1080, 654), fill=(216, 205, 184), width=12)
+        current = 0.90 + (BEST_RESULT["auc"] - 0.90) * min(1, max(0, (frame_index - 31) / 8))
+        x = 320 + int(((current - 0.50) / 0.45) * 760)
+        draw.ellipse((x - 16, 638, x + 16, 670), fill=green if active >= 4 else amber, outline=ink, width=2)
+        draw.text((300, 676), "0.50 ideal", font=_font(16, bold=True), fill=green)
+        draw.text((1010, 676), "1.00 obvious fake", font=_font(16, bold=True), fill=red)
+        frames.extend([image] * (4 if frame_index % 8 == 0 else 1))
+    _save_gif(ASSET_DIR / "c2st-validator.gif", frames, duration=90)
 
 
 def build_pipeline_svg() -> None:
@@ -567,6 +840,10 @@ Prompt summary:
 
 - `scoreboard.png`: exact primary-scoreboard numbers used by README.
 - `scoreboard.svg`: editable SVG source for the scoreboard.
+- `best-validated-result.gif`: results-first animation for the top of the README.
+- `pitch-cloud-generator.gif`: animated conditional generator explanation.
+- `factorized-physics-chain.gif`: animated model-structure explanation.
+- `c2st-validator.gif`: animated validation explanation.
 - `pipeline.png`: model/data flow overview used by README.
 - `pipeline.svg`: editable SVG source for the pipeline.
 - `rolling-window-validation.gif`: animated rolling-window validation explanation.
@@ -579,6 +856,10 @@ def main() -> int:
     ASSET_DIR.mkdir(parents=True, exist_ok=True)
     build_scoreboard_svg()
     build_scoreboard_png()
+    build_best_results_gif()
+    build_pitch_cloud_generator_gif()
+    build_factorized_chain_gif()
+    build_c2st_validator_gif()
     build_pipeline_svg()
     build_pipeline_png()
     build_rolling_gif()
