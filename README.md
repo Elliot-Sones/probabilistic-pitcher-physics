@@ -4,21 +4,26 @@
 
 **A real pitcher doesn't throw one fastball — they throw a cloud of them, shaped by count, inning, batter, fatigue, score, and the simple fact that no human releases the ball the same way twice.** Pitcher Twin learns that cloud from public Statcast and generates pitches a classifier struggles to tell apart from real held-out ones.
 
-> **🔗 Live demo:** **[pitcher-twin.vercel.app](https://pitcher-twin.vercel.app)** &nbsp;·&nbsp; **Interactive Streamlit:** `streamlit run app/streamlit_app.py`
+> ### 🔗 [**Try the live app — pitcher-twin.vercel.app**](https://pitcher-twin.vercel.app)
+> Pick a pitcher, count, and batter hand. Watch the model's pitch cloud reshape. &nbsp;·&nbsp; [Read the technical report →](https://pitcher-twin.vercel.app/report)
 
 ---
 
-## The honest scoreboard
+## Best validated result
 
-| | Status | Result | Detail |
-|---|---|---:|---|
-| **Single 70/30 split** (Skubal 2025 FF) | ✅ validated | **0.533 AUC** · 100% pass | classifier trained to spot fakes barely beats a coin flip |
-| **Rolling temporal stress test** (10 future-game folds) | 🟡 diagnostic | **0.702 mean AUC** | goal ≤ 0.620 · best fold 0.593 · worst fold 0.929 |
-| **Cross-pitcher generalization** | 🟡 mixed | 4 pitchers · 3 pitch types | Skubal FF validates; SI/CH/Mattson/Peralta/Bradley remain diagnostic |
+The cleanest result is **Tarik Skubal 2025 four-seam fastball**. The model trains on earlier real pitches, generates new fastball samples, and validates against later real Statcast pitches.
 
-Lower AUC is better. `0.50` means a classifier specifically trained to detect synthetic pitches has no meaningful signal. Rolling validation is now the primary truth test — single-split AUC is treated as a ceiling, not a guarantee.
+| Metric | Result |
+|---|---:|
+| Real Skubal FF pitches | **835** |
+| Games represented | **31** |
+| Later holdout pitches | **251** |
+| Classifier two-sample AUC | **0.533** |
+| Repeated-seed pass rate | **100%** |
 
-![Pitcher Twin honest scoreboard](docs/assets/readme/scoreboard.png)
+Lower AUC is better. `0.50` means the classifier has no useful signal for separating generated pitches from real held-out pitches.
+
+![Animated best validated result for Skubal 2025 FF](docs/assets/readme/best-validated-result.gif)
 
 ---
 
@@ -29,6 +34,8 @@ Pitcher Twin models the **distribution** of a pitcher's actual pitch outcomes ra
 The goal is a practical generator that answers: *"If I want to practice this pitch type from this pitcher in this game state, what range of pitches should I expect?"*
 
 The output is a Trajekt-shaped session JSON of sampled pitches with **layered validation metadata** — every pitch carries the trust level of every layer (command, movement, trajectory, release, full physics) so consumers can downgrade gracefully when full physics is still diagnostic.
+
+![Animated conditional pitch probability cloud generator](docs/assets/readme/pitch-cloud-generator.gif)
 
 ---
 
@@ -49,6 +56,8 @@ release point / velocity / spin
 
 A Gaussian mixture at each layer captures the natural sub-modes (high-inside vs. low-away vs. middle-up fastballs aren't one distribution). Residual layers absorb the mechanical noise the pitcher didn't intend — the *human-error envelope*. Every layer is conditioned on game state (count, inning, batter handedness, pitch-count fatigue, score differential) and trend-anchored to capture mid-season drift in release point and stuff.
 
+![Animated factorized physics chain](docs/assets/readme/factorized-physics-chain.gif)
+
 ### The validator (classifier two-sample test)
 
 For every model variant, we:
@@ -61,7 +70,9 @@ For every model variant, we:
 
 The single-split version is the **ceiling**. The rolling temporal version repeats this across many future-game windows — which is now the primary truth test.
 
-### The rolling temporal scoreboard
+![Animated C2ST validation loop](docs/assets/readme/c2st-validator.gif)
+
+### The rolling temporal stress test
 
 ```text
 train games  1-10  → test games 11-12
@@ -84,8 +95,13 @@ Editable architecture sketch: [`docs/assets/readme/pitcher-twin-architecture.exc
 # install
 pip install -r requirements.txt
 
-# run the dashboard locally
-streamlit run app/streamlit_app.py
+# rebuild the live app's pre-sampled data + static report
+python scripts/build_interactive_data.py
+python scripts/build_static_site.py
+
+# preview the site locally (fully static — no server needed)
+python -m http.server 8000 --directory site
+# open http://localhost:8000
 
 # regenerate the headline tournament
 python scripts/run_model_tournament.py \
@@ -117,11 +133,13 @@ Run tests: `pytest -q`.
 
 | Path | What lives there |
 |---|---|
-| `app/streamlit_app.py` | The hosted demo — hero overlay, try-it interactive, rolling truth test, validation board |
+| `site/` | The hosted app — `index.html` (interactive sampler), `report.html` (long-form analysis), `data.json` (pre-sampled model output) |
 | `src/pitcher_twin/` | Core library — generators, factorized physics chain, validator, tournament, rolling validation |
-| `scripts/` | CLI entry points: data fetch, tournaments, validation boards |
+| `scripts/build_interactive_data.py` | Pre-samples model output for the live app's pitcher × context grid |
+| `scripts/build_static_site.py` | Renders the static report page with embedded Plotly charts |
+| `scripts/` | Other CLI entry points: data fetch, tournaments, validation boards |
 | `tests/` | pytest suite (93 tests) |
-| `data/processed/skubal_2025.csv` | Public Statcast pull used by the live demo |
+| `data/processed/skubal_2025.csv` | Public Statcast pull used by the live app |
 | `docs/presentation.md` | Client-facing single-page pitch |
 | `docs/research-log.md` | Full V2.1 → V4 model chronology and ablations |
 | `outputs/` | Generated tournament results, validation boards, scorecards |
