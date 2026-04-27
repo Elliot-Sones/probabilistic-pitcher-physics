@@ -1,5 +1,7 @@
 # Pitcher Twin
 
+![Pitcher Twin hero: baseball trajectory probability cloud](docs/assets/readme/hero-pitcher-twin.png)
+
 **A real pitcher doesn't throw one fastball — they throw a cloud of them, shaped by count, inning, batter, fatigue, score, and the simple fact that no human releases the ball the same way twice.** Pitcher Twin learns that cloud from public Statcast and generates pitches a classifier struggles to tell apart from real held-out ones.
 
 > **🔗 Live demo:** **[pitcher-twin.vercel.app](https://pitcher-twin.vercel.app)** &nbsp;·&nbsp; **Interactive Streamlit:** `streamlit run app/streamlit_app.py`
@@ -16,6 +18,8 @@
 
 Lower AUC is better. `0.50` means a classifier specifically trained to detect synthetic pitches has no meaningful signal. Rolling validation is now the primary truth test — single-split AUC is treated as a ceiling, not a guarantee.
 
+![Pitcher Twin honest scoreboard](docs/assets/readme/scoreboard.svg)
+
 ---
 
 ## What it does
@@ -29,6 +33,8 @@ The output is a Trajekt-shaped session JSON of sampled pitches with **layered va
 ---
 
 ## How it works
+
+![Pitcher Twin pipeline from Statcast to Trajekt export](docs/assets/readme/pipeline.svg)
 
 ### The factorized physics chain (V2.1+)
 
@@ -65,6 +71,10 @@ train games  1-28  → test games 29-30
 ```
 
 10 rolling folds, 4 repeats per fold. The "miss" flags are honest: the model can match some future windows (best fold 0.593) but still drifts hard on others (worst fold 0.929).
+
+![Animated rolling temporal validation windows](docs/assets/readme/rolling-window-validation.gif)
+
+Editable architecture sketch: [`docs/assets/readme/pitcher-twin-architecture.excalidraw`](docs/assets/readme/pitcher-twin-architecture.excalidraw)
 
 ---
 

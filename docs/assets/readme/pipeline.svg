@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="560" viewBox="0 0 1100 560" role="img" aria-label="Pitcher Twin model pipeline">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L8,3 z" fill="#211f1a"/>
+    </marker>
+    <style>
+      .title { font: 850 44px ui-sans-serif, system-ui, sans-serif; fill: #191815; }
+      .subtitle { font: 500 21px ui-sans-serif, system-ui, sans-serif; fill: #625b50; }
+      .number { font: 900 18px ui-sans-serif, system-ui, sans-serif; fill: #fffaf0; }
+      .step-title { font: 800 19px ui-sans-serif, system-ui, sans-serif; fill: #191815; }
+      .step-sub { font: 500 13px ui-sans-serif, system-ui, sans-serif; fill: #625b50; }
+    </style>
+  </defs>
+  <rect width="1100" height="560" fill="#f7f4ec"/>
+  <rect x="28" y="28" width="1044" height="504" rx="26" fill="#ffffff" opacity="0.72" stroke="#d7cdb8"/>
+  <text x="54" y="88" class="title">From Real Pitches To A Validated Practice Envelope</text>
+  <text x="54" y="122" class="subtitle">Every generated pitch is tied back to a real-data split and a validation layer.</text>
+  
+  <g transform="translate(72 190)">
+    <rect width="250" height="120" rx="18" fill="#fffaf0" stroke="#211f1a" stroke-width="2"/>
+    <circle cx="34" cy="34" r="16" fill="#1f7a4d"/>
+    <text x="34" y="43" text-anchor="middle" class="number">1</text>
+    <text x="128" y="58" text-anchor="middle" class="step-title">Real Statcast</text>
+    <text x="128" y="86" text-anchor="middle" class="step-sub">public pitch rows</text>
+  </g>
+  <g transform="translate(402 190)">
+    <rect width="250" height="120" rx="18" fill="#fffaf0" stroke="#211f1a" stroke-width="2"/>
+    <circle cx="34" cy="34" r="16" fill="#2f6f82"/>
+    <text x="34" y="43" text-anchor="middle" class="number">2</text>
+    <text x="128" y="58" text-anchor="middle" class="step-title">Feature layers</text>
+    <text x="128" y="86" text-anchor="middle" class="step-sub">release, spin, movement</text>
+  </g>
+  <g transform="translate(732 190)">
+    <rect width="250" height="120" rx="18" fill="#fffaf0" stroke="#211f1a" stroke-width="2"/>
+    <circle cx="34" cy="34" r="16" fill="#d7a531"/>
+    <text x="34" y="43" text-anchor="middle" class="number">3</text>
+    <text x="128" y="58" text-anchor="middle" class="step-title">Generator suite</text>
+    <text x="128" y="86" text-anchor="middle" class="step-sub">factorized + drift models</text>
+  </g>
+  <g transform="translate(72 360)">
+    <rect width="250" height="120" rx="18" fill="#fffaf0" stroke="#211f1a" stroke-width="2"/>
+    <circle cx="34" cy="34" r="16" fill="#a43d32"/>
+    <text x="34" y="43" text-anchor="middle" class="number">4</text>
+    <text x="128" y="58" text-anchor="middle" class="step-title">C2ST validator</text>
+    <text x="128" y="86" text-anchor="middle" class="step-sub">classifier realism test</text>
+  </g>
+  <g transform="translate(402 360)">
+    <rect width="250" height="120" rx="18" fill="#fffaf0" stroke="#211f1a" stroke-width="2"/>
+    <circle cx="34" cy="34" r="16" fill="#b47f1a"/>
+    <text x="34" y="43" text-anchor="middle" class="number">5</text>
+    <text x="128" y="58" text-anchor="middle" class="step-title">Rolling board</text>
+    <text x="128" y="86" text-anchor="middle" class="step-sub">future-game reliability</text>
+  </g>
+  <g transform="translate(732 360)">
+    <rect width="250" height="120" rx="18" fill="#fffaf0" stroke="#211f1a" stroke-width="2"/>
+    <circle cx="34" cy="34" r="16" fill="#1f7a4d"/>
+    <text x="34" y="43" text-anchor="middle" class="number">6</text>
+    <text x="128" y="58" text-anchor="middle" class="step-title">Trajekt export</text>
+    <text x="128" y="86" text-anchor="middle" class="step-sub">sampled session JSON</text>
+  </g>
+  <path d="M322 250 L390 250" stroke="#211f1a" stroke-width="3" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+  <path d="M652 250 L720 250" stroke="#211f1a" stroke-width="3" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+  <path d="M860 310 L860 360" stroke="#211f1a" stroke-width="3" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+  <path d="M720 420 L652 420" stroke="#211f1a" stroke-width="3" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+  <path d="M390 420 L322 420" stroke="#211f1a" stroke-width="3" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+</svg>

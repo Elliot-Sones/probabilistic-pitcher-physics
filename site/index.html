@@ -213,6 +213,62 @@
       color: var(--muted);
       margin-top: .5rem;
     }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: end;
+      margin-bottom: 1rem;
+    }
+    .controls label {
+      display: flex;
+      flex-direction: column;
+      gap: .3rem;
+      flex: 1 1 220px;
+      min-width: 200px;
+    }
+    .control-label {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .controls select {
+      font-family: inherit;
+      font-size: 1rem;
+      padding: .55rem .7rem;
+      border-radius: 8px;
+      border: 1px solid rgba(28, 26, 23, .25);
+      background: white;
+      color: var(--ink);
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .controls select:focus {
+      outline: 2px solid var(--green);
+      outline-offset: 1px;
+    }
+    .status-readout {
+      flex: 1 1 200px;
+      font-size: .9rem;
+      padding: .55rem .8rem;
+      background: rgba(31, 122, 77, .07);
+      border-radius: 8px;
+      color: var(--ink);
+      min-height: 2.4rem;
+      display: flex;
+      align-items: center;
+    }
+    .status-readout strong { margin-right: .35rem; }
+    .legend-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: .8rem;
+      font-size: .92rem;
+      color: var(--muted);
+    }
     </style>
     </head>
     <body>
@@ -244,6 +300,45 @@
         <div class="score-value">4 <span class="score-unit">pitchers</span></div>
         <div class="score-meta">3 pitch types &middot; Skubal FF/SI/CH + Mattson, Peralta, Bradley FFs</div>
       </div>
+    </div>
+
+    <h2>Try it · pick a pitcher, count, and batter hand</h2>
+    <p class="lede">
+      Pick a pitcher and pitch type, then change the game context. Each green dot is a
+      pitch the model generates for the chosen situation; each dark dot is a real
+      held-out pitch from that pitcher. The cloud shifts with count, batter handedness,
+      and pitcher.
+    </p>
+
+    <div class="panel" id="try-it-panel">
+      <div class="controls">
+        <label>
+          <span class="control-label">Pitcher · pitch</span>
+          <select id="pick-candidate"></select>
+        </label>
+        <label>
+          <span class="control-label">Count</span>
+          <select id="pick-count"></select>
+        </label>
+        <label>
+          <span class="control-label">Batter</span>
+          <select id="pick-hand"></select>
+        </label>
+        <div class="status-readout" id="candidate-status"></div>
+      </div>
+      <div class="legend-row">
+        <span class="legend-key"><span class="legend-dot real"></span>Real held-out pitches</span>
+        <span class="legend-key"><span class="legend-dot sim"></span>Model samples for this context</span>
+        <span class="legend-key" id="sample-counts"></span>
+      </div>
+      <div class="grid-2">
+        <div id="try-plate" style="height:460px"></div>
+        <div>
+          <div id="try-velocity" style="height:230px"></div>
+          <div id="try-spin" style="height:230px"></div>
+        </div>
+      </div>
+      <p class="caption" id="try-caption">Loading model samples…</p>
     </div>
 
     <h2>Real held-out pitches vs generated samples</h2>
@@ -370,5 +465,157 @@ train games  1-28  → test games 29-30</code></pre>
     </div>
 
     </main>
+    <script>
+    (async function() {
+      const REAL = "#171512";
+      const SIM = "#1f7a4d";
+      const STATUS_TEXT = {
+        validated: "✅ Validated · classifier barely beats coin flip",
+        candidate: "🟡 Candidate · close to target on a single split",
+        diagnostic: "🟡 Diagnostic · model still distinguishable here"
+      };
+
+      const candidateSel = document.getElementById("pick-candidate");
+      const countSel = document.getElementById("pick-count");
+      const handSel = document.getElementById("pick-hand");
+      const statusReadout = document.getElementById("candidate-status");
+      const sampleCounts = document.getElementById("sample-counts");
+      const caption = document.getElementById("try-caption");
+
+      let payload;
+      try {
+        const res = await fetch("data.json");
+        payload = await res.json();
+      } catch (err) {
+        caption.textContent = "Could not load model samples (data.json missing).";
+        return;
+      }
+
+      const byKey = Object.fromEntries(payload.candidates.map(c => [c.key, c]));
+
+      payload.candidates.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.key;
+        opt.textContent = c.label;
+        candidateSel.appendChild(opt);
+      });
+      payload.count_buckets.forEach(b => {
+        const opt = document.createElement("option");
+        opt.value = b.key;
+        opt.textContent = b.label;
+        countSel.appendChild(opt);
+      });
+      payload.batter_hands.forEach(h => {
+        const opt = document.createElement("option");
+        opt.value = h.key;
+        opt.textContent = h.label;
+        handSel.appendChild(opt);
+      });
+      candidateSel.value = payload.default_candidate;
+      countSel.value = payload.default_count_bucket;
+      handSel.value = payload.default_batter_hand;
+
+      const baseLayout = {
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(255,255,255,.86)",
+        margin: {l: 12, r: 12, t: 28, b: 36},
+        font: {color: "#171512", family: "Inter, system-ui, sans-serif"},
+        showlegend: false,
+        hovermode: "closest"
+      };
+
+      function platePoints(rows, color, name) {
+        return {
+          type: "scattergl",
+          mode: "markers",
+          name,
+          x: rows.map(r => r.plate_x),
+          y: rows.map(r => r.plate_z),
+          customdata: rows.map(r => [r.release_speed ?? null, r.release_spin_rate ?? null]),
+          marker: {
+            size: 10,
+            color,
+            opacity: 0.62,
+            line: { width: 0.6, color: REAL }
+          },
+          hovertemplate: name + "<br>Velo: %{customdata[0]:.1f} mph<br>Spin: %{customdata[1]:.0f} rpm<extra></extra>"
+        };
+      }
+
+      function strikeZoneShape() {
+        return {
+          type: "rect",
+          x0: -0.83, x1: 0.83,
+          y0: 1.5, y1: 3.5,
+          line: { color: REAL, width: 2 }
+        };
+      }
+
+      function platesLayout() {
+        return {
+          ...baseLayout,
+          xaxis: {title: "Plate X (ft)", range: [-2.2, 2.2], zeroline: false},
+          yaxis: {title: "Plate Z (ft)", range: [0.4, 4.6], zeroline: false, scaleanchor: "x", scaleratio: 1},
+          shapes: [strikeZoneShape()]
+        };
+      }
+
+      function histTrace(rows, key, color, name) {
+        const values = rows.map(r => r[key]).filter(v => v !== undefined && v !== null);
+        return {
+          type: "histogram",
+          name,
+          x: values,
+          opacity: 0.65,
+          marker: { color, line: { color: REAL, width: 0.4 } },
+          autobinx: true
+        };
+      }
+
+      function histLayout(title) {
+        return {
+          ...baseLayout,
+          barmode: "overlay",
+          title: {text: title, font: {size: 13, color: "#5b5247"}, x: 0, xanchor: "left"},
+          xaxis: { zeroline: false },
+          yaxis: { zeroline: false }
+        };
+      }
+
+      function render() {
+        const candidate = byKey[candidateSel.value];
+        if (!candidate) return;
+        const ctxKey = countSel.value + "_" + handSel.value;
+        const sims = candidate.samples[ctxKey] || [];
+        const real = candidate.real_holdout || [];
+
+        statusReadout.innerHTML = "<strong>Status:</strong> " + (STATUS_TEXT[candidate.status] || candidate.status);
+        sampleCounts.textContent = sims.length + " synthetic · " + real.length + " real holdout pitches";
+        caption.textContent =
+          candidate.label + " · " + (countSel.options[countSel.selectedIndex]?.text || "") +
+          " · " + (handSel.options[handSel.selectedIndex]?.text || "") +
+          " · model trained on " + candidate.train_count + " earlier pitches";
+
+        const plateData = [
+          platePoints(real, REAL, "Real holdout"),
+          platePoints(sims, SIM, "Simulated")
+        ];
+        Plotly.react("try-plate", plateData, platesLayout(), {displayModeBar: false, responsive: true});
+
+        Plotly.react("try-velocity", [
+          histTrace(real, "release_speed", REAL, "Real"),
+          histTrace(sims, "release_speed", SIM, "Simulated")
+        ], histLayout("Release velocity (mph)"), {displayModeBar: false, responsive: true});
+
+        Plotly.react("try-spin", [
+          histTrace(real, "release_spin_rate", REAL, "Real"),
+          histTrace(sims, "release_spin_rate", SIM, "Simulated")
+        ], histLayout("Spin rate (rpm)"), {displayModeBar: false, responsive: true});
+      }
+
+      [candidateSel, countSel, handSel].forEach(el => el.addEventListener("change", render));
+      render();
+    })();
+    </script>
     </body>
     </html>
